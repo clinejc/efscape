@@ -1,0 +1,15 @@
+
+efscape
+-------
+
+This project implements an object-oriented framework for implementing
+spatially-explicit ecological models. It implements a limited set of features
+from the following projects:
+ * SimApp (Cline 1999-2004), a C++ CORBA-based simulation framework,
+ * ecological framework or "ef" (Saponara 1997), a C++ framework for discrete-
+   time, discrete-space, individual-based ecological simulations, and
+ * simdriver (Cline 2001-2003),a generic SimApp-based ATLSS driver.
+
+The efscape package uses adevs, C++-based implementation of the DEVS (Discrete
+EVent System Specification) modeling methdology (Zeigler 1974) as the core
+simulation engine.

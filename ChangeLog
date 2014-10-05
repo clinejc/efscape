@@ -1,0 +1,20 @@
+2014-10-05 : Jon Cline <clinej@alumni.stanford.org>
+	- Major revision incorporating Repast HPC
+2006-10-30 : Jon Cline <clinej@stanfordalumni.org>
+	- Created initial CVS archive of efscape library.
+
+2006-02-23 : Jon Cline <jon.cline@case.edu>
+	- Created 'efscape/gis' sub-directory for server-side gis library
+	implementation.
+
+2006-01-30 : Jon Cline <jon.cline@case.edu>
+	- Copied 'ogis' package from SimApp library. A more complete ogis idl
+	interface is planned as well as a refactored implementation
+	- Began incorporating interfaces from ogis.idl and SimApp.idl into
+	efscape.idl.
+
+2006-01-27 : Jon Cline <jon.cline@case.edu>
+	- Created 'efscape/impl' sub-directory for server-side implementation
+
+2005-04-14 : Jon Cline <jon.cline@case.edu>
+	- Created project 'efscape' (successor to SimApp and efdevs)

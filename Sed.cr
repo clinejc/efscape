@@ -1,0 +1,2 @@
+/__COPYRIGHT_START__/,/__COPYRIGHT_END__/d
+p

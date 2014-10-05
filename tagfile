@@ -1,0 +1,4562 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<tagfile>
+  <compound kind="class">
+    <name>EfscapeClient</name>
+    <filename>class_efscape_client.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>ModelHomeServer</name>
+    <filename>class_model_home_server.html</filename>
+    <member kind="function" virtualness="virtual">
+      <type>virtual int</type>
+      <name>run</name>
+      <anchorfile>class_model_home_server.html</anchorfile>
+      <anchor>a6bc59bfad44fbd9b0d2820807bcb3ff3</anchor>
+      <arglist>(int, char *[])</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>adevs::ModelDecorator</name>
+    <filename>classadevs_1_1_model_decorator.html</filename>
+    <templarg></templarg>
+    <member kind="function">
+      <type></type>
+      <name>ModelDecorator</name>
+      <anchorfile>classadevs_1_1_model_decorator.html</anchorfile>
+      <anchor>a00a5532329d10526c939e290c039563b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~ModelDecorator</name>
+      <anchorfile>classadevs_1_1_model_decorator.html</anchorfile>
+      <anchor>a943ba06a50285d4632f8c92ead5574f4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setWrappedModel</name>
+      <anchorfile>classadevs_1_1_model_decorator.html</anchorfile>
+      <anchor>abca5d1787c85a2f24a63ad16cfa23552</anchor>
+      <arglist>(Devs&lt; X &gt; *aCp_model)</arglist>
+    </member>
+    <member kind="function">
+      <type>Devs&lt; X &gt; *</type>
+      <name>getWrappedModel</name>
+      <anchorfile>classadevs_1_1_model_decorator.html</anchorfile>
+      <anchor>a46087a5ff6bf660306f1c3e4ebf5c634</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const Devs&lt; X &gt; *</type>
+      <name>getWrappedModel</name>
+      <anchorfile>classadevs_1_1_model_decorator.html</anchorfile>
+      <anchor>a703ae702a82bf443c5a667f0ebe8e94c</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>getComponents</name>
+      <anchorfile>classadevs_1_1_model_decorator.html</anchorfile>
+      <anchor>af0b3167c21ba98a3eee738e008d430fe</anchor>
+      <arglist>(Set&lt; Devs&lt; X &gt; * &gt; &amp;c)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>route</name>
+      <anchorfile>classadevs_1_1_model_decorator.html</anchorfile>
+      <anchor>a91d880763abef45de35cd2a0d5f1a7a2</anchor>
+      <arglist>(const X &amp;value, Devs&lt; X &gt; *model, Bag&lt; Event&lt; X &gt; &gt; &amp;r)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::CellIndex</name>
+    <filename>classefscape_1_1gis_1_1_cell_index.html</filename>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>operator()</name>
+      <anchorfile>classefscape_1_1gis_1_1_cell_index.html</anchorfile>
+      <anchor>aec2484cf8764f0a0532df43a49754738</anchor>
+      <arglist>(const Geogrid *aCp_grid, size_t &amp;ai_row, size_t &amp;ai_col) const </arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::GDALWrapper</name>
+    <filename>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</filename>
+    <base>efscape::gis::GeoRaster</base>
+    <member kind="function">
+      <type></type>
+      <name>GDALWrapper</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>ad980c964ddf5f49eb42ae2872571ef6c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GDALWrapper</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>a6c7aebe67da6743c59520e46693e13ce</anchor>
+      <arglist>(const char *acp_filename, bool ab_is_mutable)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GDALWrapper</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>a756bbd5381f96c49662ee721426010c3</anchor>
+      <arglist>(GDALDataset *aCp_dataset)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GDALWrapper</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>af2399ad6b42d5e718d520b543f6c66e4</anchor>
+      <arglist>(const char *acp_name, const char *acp_format, int ai_nCols, int ai_nRows, int ai_nBands, GDALDataType ae_datatype, double *ad1_transform, const char *acp_projection)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~GDALWrapper</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>a73f4132a52f094a1272e74e2fb279231</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>open</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>ade3bb80f641d75f384353daf4d5c2c67</anchor>
+      <arglist>(const char *acp_filename, bool ab_is_mutable)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_open</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>a36d3cb52e3ca1c43ae5f790459612e99</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_mutable</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>a99d7c12fe6ccfd024422932dd64eaba5</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>name</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>a34602c37551e33489e16235909ec6363</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>close</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>a748b146fd19e51b557526f7ccd5cd150</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Geogrid *</type>
+      <name>create_geogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>aff595bbff2dd455e0ef89676e902e4e1</anchor>
+      <arglist>(const char *acp_name) const </arglist>
+    </member>
+    <member kind="function">
+      <type>const boost::shared_ptr&lt; GDALDataset &gt; &amp;</type>
+      <name>dataset</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>a75ac4bfc81b6bc1bb568e8bcf7d747c6</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>read</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>a1a85b236c720ff0e6e349fb8a01aa749</anchor>
+      <arglist>(Geogrid *aCp_grid, long al_index) const </arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>write</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>a7c6edd1edb8f0e5fd95d8aaa37cf4238</anchor>
+      <arglist>(const Geogrid *aCp_grid, long al_index)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GeoRaster</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster.html</anchorfile>
+      <anchor>a0da9ec306f4a26603ea6f7c569419cec</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~GeoRaster</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster.html</anchorfile>
+      <anchor>ae144d419fc267db8d583d14dd48e591d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual long</type>
+      <name>num_recs</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster.html</anchorfile>
+      <anchor>a880f63a82e87f24ca0522f41b5f8c3d1</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>iterator</type>
+      <name>begin</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster.html</anchorfile>
+      <anchor>a6dde8499a910ac78d5502d8315a75104</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>iterator</type>
+      <name>end</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster.html</anchorfile>
+      <anchor>af48bb9963174aa5aff562aaf9fe7a518</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GeoObject</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_object.html</anchorfile>
+      <anchor>a2a5126d3f69e0c62a88725a4a7247eef</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~GeoObject</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_object.html</anchorfile>
+      <anchor>afd8a26f8aa7107a944d5c331545fc27f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual const char *</type>
+      <name>basename</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_object.html</anchorfile>
+      <anchor>a2bc57a862bc4dcf20635a741ba58baf9</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::shared_ptr&lt; GDALDataset &gt;</type>
+      <name>mCp_dataset</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>a2b15fb018b95da299eea63ff0a292c8e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::string</type>
+      <name>mC_name</name>
+      <anchorfile>classefscape_1_1gis_1_1_g_d_a_l_wrapper.html</anchorfile>
+      <anchor>ae37c5f973f3ed918e0af08616af71546</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::Geogrid</name>
+    <filename>classefscape_1_1gis_1_1_geogrid.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Geogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a36b179a0fa91deacaee9cb0c042583b8</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Geogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>abf880c3ad156de1afeba45ef404ce6fc</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~Geogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a67a05a5605bd628d287d2407db9001e5</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>name</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a60d57bdf3b3fa9e10b7baab3e4a94998</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>name</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a317b515c5967d4d1a4745b301b99dc7f</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>cell_index</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>ae0799a7e9c97b2ea41e9563100749020</anchor>
+      <arglist>(CellIndex *aCp_index)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>contains</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a3242c619eadd8a43c11665ee82132cdb</anchor>
+      <arglist>(const geos::geom::Coordinate &amp;aCr_coord) const </arglist>
+    </member>
+    <member kind="function">
+      <type>Index</type>
+      <name>coord2index</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a12abfc4ad44f6ef0984afbb84e8cf671</anchor>
+      <arglist>(const geos::geom::Coordinate &amp;aCr_coord) const </arglist>
+    </member>
+    <member kind="function">
+      <type>Index</type>
+      <name>coord2index</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a37d009fca896653b6b546bbb2815d471</anchor>
+      <arglist>(const geos::geom::Coordinate &amp;aCr_coord, Index &amp;aCr_index, size_t ai_NumRows, size_t ai_NumCols) const </arglist>
+    </member>
+    <member kind="function">
+      <type>geos::geom::Envelope</type>
+      <name>envelope</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>afa448cd626e50a607cc1baacc109e759</anchor>
+      <arglist>(size_t ai_row, size_t ai_col) const </arglist>
+    </member>
+    <member kind="function">
+      <type>geos::geom::Envelope</type>
+      <name>envelope</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a39b053160c33c7a9207fc4d60ee2d670</anchor>
+      <arglist>(const Index &amp;aCr_index) const </arglist>
+    </member>
+    <member kind="function">
+      <type>geos::geom::Envelope</type>
+      <name>envelope</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a58f8f5a0c12bbde68cd01f0fac5ae4d4</anchor>
+      <arglist>(const Range &amp;aCr_range) const </arglist>
+    </member>
+    <member kind="function">
+      <type>Range</type>
+      <name>range</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>ac157cc53701879ddba6b3ec6534d9c62</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>intersection</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>af8dafaef971a2c42cf51dd720b8e0a09</anchor>
+      <arglist>(Range &amp;aCr_range) const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>intersection</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>ae32c387f5b2e77f386135456f790251c</anchor>
+      <arglist>(const geos::geom::Envelope &amp;aCr_envelope, Range &amp;aCr_result) const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>isa_torus</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>ae21b5ff23edccae42e4399fe95c950a8</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const boost::shared_ptr&lt; GDALDataset &gt; &amp;</type>
+      <name>dataset</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a1fb4580078ac55a19a26fefae68e30a2</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>set_dataset</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a4b59c2d74e249d7b51928475eaa2083a</anchor>
+      <arglist>(const boost::shared_ptr&lt; GDALDataset &gt; &amp;aCp_dataset)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>write</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>aa7991bfd080529214043594c7e06e6ea</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>write</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a26bbcc3c9c68607a689b8742bfc15d01</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>write</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a00032f144c3406d3c09d5d5a190bc037</anchor>
+      <arglist>(GeoNetCDF &amp;aCr_GeoNetCDF, long al_index)</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::scoped_ptr&lt; CellIndex &gt;</type>
+      <name>mCp_index</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid.html</anchorfile>
+      <anchor>a9de4e9ebea63aff3765a2c23f581118c</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::Geogrid_impl</name>
+    <filename>singletonefscape_1_1gis_1_1_geogrid__impl.html</filename>
+    <templarg>Type</templarg>
+    <base>efscape::gis::Geogrid</base>
+    <class kind="class">efscape::gis::Geogrid_impl::Band</class>
+    <member kind="function">
+      <type></type>
+      <name>Geogrid_impl</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a798290a3a169ee4fc684033acec053c1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Geogrid_impl</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>acea1b81883c396b955b18b6fc267ac89</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Geogrid_impl</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>aea2baed4aa3e4afb05240f5caa74d269</anchor>
+      <arglist>(const char *acp_name, int ai_nCols, int ai_nRows, int ai_nBands, const geos::geom::Envelope &amp;aCr_envelope, const char *acp_projection)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Geogrid_impl</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a950136bc84a6939758f2da2b5a76192a</anchor>
+      <arglist>(const Geogrid_impl&lt; Type &gt; &amp;aCr_grid)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~Geogrid_impl</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>adf39515961915b7b918391341eda32e1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Geogrid *</type>
+      <name>clone</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>ab05a1def67522c5e0cf3c110e1619366</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>resize</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a57e0d352d10331e862dc900b8cb5ebf6</anchor>
+      <arglist>(int ai_nCols, int ai_nRows, int ai_nBands, const geos::geom::Envelope &amp;aCr_envelope, const char *acp_projection)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>resize</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>ae7b417ac4bf77d6da98471e1b4bdbdbb</anchor>
+      <arglist>(const Geogrid &amp;aCr_grid)</arglist>
+    </member>
+    <member kind="function">
+      <type>geos::geom::Envelope</type>
+      <name>envelope</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a2b419e8063f3761b8c59215ce6d26746</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>geos::geom::Coordinate</type>
+      <name>resolution</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a595cc75a7b73de2f14c3dbdc6749cb60</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>spatial_ref</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>ac74f8daff1f9defe5fbf46e654a19bbf</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>num_cols</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a7c1221521290491f6453cb8ccd4794e2</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>num_rows</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a23f03cfb23513318783118544d47fd6b</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>num_bands</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>ac97996c0901a0b86adc789161c50451b</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>std::string</type>
+      <name>band_name</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a7bda2f6a2b9fd0c90ecfa50865e05689</anchor>
+      <arglist>(int ai_band) const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>band_name</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>aa66ae7cd03102dabfc92ca0c19f487c4</anchor>
+      <arglist>(int ai_band, const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>size</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a34c5d0d8f2bc8b1ae5666b08498de203</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>array_type &amp;</type>
+      <name>operator()</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a278dac877776f126dce37a3a2c2ca8e1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const array_type &amp;</type>
+      <name>operator()</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a367fd18a49d43cf40b577ea5f56ed051</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>Band &amp;</type>
+      <name>operator()</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a505ffb2a499974c18ded874092fac3f5</anchor>
+      <arglist>(size_t ai_band)</arglist>
+    </member>
+    <member kind="function">
+      <type>const Band &amp;</type>
+      <name>operator()</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>af0c8551750ff96db11c4d2b47a58b08e</anchor>
+      <arglist>(size_t ai_band) const </arglist>
+    </member>
+    <member kind="function">
+      <type>Type &amp;</type>
+      <name>operator()</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a27aea6c2acea5fb0da3b035b478003d3</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col)</arglist>
+    </member>
+    <member kind="function">
+      <type>Type</type>
+      <name>operator()</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>afb59f8baa41c64d6f77cd2232ce3eabd</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col) const </arglist>
+    </member>
+    <member kind="function">
+      <type>Type &amp;</type>
+      <name>operator()</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>ab4cd18d2829420dcb091b64f021fd4bf</anchor>
+      <arglist>(size_t ai_row, size_t ai_col)</arglist>
+    </member>
+    <member kind="function">
+      <type>Type</type>
+      <name>operator()</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>adb1f38f77c4af0c36778116d717680e8</anchor>
+      <arglist>(size_t ai_row, size_t ai_col) const </arglist>
+    </member>
+    <member kind="function">
+      <type>Type &amp;</type>
+      <name>operator()</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>ac3f7fad8df237465afc6b786b996bf37</anchor>
+      <arglist>(const Index &amp;aCr_index)</arglist>
+    </member>
+    <member kind="function">
+      <type>Type</type>
+      <name>operator()</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a2b215125fa5490e1029eba9d31488517</anchor>
+      <arglist>(const Index &amp;aCr_index) const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>as_bool</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>ab20b7a05a2ead28bf487fddf0ed4ebbb</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col) const </arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned char</type>
+      <name>as_byte</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>acadb97a2149bc2be89e8504b43065a35</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col) const </arglist>
+    </member>
+    <member kind="function">
+      <type>char</type>
+      <name>as_char</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>ae5b8b847eeb1dc83a5e0d59da47e16bf</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col) const </arglist>
+    </member>
+    <member kind="function">
+      <type>short</type>
+      <name>as_short</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a51dc870a25b19c6fb15787c17d03486e</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col) const </arglist>
+    </member>
+    <member kind="function">
+      <type>long</type>
+      <name>as_long</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a8496a84b037f0899d3533aff8fe79cb4</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col) const </arglist>
+    </member>
+    <member kind="function">
+      <type>float</type>
+      <name>as_float</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>af463069c1f10a852b31558e3c291157f</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col) const </arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>as_double</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a4908be681b84b28f9f22e672917d282a</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col) const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>set</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a23a7f3e2e144192f9c1f10323d64b97e</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col, bool ab_val)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>set</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>aa85c506bbc0427edac2ddb79a987370f</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col, unsigned char auc_val)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>set</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a16140d4b0e40799a5c68d41730efd02b</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col, char ac_val)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>set</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a9d4daaaa2beb1b2e92565bfad86558d4</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col, short as_val)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>set</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a39be5049dc74cbd356f6c540cfda3b16</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col, long al_val)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>set</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>aa300bce7ea490d9f2fd5e0457991bbc7</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col, float af_val)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>set</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>aa03de9eac958ec56ecc8ad8ded243563</anchor>
+      <arglist>(unsigned int aui_band, size_t ai_row, size_t ai_col, double ad_val)</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::scoped_ptr&lt; array_type &gt;</type>
+      <name>mT3p_data</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>acebb3d754a0f1a0ef93fd2728ab43ddf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>geos::geom::Envelope</type>
+      <name>mC_envelope</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a2a838fb21a67f55614b9187d0ace6834</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::string</type>
+      <name>mC_spatial_ref</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a13e900866cdb8828daf277bfe5293528</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::vector&lt; std::string &gt;</type>
+      <name>mC1_band_names</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>a44ce6e97f894f022f673cbf8a3f259cc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::vector&lt; boost::shared_ptr&lt; Band &gt; &gt;</type>
+      <name>mCp1_bands</name>
+      <anchorfile>singletonefscape_1_1gis_1_1_geogrid__impl.html</anchorfile>
+      <anchor>abf7942f88b4e537c5379cb3c8b1c871a</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::Geogrid_impl::Band</name>
+    <filename>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</filename>
+    <member kind="function">
+      <type>int</type>
+      <name>band</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>ab3203e9e955541075b8af49df87d7349</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>num_cols</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>a25936a7c05d2b55c0a23d50b88b4ed48</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>num_rows</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>a2289b3734fc3a72d484ef3dc55606b97</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>size</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>a1f56f130146061f8372e590813e5393a</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>Type</type>
+      <name>min</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>aef352f0a45645a7b19081a2e10118392</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>Type</type>
+      <name>max</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>a7a5de752e61e6a49ba75f1e172be87f2</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>no_data</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>a989d30996df04ef72fbd32d12b59bf73</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>no_data</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>a94a68a3c8dd4c70b651acc037aee04a5</anchor>
+      <arglist>(double ad_no_data)</arglist>
+    </member>
+    <member kind="function">
+      <type>Type &amp;</type>
+      <name>operator()</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>a69164c9978a4ebc726d1105953174c53</anchor>
+      <arglist>(size_t ai_row, size_t ai_col)</arglist>
+    </member>
+    <member kind="function">
+      <type>const Type</type>
+      <name>operator()</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>a24b90dd5111825de01d8b8d6d5b07dad</anchor>
+      <arglist>(size_t ai_row, size_t ai_col) const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fill</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>ae23c7831406f301a5f1808b8095de736</anchor>
+      <arglist>(Type aT_value)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; std::string &gt;</type>
+      <name>getCategoryNames</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>a1b9b473b149e73ae57d8bf160b045136</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setCategoryNames</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>a1315d0416d55cab9038622d3e79461d9</anchor>
+      <arglist>(const std::vector&lt; std::string &gt; &amp;aC1_names)</arglist>
+    </member>
+    <member kind="function">
+      <type>GDALColorTable *</type>
+      <name>getColorTable</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>adbbb1384555acd7acf1a829c23d1f106</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setColorTable</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>a8f52d0fc4c5156df0de96a5f5b858dc4</anchor>
+      <arglist>(GDALColorTable *aCp_ColorTable)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type></type>
+      <name>Band</name>
+      <anchorfile>classefscape_1_1gis_1_1_geogrid__impl_1_1_band.html</anchorfile>
+      <anchor>a12f2a9cb24cfc877889d444324f551d0</anchor>
+      <arglist>(int ai_band, Geogrid_impl&lt; Type &gt; *aCp_geogrid)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::GeoNetCDF</name>
+    <filename>classefscape_1_1gis_1_1_geo_net_c_d_f.html</filename>
+    <base>efscape::gis::GeoRaster</base>
+    <member kind="function">
+      <type></type>
+      <name>GeoNetCDF</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a2f8fde07a0c1599e236324b3f1b3ac93</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GeoNetCDF</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a16687aa56433e89ab272d4ec6bdc39d5</anchor>
+      <arglist>(const char *acp_filename, NcFile::FileMode ae_filemode)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GeoNetCDF</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a759d3246775e40def9fcfd1e07026847</anchor>
+      <arglist>(const char *acp_name, int ai_xsize, int ai_ysize, int ai_zsize, const geos::geom::Envelope &amp;aCr_envelope, const char *acp_projection, bool ab_isa_timeseries)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~GeoNetCDF</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a90c9c4f3c8a21be2309a2f9ed68305cb</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>open</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>aca08400c2b8c2850cd4a67f3528fbd04</anchor>
+      <arglist>(const char *acp_filename, bool ab_is_mutable)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>open</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>ad7a5bdd0b33a911b6718387bb7eb720c</anchor>
+      <arglist>(const char *acp_filename, NcFile::FileMode ae_filemode)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>close</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a57ce0aee9f533cb8e52935110eb0e496</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_mutable</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>ac0fe1dcba6703e6bb3cb64e084b0f9c4</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>name</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a4f026dc585c9519fd499c15bd8e202d7</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>add_geogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a082ea0e5259a8fea6c0e4f09237c6353</anchor>
+      <arglist>(const char *acp_name, NcType ae_type)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_open</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>ada4bc85f3f85d9e49c705291e98ce17b</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>NcFile *</type>
+      <name>dataset</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a9b19e67d8b8c284ee7d876b62fb57331</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>isa_timeseries</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a4461c2bf1a3252eed4ea7c290c409de3</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_georeferenced</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>aeaa9803a1386d6973ca1e524a3a6b619</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_georeferenced</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a5b9827783eb38dbe96b7b08ee4f9dc79</anchor>
+      <arglist>(const char *acp_name) const </arglist>
+    </member>
+    <member kind="function">
+      <type>long</type>
+      <name>num_rows</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a1b7fbb2f535d9206a8c33248306ae1b7</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>long</type>
+      <name>num_cols</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>afb3b86077337d646eed0d5a911c517a3</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>long</type>
+      <name>num_bands</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a33a33e7ce8396061a54852deff9cbb89</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>geos::geom::Envelope</type>
+      <name>envelope</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>ad1116aa0ed373c92360a6790ca088fb7</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>spatial_ref</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a63f9df2bd8196d19540b7733d10786da</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>Geogrid *</type>
+      <name>create_geogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a6cf2a130058a8460cb3cd50ddcb2ad8b</anchor>
+      <arglist>(const char *acp_name) const </arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>read</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a0f18125eb9b74f7183df89d7119b8e52</anchor>
+      <arglist>(Geogrid *aCp_grid, long al_index) const </arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>read</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>ae2bd7ec302037f78216dd5f5d8d3bdb8</anchor>
+      <arglist>(Geogrid_impl&lt; Type &gt; &amp;aCr_grid, long al_index) const </arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>write</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a1ace1c0d5de8435ddca54069dca711ff</anchor>
+      <arglist>(const Geogrid *aCp_grid, long al_index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>write</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>aa2126dbdadcb6abd053399e6a49eefab</anchor>
+      <arglist>(const Geogrid_impl&lt; Type &gt; &amp;aCr_grid, long al_index)</arglist>
+    </member>
+    <member kind="function">
+      <type>boost::posix_time::time_duration</type>
+      <name>time_unit</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>abe71685323a7612cb7742386e0345ce6</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>boost::posix_time::ptime</type>
+      <name>base_date</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a0dee0f0dd0034747260f8277007c1930</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>delta_t</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a01bca387f772e79524eaba1d4a8be701</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>boost::posix_time::ptime</type>
+      <name>date</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a812229e2c6f89ba7027f26c027f06221</anchor>
+      <arglist>(long al_index) const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>time</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a4792f2e4d4a3148a1973152f829882fa</anchor>
+      <arglist>(double ad_time, long al_index)</arglist>
+    </member>
+    <member kind="function">
+      <type>long</type>
+      <name>num_recs</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a46bd22964a3eb81ae31e4ee24db867bf</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>void</type>
+      <name>time_units</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_net_c_d_f.html</anchorfile>
+      <anchor>a7662f833d62abefdb49541ab9a25569e</anchor>
+      <arglist>(const char *acp_units)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::GeoObject</name>
+    <filename>classefscape_1_1gis_1_1_geo_object.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::GeoRaster</name>
+    <filename>classefscape_1_1gis_1_1_geo_raster.html</filename>
+    <base>efscape::gis::GeoObject</base>
+    <class kind="class">efscape::gis::GeoRaster::Iterator</class>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::GeoRaster::Iterator</name>
+    <filename>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Iterator</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>ab600b68623e59afa086bd4b87778895a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Iterator</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>ab26b2bb132a65415fb5fc6e0762ffed1</anchor>
+      <arglist>(GeoRaster *aCp_dataset, const char *acp_name, long al_index)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Iterator</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>aecb49a30140e2dd94dc2a89d8e4c0183</anchor>
+      <arglist>(const Iterator &amp;aCr_source)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~Iterator</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>ac2d237f2638a1c6a2480d323ea4e8924</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>a3da54cdd5e43db1988dd3bb65532f0c2</anchor>
+      <arglist>(const Iterator &amp;aCr_source)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>name</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>aaab21e00c5c05906457cb0ff61dd130d</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>long</type>
+      <name>index</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>a97d18c3c77447e58417dc963e31d74a4</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_valid</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>ac1d26e2ea77b847efe815502ea963dc1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>write</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>ac0c679dc42f942eb302f6d7ba3949b01</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Geogrid *</type>
+      <name>operator*</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>a5e27b9b7efbcde1f389343de22fc0093</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Geogrid **</type>
+      <name>operator-&gt;</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>a5b8b36b2cf81e5083a98e21d7fcae4cb</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator &amp;</type>
+      <name>operator++</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>a09732563f32e579fed414987fb7fd7e1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator</type>
+      <name>operator++</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>ad6bf0729e55dbe4e29ae0c106dcba025</anchor>
+      <arglist>(int)</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator &amp;</type>
+      <name>operator--</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>af996a83965c5729e79dd23e435f2638c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator</type>
+      <name>operator--</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>ad1668c4b53ac1d4c09cb3b2f501acc5f</anchor>
+      <arglist>(int)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>operator==</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>a1c893442859da20462efea159d1f2020</anchor>
+      <arglist>(const Iterator &amp;aCr_other)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>operator!=</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>a89c5d8c90bca508766f2fded5651d5ec</anchor>
+      <arglist>(const Iterator &amp;aCr_other)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>operator&lt;</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>a6d2f167b21dc77b0e2d626471899f38c</anchor>
+      <arglist>(const Iterator &amp;aCr_other)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>operator&lt;=</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>adf46eb581acd106940e52c08245964f3</anchor>
+      <arglist>(const Iterator &amp;aCr_other)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>operator&gt;</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>aff67399a7e65f07a041572206832f51e</anchor>
+      <arglist>(const Iterator &amp;aCr_other)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>operator&gt;=</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>a4784420181057a6300aa3f95e20ad2d5</anchor>
+      <arglist>(const Iterator &amp;aCr_other)</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator &amp;</type>
+      <name>operator+=</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>ad1406b75be498871b6bd1827b03d2557</anchor>
+      <arglist>(size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator &amp;</type>
+      <name>operator-=</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>a20518eefbd99edbec36f71f2f6eb4d1a</anchor>
+      <arglist>(size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator</type>
+      <name>operator+</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>afb3db9270f186dcd9b2deb1f2ed4f417</anchor>
+      <arglist>(size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator</type>
+      <name>operator-</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>a2cd0526d9d1b4422698e7bee18e2a8be</anchor>
+      <arglist>(size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator</type>
+      <name>operator[]</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>a9af2bbc1fb5d49fd96098712a22e5b39</anchor>
+      <arglist>(size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>operator-</name>
+      <anchorfile>classefscape_1_1gis_1_1_geo_raster_1_1_iterator.html</anchorfile>
+      <anchor>a4e486be24b2881fc9e8e0c6899669549</anchor>
+      <arglist>(const Iterator &amp;aCr_other)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::Index</name>
+    <filename>classefscape_1_1gis_1_1_index.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Index</name>
+      <anchorfile>classefscape_1_1gis_1_1_index.html</anchorfile>
+      <anchor>a642da3a2bbbc74d527f4c853d46b3869</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Index</name>
+      <anchorfile>classefscape_1_1gis_1_1_index.html</anchorfile>
+      <anchor>a52b386225f94246525a6aa0bde25cf0e</anchor>
+      <arglist>(const Index &amp;aCr_orig)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Index</name>
+      <anchorfile>classefscape_1_1gis_1_1_index.html</anchorfile>
+      <anchor>a07259e204fa5579b67592195a0d7a6da</anchor>
+      <arglist>(long ai_row, long ai_col)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Index</name>
+      <anchorfile>classefscape_1_1gis_1_1_index.html</anchorfile>
+      <anchor>a974178175a9ddf463f811b608e704eb9</anchor>
+      <arglist>(long ai_band, long ai_row, long ai_col)</arglist>
+    </member>
+    <member kind="function">
+      <type>Index &amp;</type>
+      <name>reset</name>
+      <anchorfile>classefscape_1_1gis_1_1_index.html</anchorfile>
+      <anchor>a6546a14953edf8e2fccff47e51dee1ce</anchor>
+      <arglist>(long ai_row, long ai_col)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::string</type>
+      <name>toString</name>
+      <anchorfile>classefscape_1_1gis_1_1_index.html</anchorfile>
+      <anchor>a44f2ec74fd440dc545195aa8aa29c3bd</anchor>
+      <arglist>() const </arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::LandscapeI</name>
+    <filename>classefscape_1_1gis_1_1_landscape_i.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>LandscapeI</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a743082d9f465d21a5c15361108c9f611</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~LandscapeI</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>ab5d4bfcf7e7b673d6b3292bd86644ff5</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Geogrid *</type>
+      <name>addGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a8a4521e13f7beac2b4195d7ae183c2e8</anchor>
+      <arglist>(Geogrid *aCp_grid)</arglist>
+    </member>
+    <member kind="function">
+      <type>Geogrid *</type>
+      <name>getGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a3db34857ca0b9c0f860249c89a38c711</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>ByteGeogrid *</type>
+      <name>getByteGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a05c28c7b292602a19cb311c20783b6be</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>ShortGeogrid *</type>
+      <name>getShortGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a44ca655469aebbffbf699eb878c9c8c4</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>IntGeogrid *</type>
+      <name>getIntGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>ab90e6e046bb51d132acab47038a5feeb</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>LongGeogrid *</type>
+      <name>getLongGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>adffb6d41495aee72fb325b87bdd88827</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>FloatGeogrid *</type>
+      <name>getFloatGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>adc8f07e3843b3a2e848a2492e48a8985</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>DoubleGeogrid *</type>
+      <name>getDoubleGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a3b62b21efbfb5f0b7e2decbc3447bf65</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>const Geogrid *</type>
+      <name>getGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a36ff8e2c37ded22ed5f03cbb183313c6</anchor>
+      <arglist>(const char *acp_name) const </arglist>
+    </member>
+    <member kind="function">
+      <type>const ByteGeogrid *</type>
+      <name>getByteGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a11b2e5c76ce7e5471d9cc6f0e870eed1</anchor>
+      <arglist>(const char *acp_name) const </arglist>
+    </member>
+    <member kind="function">
+      <type>const ShortGeogrid *</type>
+      <name>getShortGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>ad7394bface3c25dc1e255bf1fcec8c2d</anchor>
+      <arglist>(const char *acp_name) const </arglist>
+    </member>
+    <member kind="function">
+      <type>const IntGeogrid *</type>
+      <name>getIntGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a8e31e00530548b851581955ef9cedb88</anchor>
+      <arglist>(const char *acp_name) const </arglist>
+    </member>
+    <member kind="function">
+      <type>const LongGeogrid *</type>
+      <name>getLongGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a90dc866731ac293f978fa864e7a76378</anchor>
+      <arglist>(const char *acp_name) const </arglist>
+    </member>
+    <member kind="function">
+      <type>const FloatGeogrid *</type>
+      <name>getFloatGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a1636b21285f7ee5156af973a32e91db2</anchor>
+      <arglist>(const char *acp_name) const </arglist>
+    </member>
+    <member kind="function">
+      <type>const DoubleGeogrid *</type>
+      <name>getDoubleGeogrid</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a7b805388ace2271807463b5dfb3108d4</anchor>
+      <arglist>(const char *acp_name) const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>getGeogrids</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>ad7cfbd334bdda39305a6155161b3c6f2</anchor>
+      <arglist>(GeogridSet &amp;aCCpr_geogrids)</arglist>
+    </member>
+    <member kind="function">
+      <type>OGRWrapper *</type>
+      <name>addOGRWrapper</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a30e6216cb6bfecdf605d9887c9a60204</anchor>
+      <arglist>(const char *acp_name, OGRWrapper *aCp_dataset)</arglist>
+    </member>
+    <member kind="function">
+      <type>OGRWrapper *</type>
+      <name>getOGRWrapper</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a5bf59764332f117dd050bf489500a4bb</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>getOGRWrappers</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>a12a5743a6ac0e7a4b5e3c55c6765ccd8</anchor>
+      <arglist>(OGRWrapperSet &amp;aCCpr_datasets)</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::scoped_ptr&lt; GeogridMap &gt;</type>
+      <name>mCCCp_Geogrids</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>ab959b013e1c8c9605d9fe5e1c1e58c85</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::scoped_ptr&lt; OGRWrapperMap &gt;</type>
+      <name>mCCCp_OGRWrappers</name>
+      <anchorfile>classefscape_1_1gis_1_1_landscape_i.html</anchorfile>
+      <anchor>afad26e6c09a55667d41885338ae84c6c</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::OGRWrapper</name>
+    <filename>classefscape_1_1gis_1_1_o_g_r_wrapper.html</filename>
+    <base>efscape::gis::GeoObject</base>
+    <base>efscape::gis::GeoObject</base>
+    <member kind="function">
+      <type></type>
+      <name>OGRWrapper</name>
+      <anchorfile>classefscape_1_1gis_1_1_o_g_r_wrapper.html</anchorfile>
+      <anchor>a6fc7892b62b084c240f1a4c07d4d30b9</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~OGRWrapper</name>
+      <anchorfile>classefscape_1_1gis_1_1_o_g_r_wrapper.html</anchorfile>
+      <anchor>a96e2664e4637293ef723c61502a279ba</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>OGRDataSource *</type>
+      <name>create</name>
+      <anchorfile>classefscape_1_1gis_1_1_o_g_r_wrapper.html</anchorfile>
+      <anchor>a0895034c76b0927d3eb401cbfe619a8a</anchor>
+      <arglist>(const char *acp_filename, const char *acp_drivername)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>open</name>
+      <anchorfile>classefscape_1_1gis_1_1_o_g_r_wrapper.html</anchorfile>
+      <anchor>a0cb2b8b33cdb55250d2298f49732c6a2</anchor>
+      <arglist>(const char *acp_filename, bool ab_is_mutable)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_open</name>
+      <anchorfile>classefscape_1_1gis_1_1_o_g_r_wrapper.html</anchorfile>
+      <anchor>a2928fe70d338e2e248976e89fb2e5724</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_mutable</name>
+      <anchorfile>classefscape_1_1gis_1_1_o_g_r_wrapper.html</anchorfile>
+      <anchor>aa2a5a5f21129c341746f45b5324e8c63</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>close</name>
+      <anchorfile>classefscape_1_1gis_1_1_o_g_r_wrapper.html</anchorfile>
+      <anchor>aee71a8be12e651acc88f8f36d58fb50c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>name</name>
+      <anchorfile>classefscape_1_1gis_1_1_o_g_r_wrapper.html</anchorfile>
+      <anchor>aeb5ebaf59cd2c5518fe2b499d533699d</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>OGRDataSource *</type>
+      <name>dataset</name>
+      <anchorfile>classefscape_1_1gis_1_1_o_g_r_wrapper.html</anchorfile>
+      <anchor>a82d8fb050a7a90a4fee387ebf93fd6ad</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::Range</name>
+    <filename>classefscape_1_1gis_1_1_range.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Range</name>
+      <anchorfile>classefscape_1_1gis_1_1_range.html</anchorfile>
+      <anchor>af9d353c348c8561af69c306c73fead1f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Range</name>
+      <anchorfile>classefscape_1_1gis_1_1_range.html</anchorfile>
+      <anchor>a0e987128aa01f6678de8f2dd0e691d73</anchor>
+      <arglist>(const Index &amp;aCr_index1, const Index &amp;aCr_index2)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>init</name>
+      <anchorfile>classefscape_1_1gis_1_1_range.html</anchorfile>
+      <anchor>a12ad3525db5242cffa47bb34bace6f89</anchor>
+      <arglist>(const Index &amp;aCr_index1, const Index &amp;aCr_index2)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::gis::Torus</name>
+    <filename>classefscape_1_1gis_1_1_torus.html</filename>
+    <base>efscape::gis::CellIndex</base>
+    <member kind="function">
+      <type>void</type>
+      <name>operator()</name>
+      <anchorfile>classefscape_1_1gis_1_1_torus.html</anchorfile>
+      <anchor>aa12c5afb96b58d85a42be54141e47bd0</anchor>
+      <arglist>(const Geogrid *aCp_grid, size_t &amp;ai_row, size_t &amp;ai_col) const </arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::AdevsModel</name>
+    <filename>classefscape_1_1impl_1_1_adevs_model.html</filename>
+    <base virtualness="virtual">efscape::impl::EntityI</base>
+    <base>adevs::ModelDecorator</base>
+    <base>efscape::impl::InitObject</base>
+    <member kind="function">
+      <type></type>
+      <name>AdevsModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>a8ec07daabcce49d4804947f680eb0e8c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~AdevsModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>aeb23904eb00df89c06858a510cc64008</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Cloneable *</type>
+      <name>clone</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>a9eda69e9fab454b9ccc869a63062bc7b</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>initialize</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>a99131bd04524b5b22e7773042241f351</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>run</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>a5e7c94d82e6481ed8e444c17742d92ba</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>ClockIPtr &amp;</type>
+      <name>getClockIPtr</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>a956c2b6a420c01a2d17c85730ad7da0b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setClockIPtr</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>a9e3cc4a978799d59d74bab8a2495d474</anchor>
+      <arglist>(const ClockIPtr &amp;aCp_clock)</arglist>
+    </member>
+    <member kind="function">
+      <type>const ClockI *</type>
+      <name>getClock</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>ae0afb336aef73066a395955ca97941d2</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>comment</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>ac880e78c1840260ba454c467988903d9</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>comment</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>a7a2b9241955daaf4fd63cf313f4940f7</anchor>
+      <arglist>(const char *acp_comment)</arglist>
+    </member>
+    <member kind="function">
+      <type>log4cxx::LoggerPtr</type>
+      <name>getLogger</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>a9038cbb42f73a8f91bc31edbbcbc05ac</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>std::string</type>
+      <name>getResourcePath</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>ae042f475cca9353e268da61ad0e3f33b</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setResourcePath</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>ab2fa53fed976040360fe7e2612a57a84</anchor>
+      <arglist>(const char *acp_path)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::string</type>
+      <name>getWorkDir</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>a07330f972123e9c4bb78dc33003e8b75</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setWorkDir</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>a07c21e62982e819d5144b515b2412078</anchor>
+      <arglist>(const char *acp_WorkDir)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>addObserver</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>a0a6979dd5da299c4b4459391f0f6bee2</anchor>
+      <arglist>(Observer *aCp_observer)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>getObservers</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>a82e43d8574e3993e32e655450a37a134</anchor>
+      <arglist>(std::set&lt; ObserverPtr &gt; &amp;aCCpr_observer)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>EntityI</name>
+      <anchorfile>classefscape_1_1impl_1_1_entity_i.html</anchorfile>
+      <anchor>a17919271d6db0f1391d83c3792c9b8b2</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~EntityI</name>
+      <anchorfile>classefscape_1_1impl_1_1_entity_i.html</anchorfile>
+      <anchor>adfc9cb739e1668c56f1fb0ebcafa9a06</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>name</name>
+      <anchorfile>classefscape_1_1impl_1_1_entity_i.html</anchorfile>
+      <anchor>a0c268cf854f5d337228c7f058654cdd2</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>name</name>
+      <anchorfile>classefscape_1_1impl_1_1_entity_i.html</anchorfile>
+      <anchor>a4aa841a2548e1af25035149745618fb7</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>InitObject</name>
+      <anchorfile>classefscape_1_1impl_1_1_init_object.html</anchorfile>
+      <anchor>ae4f3e0f1632f707f54bc2723f940e91c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~InitObject</name>
+      <anchorfile>classefscape_1_1impl_1_1_init_object.html</anchorfile>
+      <anchor>aa02faee11c78d32559b5f394e27636ba</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="variable">
+      <type>ClockI *</type>
+      <name>clock_out</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>ac847b4c238f1c40c89de250d7ca8a1c9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>ClockIPtr</type>
+      <name>mCp_ClockI</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>ad7a9e7ec91ce166be9c4a9fb6c628b4f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>int</type>
+      <name>mi_JobID</name>
+      <anchorfile>classefscape_1_1impl_1_1_adevs_model.html</anchorfile>
+      <anchor>a46cc581398b330d5c2a9db8e6c9e1bb0</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>efscape::impl::AdevsModel_strings</name>
+    <filename>structefscape_1_1impl_1_1_adevs_model__strings.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::BuildCmd</name>
+    <filename>classefscape_1_1impl_1_1_build_cmd.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::BuildModel</name>
+    <filename>classefscape_1_1impl_1_1_build_model.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>BuildModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>af4f5ed1561ad9010e67daac8087444c8</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~BuildModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>a43b6ce41fce8420ed862d22d3328d19b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>parse_options</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>a74dbc1bd74df28ca1a12991f4975f266</anchor>
+      <arglist>(int argc, char *argv[])</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>execute</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>a9fc8f5fc06869833dab12f009620a863</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>program_name</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>ae92fd8f7bfe2601883fb191f21b101d1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>program_version</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>ace8c4ef0b4f6a3fdac6c56aa37bfebd4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const char *</type>
+      <name>ProgramName</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>ae5201e0af48193a31540544a3df4e4cd</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>void</type>
+      <name>usage</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>a5bed16b7359e05365547dbe849da019c</anchor>
+      <arglist>(int exit_value=0)</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setClock</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>ab08916eef9d4b6fc89faca775ba3d117</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>createModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>ac616face7a68e1b4dd6bb2adddfdbf80</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>saveConfig</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>a4e3520cff04e4c231cef2fcac85558f9</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>ClockIPtr</type>
+      <name>mCp_ClockI</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>af2d435189c844d2d4dbd875d80f03a83</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::scoped_ptr&lt; DEVS &gt;</type>
+      <name>mCp_model</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>a3116a75b4afe2c4d8dc00036aa3663ff</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>AdevsModel *</type>
+      <name>mCp_RootModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>a0260646faa9b500b7aa6cfe5966235b8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::string</type>
+      <name>mC_ClassName</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>a600153582cbc39122919e5287a21e1b7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::string</type>
+      <name>mC_Name</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>a588c7a1cd7ac3aa1ec83017f23db420b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::string</type>
+      <name>mC_ResourcePath</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>ade44958e88182e543933c9a1ee10b5c2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>double</type>
+      <name>md_TimeDelta</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>a1d26f89789b8fcc128c8d23c005595bb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>double</type>
+      <name>md_TimeMax</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>a847a9f7b758de8927d52bef3ce515511</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::posix_time::ptime</type>
+      <name>mC_StartDate</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>af11644d6f13d4c702f56f661e48c76c4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::posix_time::time_duration</type>
+      <name>mC_TimeUnits</name>
+      <anchorfile>classefscape_1_1impl_1_1_build_model.html</anchorfile>
+      <anchor>a7ed53a9665d75a9eeb3573cae9bb3735</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::CellBroadcastConsumer</name>
+    <filename>classefscape_1_1impl_1_1_cell_broadcast_consumer.html</filename>
+    <base>efscape::impl::InputConsumer</base>
+    <member kind="function">
+      <type></type>
+      <name>CellBroadcastConsumer</name>
+      <anchorfile>classefscape_1_1impl_1_1_cell_broadcast_consumer.html</anchorfile>
+      <anchor>a9051831e018f7ede1e1c3a8e09b2efec</anchor>
+      <arglist>(PortType aC_InputPort, CELLSPACE *aCp_CellSpace)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>operator()</name>
+      <anchorfile>classefscape_1_1impl_1_1_cell_broadcast_consumer.html</anchorfile>
+      <anchor>ae78f9610ba3b36e93eed9a4d06ea6311</anchor>
+      <arglist>(const adevs::Bag&lt; IO_Type &gt; &amp;aCr_input, adevs::Bag&lt; adevs::Event&lt; CellEvent &gt; &gt; &amp;aCCr_output)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>InputConsumer</name>
+      <anchorfile>classefscape_1_1impl_1_1_input_consumer.html</anchorfile>
+      <anchor>ad6efe582b039b4cc8e48b51a2cc8d649</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~InputConsumer</name>
+      <anchorfile>classefscape_1_1impl_1_1_input_consumer.html</anchorfile>
+      <anchor>a07c53b88813bca9008f0d4d72362faa4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>PortType</type>
+      <name>mC_InputPort</name>
+      <anchorfile>classefscape_1_1impl_1_1_cell_broadcast_consumer.html</anchorfile>
+      <anchor>ada8887563da7beb2d8283bcd6b728290</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>CELLSPACE *</type>
+      <name>mCp_CellSpace</name>
+      <anchorfile>classefscape_1_1impl_1_1_cell_broadcast_consumer.html</anchorfile>
+      <anchor>a0ab6d0c7b8edaaf3e31a490782980e6b</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::CellInputConsumer</name>
+    <filename>classefscape_1_1impl_1_1_cell_input_consumer.html</filename>
+    <base>efscape::impl::InputConsumer</base>
+    <member kind="function">
+      <type></type>
+      <name>CellInputConsumer</name>
+      <anchorfile>classefscape_1_1impl_1_1_cell_input_consumer.html</anchorfile>
+      <anchor>a9364f38a3ef6aca6ecec4b43e66bb9fa</anchor>
+      <arglist>(PortType aC_InputPort, adevs::Devs&lt; IO_Type &gt; *aCp_model)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>operator()</name>
+      <anchorfile>classefscape_1_1impl_1_1_cell_input_consumer.html</anchorfile>
+      <anchor>affb4ed909a7a9c83b9cf9cf89e952a49</anchor>
+      <arglist>(const adevs::Bag&lt; CellEvent &gt; &amp;aCr_input, adevs::Bag&lt; adevs::Event&lt; IO_Type &gt; &gt; &amp;aCCr_output)</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>PortType</type>
+      <name>mC_InputPort</name>
+      <anchorfile>classefscape_1_1impl_1_1_cell_input_consumer.html</anchorfile>
+      <anchor>a45f720fa95a4dd6cb967c0ea14f054cd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>adevs::Devs&lt; IO_Type &gt; *</type>
+      <name>mCp_model</name>
+      <anchorfile>classefscape_1_1impl_1_1_cell_input_consumer.html</anchorfile>
+      <anchor>a862f6404b5f6d636982917789947c97b</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::CellModelFactory</name>
+    <filename>classefscape_1_1impl_1_1_cell_model_factory.html</filename>
+    <base>ModelFactoryTmpl&lt; CellDevs &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>CellModelFactory</name>
+      <anchorfile>classefscape_1_1impl_1_1_cell_model_factory.html</anchorfile>
+      <anchor>a5e8380e2064d4e76f34cdd1072d41ed7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~CellModelFactory</name>
+      <anchorfile>classefscape_1_1impl_1_1_cell_model_factory.html</anchorfile>
+      <anchor>af865451cde3573faff19e979c32ce26b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>CellDevs *</type>
+      <name>CreateModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a450a54689ff342e416f2ba5fa9f5c4c9</anchor>
+      <arglist>(const char *acp_classname)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>RegisterModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>ac3003de0982620c7ada8b5fb36c24740</anchor>
+      <arglist>(const char *acp_info)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>RegisterModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>ac11976d2db75d05526213103409a8992</anchor>
+      <arglist>(const char *acp_info=&quot;&quot;, const char *acp_library_name=&quot;efscapeimpl&quot;)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>ListModels</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a8caf720ebbf23de700b035c795a86500</anchor>
+      <arglist>(std::set&lt; std::string &gt; &amp;aC1r_ModelNames)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>ListModels</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>abdaa94a8cdeb605e68fe56cd3b59bc21</anchor>
+      <arglist>(std::set&lt; std::string &gt; &amp;aC1r_ModelNames, bool(*aFp_ModelMatch)(const CellDevs *))</arglist>
+    </member>
+    <member kind="function">
+      <type>ModelInfo</type>
+      <name>getModelInfo</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a58c0d74f29453edc50d094856b6e8840</anchor>
+      <arglist>(const char *acp_classname)</arglist>
+    </member>
+    <member kind="function">
+      <type>FactoryType &amp;</type>
+      <name>GetFactory</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a17d63afa0cb866d38aa816a7ecf79a72</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::scoped_ptr&lt; FactoryType &gt;</type>
+      <name>mCp_factory</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a486c0c3d92d354b572fddfe9f8d24fff</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::map&lt; std::string, ModelInfo &gt;</type>
+      <name>mCC_ModelInfoMap</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a93c728d19a22ddf4b5c90ec212a8a3d7</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::ClockI</name>
+    <filename>classefscape_1_1impl_1_1_clock_i.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>ClockI</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>a32d07818ea5f8343b3cf2ad890a34e3b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>ClockI</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>a7e9bd066ce55624ecae639367fe224b3</anchor>
+      <arglist>(const ClockI &amp;aCr_clock)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~ClockI</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>a5896f4216c3654240e98e4f1609ce02d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>time</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>afa20675c5c94865ec9b1b7d5288f7d97</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>getTime</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>ad56adb0b89587ff687aefb8e34edb115</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>double &amp;</type>
+      <name>time</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>a318baabbb94287c0f1c167ba91edc005</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>timeDelta</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>abf51e2cb377bbb682b676d0cb090960a</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>double &amp;</type>
+      <name>timeDelta</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>ad70602c0b67f97789bdfb226c4c15d3e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>timeMax</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>a7088b6c2fb5568a3e39962841824c8c2</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>double &amp;</type>
+      <name>timeMax</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>a66d0dc1bf625981ce612b83a4b77ed03</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>boost::posix_time::ptime</type>
+      <name>date_time</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>afb0c47480ef346bb88a24bc2dd277c72</anchor>
+      <arglist>(double ad_time) const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>base_date</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>a1b1b2bc639177f5b329c6e3c31af322a</anchor>
+      <arglist>(const boost::posix_time::ptime &amp;aCr_datetime)</arglist>
+    </member>
+    <member kind="function">
+      <type>boost::posix_time::time_duration</type>
+      <name>units</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>a9f68fee36fba8d5c7b1592abe8a08b02</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>units</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>a2066311d9b12d9ae35cabf5a2e8053f6</anchor>
+      <arglist>(const boost::posix_time::time_duration &amp;aCr_units)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::string</type>
+      <name>timeUnits</name>
+      <anchorfile>classefscape_1_1impl_1_1_clock_i.html</anchorfile>
+      <anchor>a597cfac3b6a6bd1afe33b1aff96e590f</anchor>
+      <arglist>() const </arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::Cloneable</name>
+    <filename>classefscape_1_1impl_1_1_cloneable.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Cloneable</name>
+      <anchorfile>classefscape_1_1impl_1_1_cloneable.html</anchorfile>
+      <anchor>ae366d0ffa397d7f7fdb50e96185fcc18</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~Cloneable</name>
+      <anchorfile>classefscape_1_1impl_1_1_cloneable.html</anchorfile>
+      <anchor>a491d510bc0c60b8df6bbfe03509a037d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual Cloneable *</type>
+      <name>clone</name>
+      <anchorfile>classefscape_1_1impl_1_1_cloneable.html</anchorfile>
+      <anchor>af4abfdbf91fbda9db5b0317d44049362</anchor>
+      <arglist>() const </arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::EfscapeBuilder</name>
+    <filename>classefscape_1_1impl_1_1_efscape_builder.html</filename>
+    <base>efscape::impl::ModelBuilder</base>
+    <member kind="function">
+      <type></type>
+      <name>EfscapeBuilder</name>
+      <anchorfile>classefscape_1_1impl_1_1_efscape_builder.html</anchorfile>
+      <anchor>a864350526b3684e9133bfb73027e7d1f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~EfscapeBuilder</name>
+      <anchorfile>classefscape_1_1impl_1_1_efscape_builder.html</anchorfile>
+      <anchor>a5924b744dc2940e462b82bcbfac5fd70</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>adevs::Devs&lt; IO_Type &gt; *</type>
+      <name>parse</name>
+      <anchorfile>classefscape_1_1impl_1_1_efscape_builder.html</anchorfile>
+      <anchor>a77d7b620b733426fd821dd672547fe98</anchor>
+      <arglist>(const char *acp_filename)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>ModelBuilder</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_builder.html</anchorfile>
+      <anchor>af621dc1ce4a90fcd003614bbcc58d76b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~ModelBuilder</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_builder.html</anchorfile>
+      <anchor>ab1c00d589d108c7f7a6dd5bea53d2cfd</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const char *</type>
+      <name>name</name>
+      <anchorfile>classefscape_1_1impl_1_1_efscape_builder.html</anchorfile>
+      <anchor>a8724b4952405dea36da909d8e18c36f5</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::EntityI</name>
+    <filename>classefscape_1_1impl_1_1_entity_i.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::InitObject</name>
+    <filename>classefscape_1_1impl_1_1_init_object.html</filename>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>initialize</name>
+      <anchorfile>classefscape_1_1impl_1_1_init_object.html</anchorfile>
+      <anchor>ac2b44963223ae2a6c81f769e91a4dd09</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::InputConsumer</name>
+    <filename>classefscape_1_1impl_1_1_input_consumer.html</filename>
+    <templarg></templarg>
+    <templarg></templarg>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::ModelBuilder</name>
+    <filename>classefscape_1_1impl_1_1_model_builder.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::ModelFactory</name>
+    <filename>classefscape_1_1impl_1_1_model_factory.html</filename>
+    <base>ModelFactoryTmpl&lt; DEVS &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>ModelFactory</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory.html</anchorfile>
+      <anchor>af66ee6a92e05f9c55d20fe6bb8c43bd5</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~ModelFactory</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory.html</anchorfile>
+      <anchor>aae370064fed94c137fb4c05bea9ce1e4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DEVS *</type>
+      <name>CreateModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a450a54689ff342e416f2ba5fa9f5c4c9</anchor>
+      <arglist>(const char *acp_classname)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>RegisterModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>ac3003de0982620c7ada8b5fb36c24740</anchor>
+      <arglist>(const char *acp_info)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>RegisterModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>ac11976d2db75d05526213103409a8992</anchor>
+      <arglist>(const char *acp_info=&quot;&quot;, const char *acp_library_name=&quot;efscapeimpl&quot;)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>ListModels</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a8caf720ebbf23de700b035c795a86500</anchor>
+      <arglist>(std::set&lt; std::string &gt; &amp;aC1r_ModelNames)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>ListModels</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>abdaa94a8cdeb605e68fe56cd3b59bc21</anchor>
+      <arglist>(std::set&lt; std::string &gt; &amp;aC1r_ModelNames, bool(*aFp_ModelMatch)(const DEVS *))</arglist>
+    </member>
+    <member kind="function">
+      <type>ModelInfo</type>
+      <name>getModelInfo</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a58c0d74f29453edc50d094856b6e8840</anchor>
+      <arglist>(const char *acp_classname)</arglist>
+    </member>
+    <member kind="function">
+      <type>FactoryType &amp;</type>
+      <name>GetFactory</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a17d63afa0cb866d38aa816a7ecf79a72</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::scoped_ptr&lt; FactoryType &gt;</type>
+      <name>mCp_factory</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a486c0c3d92d354b572fddfe9f8d24fff</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::map&lt; std::string, ModelInfo &gt;</type>
+      <name>mCC_ModelInfoMap</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a93c728d19a22ddf4b5c90ec212a8a3d7</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::ModelFactoryTmpl</name>
+    <filename>classefscape_1_1impl_1_1_model_factory_tmpl.html</filename>
+    <templarg>BaseType</templarg>
+    <member kind="function">
+      <type></type>
+      <name>ModelFactoryTmpl</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a5a92f35359446017f54ced4d826a47aa</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~ModelFactoryTmpl</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a5acc6a58de6a58f7edac5f0a919cd826</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BaseType *</type>
+      <name>CreateModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a450a54689ff342e416f2ba5fa9f5c4c9</anchor>
+      <arglist>(const char *acp_classname)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>RegisterModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>ac3003de0982620c7ada8b5fb36c24740</anchor>
+      <arglist>(const char *acp_info)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>RegisterModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>ac11976d2db75d05526213103409a8992</anchor>
+      <arglist>(const char *acp_info=&quot;&quot;, const char *acp_library_name=&quot;efscapeimpl&quot;)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>ListModels</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a8caf720ebbf23de700b035c795a86500</anchor>
+      <arglist>(std::set&lt; std::string &gt; &amp;aC1r_ModelNames)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>ListModels</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>abdaa94a8cdeb605e68fe56cd3b59bc21</anchor>
+      <arglist>(std::set&lt; std::string &gt; &amp;aC1r_ModelNames, bool(*aFp_ModelMatch)(const BaseType *))</arglist>
+    </member>
+    <member kind="function">
+      <type>ModelInfo</type>
+      <name>getModelInfo</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a58c0d74f29453edc50d094856b6e8840</anchor>
+      <arglist>(const char *acp_classname)</arglist>
+    </member>
+    <member kind="function">
+      <type>FactoryType &amp;</type>
+      <name>GetFactory</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a17d63afa0cb866d38aa816a7ecf79a72</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::scoped_ptr&lt; FactoryType &gt;</type>
+      <name>mCp_factory</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a486c0c3d92d354b572fddfe9f8d24fff</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::map&lt; std::string, ModelInfo &gt;</type>
+      <name>mCC_ModelInfoMap</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_factory_tmpl.html</anchorfile>
+      <anchor>a93c728d19a22ddf4b5c90ec212a8a3d7</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::ModelHomeI</name>
+    <filename>classefscape_1_1impl_1_1_model_home_i.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>ModelHomeI</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>abaf852ecd5c290abb521f44b3eda6f0d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~ModelHomeI</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>ae7b49899c5194f8ccdbeb5adbaba2077</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>adevs::Devs&lt; IO_Type &gt; *</type>
+      <name>CreateModel</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>aae64089c4eea2870077f9709e3e6252d</anchor>
+      <arglist>(const char *acp_classname)</arglist>
+    </member>
+    <member kind="function">
+      <type>adevs::Devs&lt; IO_Type &gt; *</type>
+      <name>CreateModelFromFile</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>a6a59da50897b2262e3c4b5e02e77fdc3</anchor>
+      <arglist>(const char *acp_filename)</arglist>
+    </member>
+    <member kind="function">
+      <type>adevs::Devs&lt; IO_Type &gt; *</type>
+      <name>CreateModelFromStr</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>ae57a59259924d2220c8d415ea74617a8</anchor>
+      <arglist>(const std::wstring &amp;aCr_buffer)</arglist>
+    </member>
+    <member kind="function">
+      <type>adevs::Devs&lt; IO_Type &gt; *</type>
+      <name>CreateModelWithConfig</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>a686be5b3c401b67f12dc7dcb8475e090</anchor>
+      <arglist>(const char *acp_classname, const char *acp_propsfile)</arglist>
+    </member>
+    <member kind="function">
+      <type>adevs::Devs&lt; IO_Type &gt; *</type>
+      <name>CreateModelWithConfig</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>a80df85f3e39919c3c1d81e37dd8f90da</anchor>
+      <arglist>(const char *acp_classname, const std::wstring &amp;aCr_propsfile)</arglist>
+    </member>
+    <member kind="function">
+      <type>ModelFactory &amp;</type>
+      <name>GetModelFactory</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>a617c6b865e8c372bf0bef5c292b5fb93</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>CommandFactory &amp;</type>
+      <name>TheCommandFactory</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>ac9bcdc2ff062e7b3998a18c41096e5e5</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setHomeDir</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>a2caf611f6b1378742f0a50b3a495c41c</anchor>
+      <arglist>(const char *acp_path)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static std::string</type>
+      <name>getHomeDir</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>a4f1d9ea2f4f6a881a8d30b5033b20bfa</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>LoadLibrary</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>a3677b50bfdf424c7a31cf4c273858a4b</anchor>
+      <arglist>(const char *acp_libname)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>LoadLibraries</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>ae22f3d24810912a6407e95da89e51b1e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static log4cxx::LoggerPtr &amp;</type>
+      <name>getLogger</name>
+      <anchorfile>classefscape_1_1impl_1_1_model_home_i.html</anchorfile>
+      <anchor>a9e38caca7cf45d47301b72c1e8e49cb9</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>efscape::impl::ModelInfo</name>
+    <filename>structefscape_1_1impl_1_1_model_info.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::OutputProducer</name>
+    <filename>classefscape_1_1impl_1_1_output_producer.html</filename>
+    <templarg></templarg>
+    <templarg></templarg>
+    <member kind="function">
+      <type></type>
+      <name>OutputProducer</name>
+      <anchorfile>classefscape_1_1impl_1_1_output_producer.html</anchorfile>
+      <anchor>af847249b0567a9992d4dd3b86b9e1776</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~OutputProducer</name>
+      <anchorfile>classefscape_1_1impl_1_1_output_producer.html</anchorfile>
+      <anchor>ac311652137c2f9018aff4ba08aa90bac</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::RepastModelWrapper</name>
+    <filename>classefscape_1_1impl_1_1_repast_model_wrapper.html</filename>
+    <templarg></templarg>
+    <member kind="function">
+      <type></type>
+      <name>RepastModelWrapper</name>
+      <anchorfile>classefscape_1_1impl_1_1_repast_model_wrapper.html</anchorfile>
+      <anchor>a9ff2f68aea79b8eb6ab19f67b4ad973e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~RepastModelWrapper</name>
+      <anchorfile>classefscape_1_1impl_1_1_repast_model_wrapper.html</anchorfile>
+      <anchor>aeb5e498f12065d78d086c8af7471fc8b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>delta_int</name>
+      <anchorfile>classefscape_1_1impl_1_1_repast_model_wrapper.html</anchorfile>
+      <anchor>ad6a9edf3c16918581454c00733cdcac6</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>delta_ext</name>
+      <anchorfile>classefscape_1_1impl_1_1_repast_model_wrapper.html</anchorfile>
+      <anchor>a13c46e6fcfa3c8fb8168a717526a72f9</anchor>
+      <arglist>(double e, const adevs::Bag&lt; IO_Type &gt; &amp;xb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>delta_conf</name>
+      <anchorfile>classefscape_1_1impl_1_1_repast_model_wrapper.html</anchorfile>
+      <anchor>abe642dbfab23031cdafacc2d06dcae4b</anchor>
+      <arglist>(const adevs::Bag&lt; IO_Type &gt; &amp;xb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>output_func</name>
+      <anchorfile>classefscape_1_1impl_1_1_repast_model_wrapper.html</anchorfile>
+      <anchor>a5a0c72c7c45b8a6299bdb82b18b9c846</anchor>
+      <arglist>(adevs::Bag&lt; IO_Type &gt; &amp;yb)</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>ta</name>
+      <anchorfile>classefscape_1_1impl_1_1_repast_model_wrapper.html</anchorfile>
+      <anchor>a881d5fc90a828c62a32294fe29d38cf6</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>gc_output</name>
+      <anchorfile>classefscape_1_1impl_1_1_repast_model_wrapper.html</anchorfile>
+      <anchor>adbaebc7f2c252d549d51d4a7cecf51a1</anchor>
+      <arglist>(adevs::Bag&lt; IO_Type &gt; &amp;g)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::RunSim</name>
+    <filename>classefscape_1_1impl_1_1_run_sim.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>RunSim</name>
+      <anchorfile>classefscape_1_1impl_1_1_run_sim.html</anchorfile>
+      <anchor>ad34fc9336bc03becc1cc946a7f0519b9</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~RunSim</name>
+      <anchorfile>classefscape_1_1impl_1_1_run_sim.html</anchorfile>
+      <anchor>af22bfdddc0f864fe70e3236346495be5</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>parse_options</name>
+      <anchorfile>classefscape_1_1impl_1_1_run_sim.html</anchorfile>
+      <anchor>a187c747c6cbb6a1e55e89483f284f425</anchor>
+      <arglist>(int argc, char *argv[])</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>execute</name>
+      <anchorfile>classefscape_1_1impl_1_1_run_sim.html</anchorfile>
+      <anchor>a19e0ed93284851f27a9d19c282ad7626</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>program_name</name>
+      <anchorfile>classefscape_1_1impl_1_1_run_sim.html</anchorfile>
+      <anchor>a75880eb374c2e3206cb01034033c2732</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>program_version</name>
+      <anchorfile>classefscape_1_1impl_1_1_run_sim.html</anchorfile>
+      <anchor>a19a476b8554a293983f1b15011bd9864</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const char *</type>
+      <name>ProgramName</name>
+      <anchorfile>classefscape_1_1impl_1_1_run_sim.html</anchorfile>
+      <anchor>aef9ca6ea328f65287012024bf21ae8c6</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>void</type>
+      <name>usage</name>
+      <anchorfile>classefscape_1_1impl_1_1_run_sim.html</anchorfile>
+      <anchor>aef6b66df56948eca61d781a8e03e457c</anchor>
+      <arglist>(int exit_value=0)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::impl::Singleton</name>
+    <filename>classefscape_1_1impl_1_1_singleton.html</filename>
+    <templarg></templarg>
+  </compound>
+  <compound kind="class">
+    <name>efscape::server::AdevsInputConsumer</name>
+    <filename>classefscape_1_1server_1_1_adevs_input_consumer.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>AdevsInputConsumer</name>
+      <anchorfile>classefscape_1_1server_1_1_adevs_input_consumer.html</anchorfile>
+      <anchor>abd5de2ebcfd4dd8e1c010f580b17e3e2</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~AdevsInputConsumer</name>
+      <anchorfile>classefscape_1_1server_1_1_adevs_input_consumer.html</anchorfile>
+      <anchor>ab999130eed3aa05abf309621944971fa</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::server::AdevsOutputProducer</name>
+    <filename>classefscape_1_1server_1_1_adevs_output_producer.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>AdevsOutputProducer</name>
+      <anchorfile>classefscape_1_1server_1_1_adevs_output_producer.html</anchorfile>
+      <anchor>a0bb266f9fb882f8a3a5b77f2ea7e78e4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~AdevsOutputProducer</name>
+      <anchorfile>classefscape_1_1server_1_1_adevs_output_producer.html</anchorfile>
+      <anchor>a3e871f0d662f29d848403c5c18f78e1b</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::server::ClockTie</name>
+    <filename>classefscape_1_1server_1_1_clock_tie.html</filename>
+    <base virtualness="virtual">efscape::impl::EntityI</base>
+    <member kind="function">
+      <type></type>
+      <name>ClockTie</name>
+      <anchorfile>classefscape_1_1server_1_1_clock_tie.html</anchorfile>
+      <anchor>a0a4c4c86198f2dd8c79febf9edaadf36</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>ClockTie</name>
+      <anchorfile>classefscape_1_1server_1_1_clock_tie.html</anchorfile>
+      <anchor>a3094cac1f95113f69c14d14ffca56fcc</anchor>
+      <arglist>(const boost::shared_ptr&lt; efscape::impl::ClockI &gt; &amp;aCp_clock)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~ClockTie</name>
+      <anchorfile>classefscape_1_1server_1_1_clock_tie.html</anchorfile>
+      <anchor>ad21ce743ca0367ecb66a7b8ff55424b1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>getName</name>
+      <anchorfile>classefscape_1_1server_1_1_clock_tie.html</anchorfile>
+      <anchor>a59bb4c5f9332a413673c175562a8fae3</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>timeUnits</name>
+      <anchorfile>classefscape_1_1server_1_1_clock_tie.html</anchorfile>
+      <anchor>a1d7b31395214f5a55de2b7f010087a1d</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Double</type>
+      <name>timeDelta</name>
+      <anchorfile>classefscape_1_1server_1_1_clock_tie.html</anchorfile>
+      <anchor>afa72a24a799f7bdc16a74db7c1bc4bb5</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Double</type>
+      <name>timeMax</name>
+      <anchorfile>classefscape_1_1server_1_1_clock_tie.html</anchorfile>
+      <anchor>a7ba6e4052006e18a57c0939f8b47cf3a</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Double</type>
+      <name>timeCurrent</name>
+      <anchorfile>classefscape_1_1server_1_1_clock_tie.html</anchorfile>
+      <anchor>a21b7ee5a3fd0ed661b4a4e964c3b2d9d</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>efscape::impl::ClockI *</type>
+      <name>getClock</name>
+      <anchorfile>classefscape_1_1server_1_1_clock_tie.html</anchorfile>
+      <anchor>a387c434074d909f63ecec2718094d9aa</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setClock</name>
+      <anchorfile>classefscape_1_1server_1_1_clock_tie.html</anchorfile>
+      <anchor>a789393aeffa725bfe347bb68006237c9</anchor>
+      <arglist>(const boost::shared_ptr&lt; efscape::impl::ClockI &gt; &amp;aCp_clock)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::server::DataFrameTie</name>
+    <filename>classefscape_1_1server_1_1_data_frame_tie.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>DataFrameTie</name>
+      <anchorfile>classefscape_1_1server_1_1_data_frame_tie.html</anchorfile>
+      <anchor>a48835be2e7142844f183ac8653fdcdf4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>DataFrameTie</name>
+      <anchorfile>classefscape_1_1server_1_1_data_frame_tie.html</anchorfile>
+      <anchor>a0536347522644d29d3d2267d1848df9c</anchor>
+      <arglist>(const efscape::impl::DataFrameIPtr &amp;aCp_DataFrame)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~DataFrameTie</name>
+      <anchorfile>classefscape_1_1server_1_1_data_frame_tie.html</anchorfile>
+      <anchor>a65767f4cb651b4d00f780ec4225bc103</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual std::string</type>
+      <name>getName</name>
+      <anchorfile>classefscape_1_1server_1_1_data_frame_tie.html</anchorfile>
+      <anchor>a054b6ed1df7d15171f0d2d4769a0d989</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::efscape::data::StringSequence</type>
+      <name>variableNames</name>
+      <anchorfile>classefscape_1_1server_1_1_data_frame_tie.html</anchorfile>
+      <anchor>abcfbf28fb079ae5dc256e6e3297413c3</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Long</type>
+      <name>numRows</name>
+      <anchorfile>classefscape_1_1server_1_1_data_frame_tie.html</anchorfile>
+      <anchor>a5e5f5e23d0bec80223a90f764a72f7dc</anchor>
+      <arglist>(const Ice::Current &amp;current)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setDataFrame</name>
+      <anchorfile>classefscape_1_1server_1_1_data_frame_tie.html</anchorfile>
+      <anchor>a59911b68269fe5395eb913969a13226f</anchor>
+      <arglist>(const efscape::impl::DataFrameIPtr &amp;aCp_DataFrame)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>name</name>
+      <anchorfile>classefscape_1_1server_1_1_data_frame_tie.html</anchorfile>
+      <anchor>a2c6fe97c4e118a5b6a4fcea9438a47b7</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>efscape::impl::DataFrameIPtr</type>
+      <name>mCp_DataFrame</name>
+      <anchorfile>classefscape_1_1server_1_1_data_frame_tie.html</anchorfile>
+      <anchor>ac3f922e1c2842b702e0cca1cc8626615</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::server::GridCoverageProducer</name>
+    <filename>classefscape_1_1server_1_1_grid_coverage_producer.html</filename>
+    <base>efscape::server::AdevsOutputProducer</base>
+    <member kind="variable" protection="protected">
+      <type>efscape::impl::PortType</type>
+      <name>mC_OutputPort</name>
+      <anchorfile>classefscape_1_1server_1_1_grid_coverage_producer.html</anchorfile>
+      <anchor>a644f10e0fcc2d2cd2b876e4df654dfdb</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::server::ModelHomeTie</name>
+    <filename>classefscape_1_1server_1_1_model_home_tie.html</filename>
+    <member kind="function">
+      <type>virtual ::efscape::ModelPrx</type>
+      <name>create</name>
+      <anchorfile>classefscape_1_1server_1_1_model_home_tie.html</anchorfile>
+      <anchor>aaa3836c51b89f3d6a6ab0ffd51b233dd</anchor>
+      <arglist>(const ::std::string &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::efscape::ModelPrx</type>
+      <name>createFromXML</name>
+      <anchorfile>classefscape_1_1server_1_1_model_home_tie.html</anchorfile>
+      <anchor>af3f1cbe397f3141aaba3ee85361bcf58</anchor>
+      <arglist>(const ::std::wstring &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::efscape::ModelPrx</type>
+      <name>createWithConfig</name>
+      <anchorfile>classefscape_1_1server_1_1_model_home_tie.html</anchorfile>
+      <anchor>a1734d19da638a13125316d39c5d135cb</anchor>
+      <arglist>(const ::std::string &amp;, const ::std::wstring &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::efscape::ModelList</type>
+      <name>getModelList</name>
+      <anchorfile>classefscape_1_1server_1_1_model_home_tie.html</anchorfile>
+      <anchor>a7143f57c82e09e0b47738c87183ddef4</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::efscape::SimulatorPrx</type>
+      <name>createSim</name>
+      <anchorfile>classefscape_1_1server_1_1_model_home_tie.html</anchorfile>
+      <anchor>a55e837cc290089f0b3cbf7b0085437e7</anchor>
+      <arglist>(const ::efscape::ModelPrx &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>ModelHomeTie</name>
+      <anchorfile>classefscape_1_1server_1_1_model_home_tie.html</anchorfile>
+      <anchor>a92ce99bceb79e901d5f43f3a224e5b0a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~ModelHomeTie</name>
+      <anchorfile>classefscape_1_1server_1_1_model_home_tie.html</anchorfile>
+      <anchor>a5796e93c6eeda5a4b5a75a74eeed88df</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::server::ModelTie</name>
+    <filename>classefscape_1_1server_1_1_model_tie.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>ModelTie</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a1a45d54916ec9d9a666968ca1c61efc2</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>ModelTie</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>ae9e1b3b37390418ada55f84a19b087ea</anchor>
+      <arglist>(adevs::Devs&lt; efscape::impl::IO_Type &gt; *aCp_model)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>ModelTie</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>acedb13295ad666dc4d06ea0a10a2f15b</anchor>
+      <arglist>(adevs::Devs&lt; efscape::impl::IO_Type &gt; *aCp_model, const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~ModelTie</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>aed5c330c51224633ee7ea0e025540eaa</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>getName</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a328c93006440660a97eda70cb1cd4f53</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>initialize</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>aea7c48810347d14e9d4062e1cde199c1</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Double</type>
+      <name>timeAdvance</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>ac91cbece496f6a2f0c953003dc0ab5aa</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>internalTransition</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>aaecd645a16cb0d14a7847c0b6e1689ea</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>externalTransition</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>aab322c1fc33c43ac7fe0e308cad743d5</anchor>
+      <arglist>(::Ice::Double, const ::efscape::Message &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>confluentTransition</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a4b3bb0d935485096de190e0c067435f5</anchor>
+      <arglist>(const ::efscape::Message &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::efscape::Message</type>
+      <name>outputFunction</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>add10a7ede7ce89708c2eaa88adb0d1db</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>getType</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a73cc1aded13dd5bf8f846b5006d9c655</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>getBaseType</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>af5f73ede52b22227ca1a909bb9f7ea2f</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setName</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a76f7ae649a50d618f9c57ccb12e5464f</anchor>
+      <arglist>(const std::string &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::efscape::PortDescriptions</type>
+      <name>getInPorts</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a49932a615e7217b6e7895a2988765436</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::efscape::PortDescriptions</type>
+      <name>getOutPorts</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>ab42b672425096c06e8ea4e255ffc2319</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::wstring</type>
+      <name>saveXML</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a19bed7aea0fafe8945add1cced9e1655</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>destroy</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a533bea7f7925fd2816fe81718faa2650</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>outputEvent</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>aafc5adc7d65d0a2852ed573b4f2bec43</anchor>
+      <arglist>(adevs::Event&lt; efscape::impl::IO_Type &gt; x, double t)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setWrappedModel</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>ae1021bdd83117e1d15e9a366d331ab2a</anchor>
+      <arglist>(adevs::Devs&lt; efscape::impl::IO_Type &gt; *aCp_model)</arglist>
+    </member>
+    <member kind="function">
+      <type>adevs::Devs&lt; efscape::impl::IO_Type &gt; *</type>
+      <name>getWrappedModel</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a75e70b7670f11cb84e90eb052d9fe230</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>translateOutput</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a1f5c680aa0f9c33d0da4b291d9c9b2b2</anchor>
+      <arglist>(const Ice::Current &amp;aCr_current,::efscape::Message &amp;aCr_external_output)</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>translateInput</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a8dd27265627094193b1711edaf9903f3</anchor>
+      <arglist>(const Ice::Current &amp;aCr_current, const ::efscape::Message &amp;aCr_external_input, adevs::Bag&lt; adevs::Event&lt; efscape::impl::IO_Type &gt; &gt; &amp;aCr_internal_input)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>void</type>
+      <name>addInputConsumer</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a92314705588cf5a71624fc60fa05d50c</anchor>
+      <arglist>(const AdevsInputConsumerPtr &amp;aCr_consumer)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>void</type>
+      <name>addOutputProducer</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a0e64a3850906fb7ae27c0206a136f2a0</anchor>
+      <arglist>(const AdevsOutputProducerPtr &amp;aCr_producer)</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::scoped_ptr&lt; adevs::Simulator&lt; efscape::impl::IO_Type &gt; &gt;</type>
+      <name>mCp_simulator</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a7b7348439c78967616c543eb7d04a84b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::scoped_ptr&lt; adevs::Devs&lt; efscape::impl::IO_Type &gt; &gt;</type>
+      <name>mCp_WrappedModel</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a90f2c9635aa9c537a751fa1ca4d806f4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>adevs::Bag&lt; adevs::Event&lt; efscape::impl::IO_Type &gt; &gt;</type>
+      <name>mCC_OutputBuffer</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a45d658150443426ef7d628dd3837db5a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>ClockTiePtr</type>
+      <name>mCp_ClockTie</name>
+      <anchorfile>classefscape_1_1server_1_1_model_tie.html</anchorfile>
+      <anchor>a9e7a1f250a98c02683be80a0d61b7598</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::server::RunServer</name>
+    <filename>classefscape_1_1server_1_1_run_server.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>RunServer</name>
+      <anchorfile>classefscape_1_1server_1_1_run_server.html</anchorfile>
+      <anchor>a199b20617ad277f2093703bbc7eee554</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~RunServer</name>
+      <anchorfile>classefscape_1_1server_1_1_run_server.html</anchorfile>
+      <anchor>a52a6ac2923843285e144ae51308881a7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>parse_options</name>
+      <anchorfile>classefscape_1_1server_1_1_run_server.html</anchorfile>
+      <anchor>adc04d39dee72a0d49cebf74a838182bb</anchor>
+      <arglist>(int argc, char *argv[])</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>execute</name>
+      <anchorfile>classefscape_1_1server_1_1_run_server.html</anchorfile>
+      <anchor>a9cbc2613d5ca1bc45368c170c31fcb55</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>program_name</name>
+      <anchorfile>classefscape_1_1server_1_1_run_server.html</anchorfile>
+      <anchor>a6fabd1083af3a0134bbda8d4d87770f1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>program_version</name>
+      <anchorfile>classefscape_1_1server_1_1_run_server.html</anchorfile>
+      <anchor>addacc5f2d816327605fe95ba8232d9c4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>run</name>
+      <anchorfile>classefscape_1_1server_1_1_run_server.html</anchorfile>
+      <anchor>ac4a1e9f3c3878a32defb9a5e593f5881</anchor>
+      <arglist>(int, char *[])</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const char *</type>
+      <name>ProgramName</name>
+      <anchorfile>classefscape_1_1server_1_1_run_server.html</anchorfile>
+      <anchor>a871f4df406627972e51d7988f3a4de35</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>void</type>
+      <name>usage</name>
+      <anchorfile>classefscape_1_1server_1_1_run_server.html</anchorfile>
+      <anchor>a8e6a76a01f9f9928a543aff77e15aab8</anchor>
+      <arglist>(int exit_value=0)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>efscape::server::SimulatorI</name>
+    <filename>classefscape_1_1server_1_1_simulator_i.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>SimulatorI</name>
+      <anchorfile>classefscape_1_1server_1_1_simulator_i.html</anchorfile>
+      <anchor>a34bac91f4a133db44512f77461d13d55</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>SimulatorI</name>
+      <anchorfile>classefscape_1_1server_1_1_simulator_i.html</anchorfile>
+      <anchor>a4440dc1150ddf1ea14999a62aba42b97</anchor>
+      <arglist>(const ::efscape::ModelPrx &amp;aCp_model)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~SimulatorI</name>
+      <anchorfile>classefscape_1_1server_1_1_simulator_i.html</anchorfile>
+      <anchor>ab35ce635653fa82454ba2a6da6ef4520</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>start</name>
+      <anchorfile>classefscape_1_1server_1_1_simulator_i.html</anchorfile>
+      <anchor>a73534ed6482f639ac941d3a1e43c195d</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Double</type>
+      <name>nextEventTime</name>
+      <anchorfile>classefscape_1_1server_1_1_simulator_i.html</anchorfile>
+      <anchor>a9d986a5c0c8db95575c9e16de8957f38</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>execNextEvent</name>
+      <anchorfile>classefscape_1_1server_1_1_simulator_i.html</anchorfile>
+      <anchor>a9bf9e841fb55fa3cdf5c92b4fa766a34</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>computeNextOutput</name>
+      <anchorfile>classefscape_1_1server_1_1_simulator_i.html</anchorfile>
+      <anchor>abad644bd34fcfd9ecc9d51260be3b957</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>computeNextState</name>
+      <anchorfile>classefscape_1_1server_1_1_simulator_i.html</anchorfile>
+      <anchor>afe91422264ab1607081ab1557a8d4d69</anchor>
+      <arglist>(::Ice::Double, const ::efscape::Message &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>halt</name>
+      <anchorfile>classefscape_1_1server_1_1_simulator_i.html</anchorfile>
+      <anchor>aa8ed6027156bd2edeec30e9cddb9f107</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>destroy</name>
+      <anchorfile>classefscape_1_1server_1_1_simulator_i.html</anchorfile>
+      <anchor>a730a16b4443499380bfff4ecc30d2d36</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::CoverageI</name>
+    <filename>classogis_1_1impl_1_1_coverage_i.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>CoverageI</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a7e4b660ee3293d4367d55c6dfe3ced51</anchor>
+      <arglist>(GDALDataset *aCp_dataset)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>CoverageI</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a20ddcc9f6ba7e4a61b4202baa5b74525</anchor>
+      <arglist>(const boost::shared_ptr&lt; GDALDataset &gt; &amp;aCp_dataset)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~CoverageI</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a2cc317e84684ce648e7e668f91ebdad1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual std::string</type>
+      <name>coverageName</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a32afeb4b5c109fb0bdccd27b05fa67b4</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Long</type>
+      <name>numSampleDimensions</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a98ba6774b20f84a35c736b7211cbc6ff</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cv::StringSeq</type>
+      <name>dimensionNames</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>abaefbc616a033735a4c57c48d03a9990</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Int</type>
+      <name>numSources</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a6d51cccf8b8c622f13bbbf47279664f9</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cv::StringSeq</type>
+      <name>metadataNames</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>ac3c819826e7cba2e41083207b367fc58</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>getMetadataValue</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>ad95a53df28a656833cbc311dcd7f0d6c</anchor>
+      <arglist>(const ::std::string &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::pt::PtEnvelope</type>
+      <name>envelope</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a7b95474f63632465506f453bb4b92c9a</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cs::CsCoordinateSystemPrx</type>
+      <name>coordinateSystem</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a58dd59f43700ec27b975c8081bea6d8c</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cv::CvSampleDimensionPrx</type>
+      <name>getSampleDimension</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>ab235f326008c0b5bc8a1d39de0129507</anchor>
+      <arglist>(::Ice::Long, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cv::BooleanSeq</type>
+      <name>evaluateAsBoolean</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>aabfa71401e8afbb97b82e6ba35f2462e</anchor>
+      <arglist>(const ::pt::PtCoordinatePoint &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cv::ByteSeq</type>
+      <name>evaluateAsByte</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>acaea822ca0f0977230f9e1687f1e9de8</anchor>
+      <arglist>(const ::pt::PtCoordinatePoint &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cv::IntSeq</type>
+      <name>evaluateAsInt</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a39b00c72ba691d8938418f4cdc96ce51</anchor>
+      <arglist>(const ::pt::PtCoordinatePoint &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cv::DoubleSeq</type>
+      <name>evaluateAsDouble</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>af61835360d144cb8321bc0ddf0d9b652</anchor>
+      <arglist>(const ::pt::PtCoordinatePoint &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>coverageName</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a7f3e6a6a1d5805fba0735e30ae0953cb</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>coverageName</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a32d975f7f91b372a9b5541fc2948e263</anchor>
+      <arglist>(const char *acp_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dimensionNames</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>ac12ba6647d2c93ac9e8869e42e4a94a4</anchor>
+      <arglist>(const std::vector&lt; std::string &gt; &amp;aC1r_names)</arglist>
+    </member>
+    <member kind="function">
+      <type>SampleDimensionIPtr</type>
+      <name>getSampleDimensionI</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>ac90119a07512d3a15bcc0bd2f875131c</anchor>
+      <arglist>(int ai_index)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>std::vector&lt; Type &gt;</type>
+      <name>evaluate</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a8c8676c5a2e423521358cec6522c2b5d</anchor>
+      <arglist>(const ::pt::PtCoordinatePoint &amp;)</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::shared_ptr&lt; GDALDataset &gt;</type>
+      <name>mCp_dataset</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a9d2eeb0fe46a5f2f77eb32de8ba752f3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::vector&lt; std::string &gt;</type>
+      <name>mC1_DimensionNames</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>a21dc76166bc57e641f4bebe403c4e012</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::vector&lt; SampleDimensionIPtr &gt;</type>
+      <name>mCp1_SampleDimensions</name>
+      <anchorfile>classogis_1_1impl_1_1_coverage_i.html</anchorfile>
+      <anchor>aec88d325532cb21155367050e7d1fac6</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::CsInfoI</name>
+    <filename>classogis_1_1impl_1_1_cs_info_i.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>CsInfoI</name>
+      <anchorfile>classogis_1_1impl_1_1_cs_info_i.html</anchorfile>
+      <anchor>a5080bfa0506a52e9b6564cfaffc449b7</anchor>
+      <arglist>(const char *acp_projection)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::FeatureCollectionI</name>
+    <filename>classogis_1_1impl_1_1_feature_collection_i.html</filename>
+    <class kind="class">ogis::impl::FeatureCollectionI::Iterator</class>
+    <member kind="function">
+      <type></type>
+      <name>FeatureCollectionI</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>a99be57803ab6f5a8c75e76a46e5d5df0</anchor>
+      <arglist>(OGRLayer *aCp_layer, const char *acp_name)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~FeatureCollectionI</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>a23afa70533cf8b4fd5cb48a609cd40a4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::FeatureTypePrx</type>
+      <name>getFeatureType</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>afac8976dd94ea446b0aec6ce16b74dbd</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>getID</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>a6bcf2c1e550ac2b43b3f2a8a3f67c7d3</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::GeometryPrx</type>
+      <name>getDefaultGeometry</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>afffccc709c101315f696e7481699f381</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setDefaultGeometry</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>aeb26ea30da1bfda14b53ecd5a2aefcd8</anchor>
+      <arglist>(const ::ogis::GeometryPrx &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::Envelope</type>
+      <name>getBounds</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>a86ce3d13047ee81ecb144f0ec5839ecf</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Int</type>
+      <name>getNumberOfAttributes</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>a1578650cff406fbc02fc499742974916</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::AttributeValuePtr</type>
+      <name>getAttribute</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>ac69e58dbd7ae63bf0ae24f10f59412eb</anchor>
+      <arglist>(::Ice::Int, const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::AttributeValuePtr</type>
+      <name>getAttributeByName</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>a8e0d7b2f9bba795a906683311e9d7cc2</anchor>
+      <arglist>(const ::std::string &amp;, const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setAttribute</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>a69b9627d3b0db6de6a20474c3181da76</anchor>
+      <arglist>(::Ice::Int, const ::ogis::AttributeValuePrx &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>getStyleString</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>a6d6234e290e1ee5dcd3745f2c2b7b6c7</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Int</type>
+      <name>getNumberOfElements</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>ace3bacab01f0d89b652dbecfe21e180d</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::FeatureIteratorPrx</type>
+      <name>createIterator</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>a3d3da34065f91f19d3b8b13a504e120c</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>OGRLayer *</type>
+      <name>mCp_layer</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>a240c29aa3e965d5464b84a591644c491</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::scoped_ptr&lt; OGRGeometryCollection &gt;</type>
+      <name>mCp_geometry</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>a60c02e6b2308fb5dc82f105df715352c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>std::string</type>
+      <name>mC_name</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i.html</anchorfile>
+      <anchor>a99777fca415f0f6b811509c53d01edfc</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::FeatureCollectionI::Iterator</name>
+    <filename>classogis_1_1impl_1_1_feature_collection_i_1_1_iterator.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Iterator</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i_1_1_iterator.html</anchorfile>
+      <anchor>a2fba4cfb0220d306a24d44e09bbad409</anchor>
+      <arglist>(OGRLayer *aCp_collection, const Ice::Current &amp;aCr_current)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>more</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i_1_1_iterator.html</anchorfile>
+      <anchor>afa674b0872a674103904161e03dfc974</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::FeaturePrx</type>
+      <name>current</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i_1_1_iterator.html</anchorfile>
+      <anchor>ace64f7adf58bf21bed382fa97cab79c8</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>next</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i_1_1_iterator.html</anchorfile>
+      <anchor>a7ab553143d43f400dbdf7243264ca3d4</anchor>
+      <arglist>(::ogis::FeaturePrx &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>advance</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i_1_1_iterator.html</anchorfile>
+      <anchor>a5f1e94f58ba8eff3143b892e377583bc</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>reset</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_collection_i_1_1_iterator.html</anchorfile>
+      <anchor>a0073b2b5d67a8855b1db23d286afc78c</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::FeatureI</name>
+    <filename>classogis_1_1impl_1_1_feature_i.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>FeatureI</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_i.html</anchorfile>
+      <anchor>a71fe907ce2ba1caac09654aff790e9ef</anchor>
+      <arglist>(OGRFeature *aCp_feature)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~FeatureI</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_i.html</anchorfile>
+      <anchor>ac22c2595721cc1285d7f96b94046fc1a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::FeatureTypePrx</type>
+      <name>getFeatureType</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_i.html</anchorfile>
+      <anchor>a7c4bd6ee51a4b0fa1a932d02b4742fc9</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>getID</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_i.html</anchorfile>
+      <anchor>ae849b68d0ffa799d2f26fddbda4ebc6f</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::GeometryPrx</type>
+      <name>getDefaultGeometry</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_i.html</anchorfile>
+      <anchor>a084abcc687e0a7f3760564e39902f53d</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setDefaultGeometry</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_i.html</anchorfile>
+      <anchor>a3c499edb8bdd44175d10337a50264a1a</anchor>
+      <arglist>(const ::ogis::GeometryPrx &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::Envelope</type>
+      <name>getBounds</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_i.html</anchorfile>
+      <anchor>acfa943954514a4868efb5aa336fadd2a</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Int</type>
+      <name>getNumberOfAttributes</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_i.html</anchorfile>
+      <anchor>ab44abca0d809a59693fc56fe57bf3302</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::AttributeValuePtr</type>
+      <name>getAttribute</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_i.html</anchorfile>
+      <anchor>a032fe72962acdf29aa63f5928a434122</anchor>
+      <arglist>(::Ice::Int, const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::AttributeValuePtr</type>
+      <name>getAttributeByName</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_i.html</anchorfile>
+      <anchor>a9050f17a33b452312a32ac6ab4e6d599</anchor>
+      <arglist>(const ::std::string &amp;, const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setAttribute</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_i.html</anchorfile>
+      <anchor>a8fbf8eb15bfa0d2f441edfd1a5da844e</anchor>
+      <arglist>(::Ice::Int, const ::ogis::AttributeValuePrx &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>getStyleString</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_i.html</anchorfile>
+      <anchor>af21442bd18e588b3a9ca882d6cb09ea2</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>boost::shared_ptr&lt; OGRFeature &gt;</type>
+      <name>mCp_feature</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_i.html</anchorfile>
+      <anchor>a7eb7887ed80ff098e19e6e93222acab0</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::FeatureTypeI</name>
+    <filename>classogis_1_1impl_1_1_feature_type_i.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>FeatureTypeI</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_type_i.html</anchorfile>
+      <anchor>ae875b98e2b42e9cd9bdc7b5b611178e1</anchor>
+      <arglist>(OGRFeatureDefn *aCp_FeatureDefn)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~FeatureTypeI</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_type_i.html</anchorfile>
+      <anchor>af1d2b529b158a10a859d513b5bb49da6</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>getTypeName</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_type_i.html</anchorfile>
+      <anchor>aa633959ee01a4d89a858b0a551c5206b</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::FeatureTypeSeq</type>
+      <name>getAncestors</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_type_i.html</anchorfile>
+      <anchor>ab0025a8667ba97f49d20c5fee28f9d6b</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::FeatureTypeSeq</type>
+      <name>getChildren</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_type_i.html</anchorfile>
+      <anchor>a1dca08c0fb53d9897beb83b6949cfc5c</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Int</type>
+      <name>getNumberOfAttributes</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_type_i.html</anchorfile>
+      <anchor>a2dfbe6aa521affab20f2bb8f5011b8e6</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::AttributeType</type>
+      <name>getAttributeType</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_type_i.html</anchorfile>
+      <anchor>a41eea86687b7875355a60d16e3d82168</anchor>
+      <arglist>(::Ice::Int, const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Int</type>
+      <name>getAttributeIndex</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_type_i.html</anchorfile>
+      <anchor>a4cbabcf233d0d767bb0e5c6db56b818f</anchor>
+      <arglist>(const ::std::string &amp;, const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::WKSType</type>
+      <name>getGeometryType</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_type_i.html</anchorfile>
+      <anchor>a0f2b9e41a192ab5976a923f6c22df56f</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>OGRFeatureDefn *</type>
+      <name>mCp_FeatureDefn</name>
+      <anchorfile>classogis_1_1impl_1_1_feature_type_i.html</anchorfile>
+      <anchor>a53efeaefc114266324cef623e70c932e</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::GeometryCollectionI</name>
+    <filename>classogis_1_1impl_1_1_geometry_collection_i.html</filename>
+    <base virtualness="virtual">ogis::impl::GeometryI</base>
+    <class kind="class">ogis::impl::GeometryCollectionI::Iterator</class>
+    <member kind="function">
+      <type></type>
+      <name>GeometryCollectionI</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_collection_i.html</anchorfile>
+      <anchor>a5dda54b5b9e2ae467923bac0ec225f7b</anchor>
+      <arglist>(OGRGeometry *aCp_geometry)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Int</type>
+      <name>getNumberOfElements</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_collection_i.html</anchorfile>
+      <anchor>a458475d65b5add57a09ba3fac7412366</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::GeometryIteratorPtr</type>
+      <name>createIterator</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_collection_i.html</anchorfile>
+      <anchor>a3697d3fdb6eff80c12430a4e485f8241</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GeometryI</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>a8090316fabecd7cb90ffe69e125ca624</anchor>
+      <arglist>(OGRGeometry *aCp_geometry, bool ab_IsOwner=false)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~GeometryI</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>aea7f3af4d903c20e25b8cbf57fd55ab0</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::GeometryPrx</type>
+      <name>getBoundry</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>ae171ad55cf4c6a06e54ad7a378b3666f</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Int</type>
+      <name>getDimension</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>a34481677b7414acbd1d0738a521028bc</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Int</type>
+      <name>getCoordinateDimension</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>a658b8f7aa8140df014425f01dbcc8524</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::Envelope</type>
+      <name>getEnvelope</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>aae285364c6686d4472371fc524aff0a9</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::GeometryPrx</type>
+      <name>getConvexHall</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>ac47d93a03070939d8b5bdc8b394077e3</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>isEmpty</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>a0f1b918391764e1b8f36229ccab33d22</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>isSimple</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>a2130d1dc75a6fb5e455bc7baad6e5e6e</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>is3D</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>a87dc43f0338db68f2567e6626af2c09b</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>asText</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>aa0f349bb57c9fd02ec5c909568581c9e</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static GeometryI *</type>
+      <name>createGeometry</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>aed8db6ea261ed0b8528600ccda98d94b</anchor>
+      <arglist>(OGRGeometry *aCp_geometry, bool ab_IsOwner=false)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>::ogis::GeometryPrx</type>
+      <name>createGeometryPrx</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>a727d2fabd005cc33162eba5fd02a4cc5</anchor>
+      <arglist>(OGRGeometry *aCp_geometry, bool ab_IsOwner, const Ice::Current &amp;aCr_current)</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>OGRGeometry *</type>
+      <name>mCp_geometry</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>acbe20359dec9fa428e2d5d25a27d6ae9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>bool</type>
+      <name>mb_IsOwner</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_i.html</anchorfile>
+      <anchor>a324200f307780e484cee3e2d0b8e971b</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::GeometryCollectionI::Iterator</name>
+    <filename>classogis_1_1impl_1_1_geometry_collection_i_1_1_iterator.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Iterator</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_collection_i_1_1_iterator.html</anchorfile>
+      <anchor>aa62c64dec87ff1b74e1852ccdcd861a6</anchor>
+      <arglist>(OGRGeometryCollection *aCp_collection)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>more</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_collection_i_1_1_iterator.html</anchorfile>
+      <anchor>a18615a41dc6a4f5557a7d8706c9beca4</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::GeometryPtr</type>
+      <name>current</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_collection_i_1_1_iterator.html</anchorfile>
+      <anchor>a7ee7e8fbfe0f0a29e1fe0ed68ad71fca</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::ogis::GeometryPtr</type>
+      <name>next</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_collection_i_1_1_iterator.html</anchorfile>
+      <anchor>a2ad1cfb9bc7eea7e9d3269e4a75316fd</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>advance</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_collection_i_1_1_iterator.html</anchorfile>
+      <anchor>a6c7e86f9c714e15b7bfd79264826d68d</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>reset</name>
+      <anchorfile>classogis_1_1impl_1_1_geometry_collection_i_1_1_iterator.html</anchorfile>
+      <anchor>ab0a52c89aa6a8dbbcb8ee86f84bedf4e</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::GeometryI</name>
+    <filename>classogis_1_1impl_1_1_geometry_i.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::GridCoverageExchangeI</name>
+    <filename>classogis_1_1impl_1_1_grid_coverage_exchange_i.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>GridCoverageExchangeI</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_exchange_i.html</anchorfile>
+      <anchor>a1cea5e073fb8aff105723daed3fb7454</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~GridCoverageExchangeI</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_exchange_i.html</anchorfile>
+      <anchor>a21d73991945b1d6d9ee4dba18d90c2b7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Long</type>
+      <name>numFormats</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_exchange_i.html</anchorfile>
+      <anchor>aef2fc55d172f3d5f6fe95ddda0b7d213</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::gc::StringSeq</type>
+      <name>metadataNames</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_exchange_i.html</anchorfile>
+      <anchor>a17073d769519634f92a3c3372f752ed7</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>getMetadataValue</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_exchange_i.html</anchorfile>
+      <anchor>a9e1d47e073b2c86bd24b344631e1a8c7</anchor>
+      <arglist>(const ::std::string &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::gc::GcFormat</type>
+      <name>getFormat</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_exchange_i.html</anchorfile>
+      <anchor>a4a7f3bd7759f5c030967deaac7aa3ed6</anchor>
+      <arglist>(::Ice::Long, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::gc::StringSeq</type>
+      <name>listSubNames</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_exchange_i.html</anchorfile>
+      <anchor>aa1e151b0b385e9e7c011f6ce90de3bf1</anchor>
+      <arglist>(const ::std::string &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::gc::GcGridCoveragePtr</type>
+      <name>createFromName</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_exchange_i.html</anchorfile>
+      <anchor>a6f6a89115c8e014b7f109d920f5e78b4</anchor>
+      <arglist>(const ::std::string &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>exportTo</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_exchange_i.html</anchorfile>
+      <anchor>a802b50fdb62403e32617ef982a068365</anchor>
+      <arglist>(const ::gc::GcGridCoveragePtr &amp;, const ::std::string &amp;, const ::std::string &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>GridCoverageI *</type>
+      <name>CreateGridCoverageI</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_exchange_i.html</anchorfile>
+      <anchor>acf206bd30531a3b7459059c1cbf312bf</anchor>
+      <arglist>(const boost::shared_ptr&lt; GDALDataset &gt; &amp;aCpr_dataset)</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>GDALDriverManager *</type>
+      <name>mCp_DriverManager</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_exchange_i.html</anchorfile>
+      <anchor>a28308f97ff976682bb5ffb7cb29a5e91</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::GridCoverageI</name>
+    <filename>classogis_1_1impl_1_1_grid_coverage_i.html</filename>
+    <base virtualness="virtual">ogis::impl::CoverageI</base>
+    <member kind="function">
+      <type>virtual ::gc::GcGridGeometry</type>
+      <name>gridGeometry</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>a2951652fc13e39edc1de6fb0e639a336</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>getDataBlockAsBoolean</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>ae3e9e1eb3b120e74e93a5003b6b72c27</anchor>
+      <arglist>(const ::gc::GcGridRange &amp;,::gc::BooleanSeq &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>getDataBlockAsByte</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>acd0c05d9d22ac57665662099c170de41</anchor>
+      <arglist>(const ::gc::GcGridRange &amp;,::gc::ByteSeq &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>getDataBlockAsInt</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>a7001a24399ea5806afef4a4265c5b25b</anchor>
+      <arglist>(const ::gc::GcGridRange &amp;,::gc::IntSeq &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>getDataBlockAsDouble</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>acf40a17837aef7947bb82b48175890dd</anchor>
+      <arglist>(const ::gc::GcGridRange &amp;,::gc::DoubleSeq &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setDataBlockAsBoolean</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>aa0b387dbaa2f8e84de1b23a0f0bdf2b4</anchor>
+      <arglist>(const ::gc::GcGridRange &amp;, const ::gc::BooleanSeq &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setDataBlockAsByte</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>ac6f043418f07305ce62f78e85b17335d</anchor>
+      <arglist>(const ::gc::GcGridRange &amp;, const ::gc::ByteSeq &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setDataBlockAsInt</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>a230e1c67fe9b0775df2ab46aafa142fb</anchor>
+      <arglist>(const ::gc::GcGridRange &amp;, const ::gc::IntSeq &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setDataBlockAsDouble</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>ae51b66650cd60250cfbc5b7fa1d0c3ea</anchor>
+      <arglist>(const ::gc::GcGridRange &amp;, const ::gc::DoubleSeq &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GridCoverageI</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>a716604bf3cc7846b7c5949527da19204</anchor>
+      <arglist>(GDALDataset *aCp_dataset)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GridCoverageI</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>a4c9657eab108268b8cac9a404b8a421c</anchor>
+      <arglist>(const boost::shared_ptr&lt; GDALDataset &gt; &amp;aCpr_dataset)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~GridCoverageI</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>a834b186430283aab2a72f3601bc65d84</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>init</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>a09eddbcf38cfa6343c7898848e057b56</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>void</type>
+      <name>getDataBlock</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>a02194909297026d7850ee4d5261b098f</anchor>
+      <arglist>(const ::gc::GcGridRange &amp;aCr_GridRange, std::vector&lt; Type &gt; &amp;aT1_data)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>void</type>
+      <name>setDataBlock</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>a2d6106a20dcbd7a23f2c30f2522f1dd4</anchor>
+      <arglist>(const ::gc::GcGridRange &amp;aCr_GridRange, const std::vector&lt; Type &gt; &amp;aT1_data)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>bool</type>
+      <name>containsRange</name>
+      <anchorfile>classogis_1_1impl_1_1_grid_coverage_i.html</anchorfile>
+      <anchor>ac74a712e9dd2c2b60102274063a226b3</anchor>
+      <arglist>(const gc::GcGridRange &amp;aCr_GridRange)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::MultiPointI</name>
+    <filename>classogis_1_1impl_1_1_multi_point_i.html</filename>
+    <base virtualness="virtual">ogis::impl::GeometryCollectionI</base>
+    <member kind="function">
+      <type></type>
+      <name>MultiPointI</name>
+      <anchorfile>classogis_1_1impl_1_1_multi_point_i.html</anchorfile>
+      <anchor>a9fcc5574bc28aa033114521939e7cbdb</anchor>
+      <arglist>(OGRGeometry *aCp_geometry)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::PointI</name>
+    <filename>classogis_1_1impl_1_1_point_i.html</filename>
+    <base virtualness="virtual">ogis::impl::GeometryI</base>
+    <member kind="function">
+      <type></type>
+      <name>PointI</name>
+      <anchorfile>classogis_1_1impl_1_1_point_i.html</anchorfile>
+      <anchor>ad819d8c1db44952607fe509d90a922b6</anchor>
+      <arglist>(OGRGeometry *aCp_geometry, bool ab_IsOwner=false)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual double</type>
+      <name>getX</name>
+      <anchorfile>classogis_1_1impl_1_1_point_i.html</anchorfile>
+      <anchor>a63a42ccadfabe34ae514093767e0f643</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual double</type>
+      <name>getY</name>
+      <anchorfile>classogis_1_1impl_1_1_point_i.html</anchorfile>
+      <anchor>a1d05d5e364613906d061758c18bea9c2</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual double</type>
+      <name>getZ</name>
+      <anchorfile>classogis_1_1impl_1_1_point_i.html</anchorfile>
+      <anchor>ae3d2447154b1dccc177d884365a32d17</anchor>
+      <arglist>(const Ice::Current &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>const OGRGeometry &amp;</type>
+      <name>getType</name>
+      <anchorfile>classogis_1_1impl_1_1_point_i.html</anchorfile>
+      <anchor>af444469022a39cfaeff83a9b8408deba</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const OGRGeometry &amp;</type>
+      <name>Type</name>
+      <anchorfile>classogis_1_1impl_1_1_point_i.html</anchorfile>
+      <anchor>afa23848773d3332cf169832acb7fc21c</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>ogis::impl::SampleDimensionI</name>
+    <filename>classogis_1_1impl_1_1_sample_dimension_i.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>SampleDimensionI</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a294fabf0d0c9cb6d933f44d89fcf5038</anchor>
+      <arglist>(GDALRasterBand *aCp_RasterBand)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~SampleDimensionI</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a5c681581f70356e03aa4862b0414ccde</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cv::CvSampleDimensionType</type>
+      <name>sampleDimensionType</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a287acae3f11c535c6285cd6ed127d781</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual std::string</type>
+      <name>description</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a6ad2fe644f2e7e6b85b8516684feee8a</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cv::StringSeq</type>
+      <name>categoryNames</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a13e1e3c35cda38b862edff686c214efb</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cv::CvColorInterpretation</type>
+      <name>colorInterpretation</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a75ee60058053f49b191e2b89e1279fb0</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cv::CvPaletteInterpretation</type>
+      <name>paletteInterpretation</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a1ca3a5d3dd08f605c3022227c061f32a</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cv::ShortSeqSeq</type>
+      <name>palette</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>ab3d7421fc745becb2db49d66ec1f0945</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Double</type>
+      <name>minimumValue</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a31e10f47116bcd6b8741f715d7ff111a</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Double</type>
+      <name>maximumValue</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a4c11b562d6636d3a3df85af0de851894</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Double</type>
+      <name>noDataValue</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>ac7572b1d01cc2cc58d777b78b4a5e145</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cs::CsUnitPtr</type>
+      <name>units</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a5b553a3e8389ce39da17c173c6dfc25a</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Double</type>
+      <name>valueOffset</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>ade1a08b593ae276dba37756d9a4fa466</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::Ice::Double</type>
+      <name>valueScale</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a08578d95954f1cdb9f8c01c222a50a53</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::cv::StringSeq</type>
+      <name>metadataNames</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a635d905742fe469d78fe0b55082866a6</anchor>
+      <arglist>(const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type>virtual ::std::string</type>
+      <name>getMetadataValue</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a77b2c84a94b57f35495508641205e127</anchor>
+      <arglist>(const ::std::string &amp;, const Ice::Current &amp;)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type></type>
+      <name>SampleDimensionI</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>a182087ecae21f8297686516aa39d44b2</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>GDALRasterBand *</type>
+      <name>mCp_RasterBand</name>
+      <anchorfile>classogis_1_1impl_1_1_sample_dimension_i.html</anchorfile>
+      <anchor>abfb049626d75451b1a934c5ab2997885</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="dir">
+    <name>src/efscape</name>
+    <path>/Users/jcc/local/src/efscape/src/efscape/</path>
+    <filename>dir_919c3ce8498de4e86e3c7d0aeab58577.html</filename>
+    <dir>src/efscape/gis</dir>
+    <dir>src/efscape/impl</dir>
+    <dir>src/efscape/server</dir>
+  </compound>
+  <compound kind="dir">
+    <name>src/efscape/gis</name>
+    <path>/Users/jcc/local/src/efscape/src/efscape/gis/</path>
+    <filename>dir_3d39bdf624c1237200a2695a01ead08f.html</filename>
+    <file>CellIndex.cc</file>
+    <file>CellIndex.hh</file>
+    <file>gdal_utils.cpp</file>
+    <file>gdal_utils.hpp</file>
+    <file>gdal_utils.ipp</file>
+    <file>GDALWrapper.cc</file>
+    <file>GDALWrapper.hh</file>
+    <file>GeoDataSource.cc</file>
+    <file>GeoDataSource.hh</file>
+    <file>Geogrid.cc</file>
+    <file>Geogrid.hh</file>
+    <file>Geogrid_impl.cc</file>
+    <file>Geogrid_impl.hh</file>
+    <file>Geogrid_impl.ipp</file>
+    <file>GeoNetCDF.cc</file>
+    <file>GeoNetCDF.hh</file>
+    <file>GeoNetCDF.ipp</file>
+    <file>GeoObject.cc</file>
+    <file>GeoObject.hh</file>
+    <file>GeoRaster.cc</file>
+    <file>GeoRaster.hh</file>
+    <file>Index.cc</file>
+    <file>Index.hh</file>
+    <file>LandscapeI.cc</file>
+    <file>LandscapeI.hh</file>
+    <file>OGRWrapper.cc</file>
+    <file>OGRWrapper.hh</file>
+    <file>Range.cc</file>
+    <file>Range.hh</file>
+  </compound>
+  <compound kind="dir">
+    <name>src/ogis/impl</name>
+    <path>/Users/jcc/local/src/efscape/src/ogis/impl/</path>
+    <filename>dir_b348ee167d7f2e4ca227832af910ca15.html</filename>
+    <file>CoordinateSystemI.cpp</file>
+    <file>CoordinateSystemI.hpp</file>
+    <file>CoverageI.cpp</file>
+    <file>CoverageI.hpp</file>
+    <file>CoverageI.ipp</file>
+    <file>FeatureCollectionI.cpp</file>
+    <file>FeatureCollectionI.hpp</file>
+    <file>FeatureI.cpp</file>
+    <file>FeatureI.hpp</file>
+    <file>FeatureTypeI.cpp</file>
+    <file>FeatureTypeI.hpp</file>
+    <file>GeometryI.cpp</file>
+    <file>GeometryI.hpp</file>
+    <file>GridCoverageExchangeI.cpp</file>
+    <file>GridCoverageExchangeI.hpp</file>
+    <file>GridCoverageI.cpp</file>
+    <file>GridCoverageI.hpp</file>
+    <file>GridCoverageI.ipp</file>
+    <file>ogis_utils.cpp</file>
+    <file>ogis_utils.hpp</file>
+    <file>SampleDimensionI.cpp</file>
+    <file>SampleDimensionI.hpp</file>
+  </compound>
+  <compound kind="dir">
+    <name>src/efscape/impl</name>
+    <path>/Users/jcc/local/src/efscape/src/efscape/impl/</path>
+    <filename>dir_92df888c692cab43e9d06f323c5c5621.html</filename>
+    <file>adevs_config.cc</file>
+    <file>adevs_config.hh</file>
+    <file>adevs_decorator.h</file>
+    <file>adevs_serialization.hh</file>
+    <file>AdevsModel.cc</file>
+    <file>AdevsModel.hh</file>
+    <file>BuildModel.cc</file>
+    <file>BuildModel.hh</file>
+    <file>ClockI.cc</file>
+    <file>ClockI.hh</file>
+    <file>Cloneable.hh</file>
+    <file>driver.cc</file>
+    <file>EfscapeBuilder.cc</file>
+    <file>EfscapeBuilder.hh</file>
+    <file>EntityI.cc</file>
+    <file>EntityI.hh</file>
+    <file>export.cc</file>
+    <file>InitObject.hh</file>
+    <file>ModelBuilder.cc</file>
+    <file>ModelBuilder.hh</file>
+    <file>ModelFactory.cpp</file>
+    <file>ModelFactory.hpp</file>
+    <file>ModelFactory.ipp</file>
+    <file>ModelHomeI.cc</file>
+    <file>ModelHomeI.hh</file>
+    <file>ModelHomeSingleton.cc</file>
+    <file>ModelHomeSingleton.hh</file>
+    <file>RepastModelWrapper.hpp</file>
+    <file>RepastModelWrapper.ipp</file>
+    <file>RunSim.cc</file>
+    <file>RunSim.hh</file>
+    <file>singletondll_export.h</file>
+  </compound>
+  <compound kind="dir">
+    <name>src/ogis</name>
+    <path>/Users/jcc/local/src/efscape/src/ogis/</path>
+    <filename>dir_4cff2eec6ee48b77bf96266274c45f70.html</filename>
+    <dir>src/ogis/impl</dir>
+  </compound>
+  <compound kind="dir">
+    <name>src/efscape/server</name>
+    <path>/Users/jcc/local/src/efscape/src/efscape/server/</path>
+    <filename>dir_850ad947a3402f326e7889dd8a8d0266.html</filename>
+    <file>adevs_ice_config.cc</file>
+    <file>adevs_ice_config.hh</file>
+    <file>Client.cpp</file>
+    <file>ClockTie.cc</file>
+    <file>ClockTie.hh</file>
+    <file>DataFrameTie.cc</file>
+    <file>DataFrameTie.hh</file>
+    <file>ModelHomeTie.cc</file>
+    <file>ModelHomeTie.hh</file>
+    <file>ModelTie.cc</file>
+    <file>ModelTie.hh</file>
+    <file>RunServer.cpp</file>
+    <file>RunServer.hpp</file>
+    <file>Server.cpp</file>
+    <file>SimulatorI.cc</file>
+    <file>SimulatorI.hh</file>
+  </compound>
+  <compound kind="dir">
+    <name>src</name>
+    <path>/Users/jcc/local/src/efscape/src/</path>
+    <filename>dir_68267d1309a1af8e8297ef4c3efbcdba.html</filename>
+    <dir>src/efscape</dir>
+    <dir>src/ogis</dir>
+  </compound>
+</tagfile>

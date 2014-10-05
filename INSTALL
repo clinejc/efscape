@@ -1,0 +1,53 @@
+Prerequisites
+=============
+
+The efscape packages uses C++, XML, and ICE (Internet Connection Engine). The
+following packages are prerequisites:
+  o C++ compiler:
+    o GNU gcc version 4.0.x or newer
+  o automake version 1.9 or newer
+  o autoconf version 2.60 or newer
+  o Boost C++ Libraries version 1.35 or newer
+    http://www.boost.org/
+  o loki-lib version version 1.5 or newer
+    http://sorceforge.net/projects/loki-lib/
+    o NOTE: copy the loki.pc file  to {libdir}/pkgconfig and edit the file
+            to specify the correct prefix if necessary
+  o ICE (Internet Connection Engine) version 3.1 or newer (CORBA alternative)
+    http://www.zeroc.com/
+    o NOTE: edit the ice-config file (if necessary) and place a copy of the
+            file in the user's $PATH
+  o netCDF (network Common Data Format) version 3.6.x or newer
+    http://www.unidata.ucar.edu/software/netcdf/
+  o xerces-c (C++ XML Parser) version 3.x or newer
+    http://xml.apache.org/
+  o geos (Geometry Engine Open Source) version 2.2.x or newer
+    http://geos.refractions.net/
+  o gdal (Geospatial Data Abstraction Library) version 1.10.x or newer
+    http://www.gdal.org/
+    o NOTE: gdal must be configured to include both geos and xerces-c
+  o log4cxx (C++) version 0.10.x or newer
+    http://logging.apache.org/log4cxx/
+  o Repast HPC (C++) version 2.0 or newer
+
+Installation of efscape
+=======================
+Key environment variables:
+  o EFSCAPE_PATH: path of the source
+  o EFSCAPE_REPOSITORY: libdir path for all efscape model libraries
+  o EFSCAPE_HOME: path of model output (preferably web-accessible)
+
+There are three directories in the main efscape src/ directory:
+1. ogis: ICE idl file and files implementing a subset of the Open GIS
+   Consortium CORBA implementation of the GC_GridCoverage package (provides
+   open interface for grid-based spatial data) - libogis
+2. efscape: ICE idl file and files implementing base ICE servant classes
+   for the efscape framework - libefscape, libefscapeimpl
+3. demo: a simple simulation model example
+
+The current version of efscape uses autoconf, so the standard autoconf install
+instructions apply. For initial set-up of the configure, run
+
+$ ./autogen.sh
+$ ./configure --prefix=[PREFIX]
+$ make install

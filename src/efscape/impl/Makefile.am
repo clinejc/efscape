@@ -1,0 +1,79 @@
+## source directory for the DEVS simulator implementation classes
+
+hh_sources = adevs_config.hh
+hh_sources += adevs_decorator.h
+hh_sources += adevs_serialization.hh
+hh_sources += ClockI.hh
+hh_sources += Cloneable.hh
+hh_sources += EntityI.hh
+hh_sources += InitObject.hh
+hh_sources += ModelBuilder.hh
+hh_sources += EfscapeBuilder.hh
+hh_sources += ModelHomeSingleton.hh
+hh_sources += ModelFactory.hpp
+hh_sources += ModelFactory.ipp
+hh_sources += singletondll_export.h
+hh_sources += AdevsModel.hh
+hh_sources += BuildModel.hh
+hh_sources += RunSim.hh
+hh_sources += RepastModelWrapper.hpp
+hh_sources += RepastModelWrapper.ipp
+
+cc_sources = adevs_config.cc
+cc_sources += ClockI.cc
+cc_sources += EntityI.cc
+cc_sources += ModelBuilder.cc
+cc_sources += EfscapeBuilder.cc
+cc_sources += ModelHomeI.cpp
+cc_sources += ModelHomeSingleton.cc
+cc_sources += ModelFactory.cpp
+cc_sources += AdevsModel.cc
+cc_sources += BuildModel.cc
+cc_sources += RunSim.cc
+cc_sources += export.cc
+
+# library
+lib_LTLIBRARIES = libefscape-impl.la
+
+AM_CPPFLAGS = -I$(top_srcdir)/src
+AM_CPPFLAGS += $(DEPS_CFLAGS)
+AM_CPPFLAGS += $(BOOST_CPPFLAGS)
+
+libefscape_impl_la_LDFLAGS = $(BOOST_SERIALIZATION_LDFLAGS)
+
+libefscape_impl_la_LIBADD = $(top_srcdir)/src/efscape/utils/libefscape-utils.la
+libefscape_impl_la_LIBADD += $(top_srcdir)/src/efscape/gis/libefscape-gis.la
+libefscape_impl_la_LIBADD += $(BOOST_SERIALIZATION_LIBS)
+libefscape_impl_la_LIBADD += $(BOOST_MPI_LIBS)
+libefscape_impl_la_LIBADD += $(BOOST_FILESYSTEM_LIBS)
+libefscape_impl_la_LIBADD += $(BOOST_SYSTEM_LIBS)
+libefscape_impl_la_LIBADD += $(BOOST_PROGRAM_OPTIONS_LIBS)
+libefscape_impl_la_LIBADD += $(BOOST_DATE_TIME_LIBS)
+libefscape_impl_la_LIBADD += $(NETCDF_CXX_LIBS)
+libefscape_impl_la_LIBADD += $(DEPS_LIBS)
+libefscape_impl_la_LIBADD += -lltdl
+
+libefscape_impl_la_SOURCES=  $(hh_sources) $(cc_sources)
+
+library_includedir = $(includedir)/efscape/impl
+library_include_HEADERS = $(hh_sources) driver.cc
+
+# programs
+bin_PROGRAMS = efdriver
+
+# efdriver: program for running a model
+efdriver_SOURCES = driver.cc
+
+efdriver_LDFLAGS = $(BOOST_MPI_LDFLAGS)
+
+efdriver_LDADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
+efdriver_LDADD += $(BOOST_MPI_LIBS)
+efdriver_LDADD += $(BOOST_SERIALIZATION_LIBS)
+efdriver_LDADD += $(DEPS_LIBS)
+
+copyright:
+	cp $(top_srcdir)/Copyright.doc $(top_srcdir)/Makefile.cr $(top_srcdir)/Sed.cr .
+	make -f Makefile.cr NAME="${PACKAGE}" FILES="${cc_sources}"
+	make -f Makefile.cr NAME="${PACKAGE}" FILES="${hh_sources}"
+	make -f Makefile.cr NAME="${PACKAGE}" FILES="driver.cc"
+	rm -f Copyright.doc Makefile.cr Sed.cr
