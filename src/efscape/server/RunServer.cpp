@@ -18,7 +18,7 @@ namespace efscape {
   namespace server {
 
     // class variables
-    const char* RunServer::mScp_program_name = "efserver2";
+    const char* RunServer::mScp_program_name = "efserver";
     const char* RunServer::mScp_program_version =
       "version 0.0.1 (2014/09/23)";
 
