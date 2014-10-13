@@ -7,8 +7,6 @@
 
 #include <efscape/impl/RepastModelWrapper.hpp>
 
-// #include <repast_hpc/Properties.h>
-// #include <repast_hpc/Schedule.h>
 #include <repast_hpc/RepastProcess.h>
 #include <repast_hpc/logger.h>
 #include <log4cxx/logger.h>
@@ -35,12 +33,14 @@ namespace efscape {
       ATOMIC()
     {
       std::string lC_id = efscape::utils::type< RepastModelWrapper<ModelType> >(*this);
-      std::cout << "Creating <"
-		<< lC_id << ">...\n";
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "Creating <"
+		    << lC_id << ">...");
 
       // 1) Create Repast model
       mCp_model.reset( new ModelType() ); // create model
-      std::cout << "\t*** 1) Just reset the wrapped model ***\n";
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "===> 1) Just reset the wrapped model ***");
 
       // 2) Get default config file
 
@@ -55,16 +55,18 @@ namespace efscape {
       std::string lC_config_file = lC_EfscapeIcePath
 	+ std::string("/config.props");
 
-
-      std::cout << "\t*** 2) Attempting to load configuration file ***\n";
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "===> 2) Attempting to load configuration file ***");
 
       // 3) Intialize RepastProcess
       repast::RepastProcess::init(lC_config_file);
 
-      std::cout << "\t*** 3) Initialized the RepastProcess!\n";
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "===> 3) Initialized the RepastProcess!");
 
-      std::cout << "\t*** Completed configuration of <"
-		<< lC_id << ">\n";
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "===> Completed configuration of <"
+		    << lC_id << ">");
 
     } // RepastModelWrapper<ModelType>::RepastModel()
 
@@ -76,8 +78,9 @@ namespace efscape {
     template <class ModelType>
     RepastModelWrapper<ModelType>::~RepastModelWrapper() {
       std::string lC_id = efscape::utils::type< RepastModelWrapper<ModelType> >(*this);
-      std::cout << "Deleting RepastModelWrapper=<"
-		<< lC_id << ">...\n";
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "Deleting RepastModelWrapper=<"
+		    << lC_id << ">...");
 
       // Shutdown Repast process
       repast::RepastProcess::instance()->done();
@@ -113,10 +116,12 @@ namespace efscape {
 
 
       for (; i != xb.end(); i++) {
-	std::cout << "RepastModel input on port <"
-		  << (*i).port << ">\n";
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "RepastModel input on port <"
+		      << (*i).port << ">");
 	if ( (*i).port == properties_in) { // event on <properties_in> port
-	  std::cout << "Found port=" << properties_in << std::endl;
+	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+			"Found port=" << properties_in);
 	  try {
 	    // 1) try to extract the properties file name
 	    std::string lC_propsFile =
@@ -167,6 +172,17 @@ namespace efscape {
      */
     template <class ModelType>
     void RepastModelWrapper<ModelType>::output_func(adevs::Bag<IO_Type>& yb) {
+      std::map<std::string,std::string> lC_properties_map;
+      const repast::Properties& lCr_properties = mCp_model->getProperties();
+      repast::Properties::key_iterator iter = lCr_properties.keys_begin();
+      for ( ; iter != lCr_properties.keys_end(); iter++) {
+	lC_properties_map[*iter] = lCr_properties.getProperty(*iter);
+      }
+
+      // output properties map
+      efscape::impl::IO_Type y("properties_out",
+			       lC_properties_map);
+      yb.insert(y);
     }
 
     /**
