@@ -103,9 +103,6 @@ EfscapeClient::run(int argc, char* argv[])
 
     efscape::ModelPrx lCp_Model;
 
-    // processing argument
-    std::string lC_ParmName = argv[1];
-
     // try to load the parameter file
     std::ifstream parmFile(lC_ParmName.c_str());
 
@@ -116,6 +113,10 @@ EfscapeClient::run(int argc, char* argv[])
       char ch;
       while (buf && parmFile.get( ch ))
 	buf.put( (wchar_t)ch );
+      std::cout << buf << std::endl;
+    }
+    else {
+      std::cout << "No parameter file\n";
     }
     if (lC_ModelName == "") {	// loading model from xml file
       lCp_Model = lCp_ModelHome->createFromXML(buf.str());
