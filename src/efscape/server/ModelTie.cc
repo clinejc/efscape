@@ -91,8 +91,16 @@ namespace efscape {
 	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 			"The simulation model is inert");
 
-	// // save the initial state of the model in xml format
-	// efscape::impl::saveAdevs(lCp_model,lC_ParmName.c_str());
+	// save the initial state of the model in xml format
+	try {
+	  efscape::impl::saveAdevs(lCp_model,lC_ParmName.c_str());
+	}
+	catch(std::exception lC_exp) {
+	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+			lC_exp.what()
+			<< ": unable to save initial simulation state in XML format -- "
+			<< "continuing...");
+	}
       }
       catch(std::logic_error lC_exp) {
 	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
