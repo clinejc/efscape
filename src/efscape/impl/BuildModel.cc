@@ -178,22 +178,33 @@ namespace efscape {
     /**
      * Sets the model clock configuration.
      */
-    void BuildModel::setClock() {
-      if (mC_variable_map.count("TimeDelta"))
-	md_TimeDelta = mC_variable_map["TimeDelta"].as<double>();
+    void BuildModel::setClock()
+    {
       mCp_ClockI->timeDelta() = md_TimeDelta;
-
-      if (mC_variable_map.count("TimeMax"))
-	md_TimeMax = mC_variable_map["TimeMax"].as<double>();
       mCp_ClockI->timeMax() = md_TimeMax;
-
-      if (mC_variable_map.count("StartDate"))
-	mC_StartDate = mC_variable_map["StartDate"].as<ptime>();
       mCp_ClockI->base_date(mC_StartDate);
-
-      if (mC_variable_map.count("TimeUnits"))
-	mC_TimeUnits = mC_variable_map["TimeUnits"].as<time_duration>();
       mCp_ClockI->units(mC_TimeUnits);
+
+      // Override with command-line parameters
+      if (mC_variable_map.count("TimeDelta")) {
+	md_TimeDelta = mC_variable_map["TimeDelta"].as<double>();
+	mCp_ClockI->timeDelta() = md_TimeDelta;
+      }
+
+      if (mC_variable_map.count("TimeMax")) {
+	md_TimeMax = mC_variable_map["TimeMax"].as<double>();
+	mCp_ClockI->timeMax() = md_TimeMax;
+      }
+
+      if (mC_variable_map.count("StartDate")) {
+	mC_StartDate = mC_variable_map["StartDate"].as<ptime>();
+	mCp_ClockI->base_date(mC_StartDate);
+      }
+
+      if (mC_variable_map.count("TimeUnits")) {
+	mC_TimeUnits = mC_variable_map["TimeUnits"].as<time_duration>();
+	mCp_ClockI->units(mC_TimeUnits);
+      }
     }
 
     /**
@@ -204,19 +215,28 @@ namespace efscape {
     void BuildModel::createModel() 
       throw(std::logic_error)
     {
-      mCp_model.reset( Singleton<ModelHomeI>::Instance().CreateModel( mC_ClassName.c_str() ) );
+      if (mCp_model.get() == NULL) {
 
-      if (mCp_model.get() == 0) {
-	std::string lC_message = "Unable to create model <" + mC_ClassName
-	  + ">";
-	throw std::logic_error(lC_message.c_str());
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "Retrieving the model from the factory");
+	mCp_model.reset( Singleton<ModelHomeI>::Instance().CreateModel( mC_ClassName.c_str() ) );
+
+	if (mCp_model.get() == 0) {
+	  std::string lC_message = "Unable to create model <" + mC_ClassName
+	    + ">";
+	  throw std::logic_error(lC_message.c_str());
+	}
       }
-
+      else {
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "Root model has already been created");
+      }
 
       EntityI* lCp_EntityI = dynamic_cast<EntityI*>( mCp_model.get() );
       if (mC_Name != "" && lCp_EntityI != 0) {
 	lCp_EntityI->name( mC_Name.c_str() );
-	std::cout << "Set model name to <" << mC_Name << ">...\n";
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "Set model name to <" << mC_Name << ">...");
       }
 
       // attempt to narrow the cast to class <efscape::impl::AdevsModel>

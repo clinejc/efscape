@@ -53,6 +53,10 @@ namespace efscape {
     void inject_events(double e, const adevs::Bag<IO_Type>& xb,
 		       DEVS* aCp_model);
 
+    // get (extract) output from a model
+    void get_output(adevs::Bag<IO_Type>& yb,
+		    DEVS* aCp_model);
+
     // serialization functions for adevs::Devs<IO_Type> models
     void saveAdevs(const DEVS* aCp_model, const char* acp_filename);
     void saveAdevs(const DEVS* aCp_model, std::ostream& aCr_ostream);

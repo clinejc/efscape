@@ -59,7 +59,6 @@ namespace simplesim {
   void SimpleGenerator::delta_int() {
     if (!mb_IsActive)		// activate
       mb_IsActive = true;
-
   }
 
   /**
@@ -94,21 +93,16 @@ namespace simplesim {
     if (!mb_IsActive) {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		    "SimpleGenerator::delta_int(): created state");
-//       mCp_state->count().values().put(0,(int)0); // initialize count
       mCp_state->count() = 0; // initialize count
     }
     else {
       // increment count
       ++mCp_state->count();
-//       int li_count = mCp_state->count().values().as_int(0);
-//       ++li_count;
-//       mCp_state->count().values().put(0,li_count);
     }
 
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		  "SimpleGenerator::output_func(): count = "
 		  << mCp_state->count());
-// 		  << mCp_state->count().values().as_int(0));
 
     // output the model state
     out = mCp_state.get();

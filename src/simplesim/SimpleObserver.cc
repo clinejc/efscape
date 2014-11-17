@@ -7,11 +7,14 @@
 #include "SimpleGenerator.hh"
 #include "BasicModel.hh"
 
-#include "efscape/impl/AdevsModel.hh"
-#include "efscape/impl/ModelHomeI.hh"
+#include <efscape/impl/AdevsModel.hh>
+#include <efscape/impl/ModelHomeI.hh>
+
+#include <boost/lexical_cast.hpp>
 
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 using namespace boost::gregorian;
 using namespace boost::posix_time;
@@ -21,13 +24,17 @@ namespace simplesim {
   // initialize class name
   const char SimpleObserver_strings::name[] = "simplesim::SimpleObserver";
   const char SimpleObserver_strings::m_input[] = "input";
+  const char SimpleObserver_strings::f_output[] = "output";
 
   /** constructor */
   SimpleObserver::SimpleObserver() :
     efscape::impl::EntityI(),
-    adevs::Atomic<efscape::impl::IO_Type>()
+    adevs::Atomic<efscape::impl::IO_Type>(),
+    mb_is_active(false)
   {
     name(SimpleObserver_strings::name);
+
+    mCp_ptree.reset( new boost::property_tree::ptree );
   }
 
   /** destructor */
@@ -57,34 +64,12 @@ namespace simplesim {
     // get handle to clock
     const efscape::impl::ClockI* lCp_clock = lCp_RootModel->getClock();
 
-    // // create observer dataset
-    // std::string lC_FileName = "./output.nc";
-    // efscape::impl::TimeSeries* lCp_dataset = new efscape::impl::TimeSeries;
-    // lCp_dataset->open(lC_FileName.c_str());
-    // mCp_dataset.reset( lCp_dataset );
-
-    // if (!mCp_dataset->dataset()->is_valid()) {
-    //   lC_message +=
-    // 	": Unable to open cell observer dataset <" + lC_FileName + ">";
-    //   throw(std::logic_error(lC_message));
-    // }
-
-    // LOG4CXX_DEBUG(getLogger(),
-    // 		  "\tCreated dataset <"
-    // 		  << lC_FileName);
-
     //--------------------
     // set time attributes
     //--------------------
     ptime lC_base_date =
       lCp_clock->date_time(lCp_clock->time());
-    // ((efscape::impl::TimeSeries*)mCp_dataset.get())
-    //   ->time_units(1, "days", lC_base_date);
-
-    // // add variable <count>
-    // NcVar* lCp_var = mCp_dataset->add_var("count", ncInt);
     
-
   } // SimpleObserver::initialize()
 
   /**
@@ -114,32 +99,19 @@ namespace simplesim {
 	    boost::any_cast<const SimpleState*>( (*i).value );
 
 	  if (lCp_state != 0) {
+	    // add the observation to the ptree
+	    boost::property_tree::ptree child;
+	    child.put("date_time",
+		   boost::lexical_cast<std::string>(lCp_state->clock().date_time(lCp_state->clock().time())) );
+	    child.put("count",
+		   boost::lexical_cast<std::string>(lCp_state->count()) );
 
-// 	    // write time series data
-// 	    long ll_num_recs = 0;
-// 	    if (lCp_state->clock().time() > 0)
-// 	      ll_num_recs = mCp_dataset->num_recs();
+	    mCp_ptree->push_back(std::make_pair("",child));
 
-// 	    // time
-// 	    NcVar* lCp_var = mCp_dataset->dataset()->get_var("time");
-// 	    double ld_time = lCp_state->clock().time();
-// 	    lCp_var->put_rec(&ld_time,ll_num_recs);
-
-// 	    // count
-// 	    lCp_var = mCp_dataset->dataset()->get_var("count");
-// // 	    int li_count = lCp_state->count().values().as_int(0);
-// 	    int li_count = lCp_state->count();
-// 	    lCp_var->put_rec(&li_count,ll_num_recs);
-
-// 	    // update dataset
-// 	    mCp_dataset->dataset()->sync();
-
-// 	    LOG4CXX_DEBUG(getLogger(),
-// 			  lCp_state->clock().date_time(lCp_state->clock().time())
-// 			  << "\t"
-// // 			  << lCp_state->count().values().as_int(0));
-// 			  << lCp_state->count());
-
+	    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+			  lCp_state->clock().date_time(lCp_state->clock().time())
+			  << "\t"
+			  << lCp_state->count());
 
 	    //---------------------------------------------------
 	    // if this is the last iteration, write final results
@@ -148,6 +120,7 @@ namespace simplesim {
 	      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 			    "SimpleObserver: all observations complete");
 	    }
+	    mb_is_active = true;
 	  }
 	}
 	catch(const boost::bad_any_cast &) {
@@ -174,6 +147,16 @@ namespace simplesim {
    * @param yb bag of output events
    */
   void SimpleObserver::output_func(adevs::Bag<efscape::impl::IO_Type>& yb) {
+    // generting ptree output
+    boost::property_tree::ptree pt;
+    pt.put("testkey", "testvalue");
+    pt.add_child("MyArray", *mCp_ptree);
+
+    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		  "SimpleObserver::output_func()")
+    efscape::impl::IO_Type y(SimpleObserver_strings::f_output,
+			     pt);
+    yb.insert(y);
   }
 
   /**
@@ -182,15 +165,19 @@ namespace simplesim {
    * @return time advance
    */
   double SimpleObserver::ta() {
+    if (mb_is_active) {
+      mb_is_active = false;
+      return 0.;
+    }
     return DBL_MAX;
   }
 
   /**
    * Output value garbage collection.
    *
-   * @param g bag of events
+   * @param yb bag of events
    */
-  void SimpleObserver::gc_output(adevs::Bag<efscape::impl::IO_Type>& g) {
+  void SimpleObserver::gc_output(adevs::Bag<efscape::impl::IO_Type>& yb) {
   }
 
 } // namespace simplesim

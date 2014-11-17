@@ -107,7 +107,7 @@ namespace efscape {
 
       oa << boost::serialization::make_nvp("efscape",aCp_model);
 
-      aCr_ostream << "</boost_serialization>";
+      // aCr_ostream << "</boost_serialization>";
     }
 
     /**

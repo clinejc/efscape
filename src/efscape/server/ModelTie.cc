@@ -9,6 +9,13 @@
 #include <efscape/impl/ModelHomeI.hh>
 #include <efscape/impl/AdevsModel.hh>
 #include <efscape/utils/type.hpp>
+#include <efscape/utils/boost_utils.ipp>
+#include <efscape/server/JsonDatasetI.hpp>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/optional.hpp>
+#include <boost/regex.hpp>
 
 namespace efscape {
 
@@ -86,6 +93,33 @@ namespace efscape {
 	if ( mCp_simulator->nextEventTime() < DBL_MAX) {
 	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 			"The simulation model is ready to run!");
+
+	  // now check if there is initial output from the model
+	  adevs::Bag< efscape::impl::IO_Type > yb;
+	  efscape::impl::get_output( yb,
+				     mCp_WrappedModel.get() );
+	  adevs::Bag< efscape::impl::IO_Type >::iterator
+	    i = yb.begin();
+	  for ( ; i != yb.end(); i++) {
+	    try {
+	      // if there is there is a property tree in the output,
+	      // attempt to extract time parameters for the simulation
+	      boost::property_tree::ptree pt =
+		boost::any_cast<boost::property_tree::ptree>( (*i).value );
+	      boost::optional<int> lC_stop_at = pt.get_optional<int>("stop.at");
+	      if (lC_stop_at) {
+		mCp_ClockTie->getClock()->timeMax() =
+		  ((double)lC_stop_at.get());
+
+		LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+			      "Setting the simulation stop time to "
+			      << mCp_ClockTie->getClock()->timeMax());
+	      }
+	    }
+	    catch (const boost::bad_any_cast &) {
+	      ;
+	    }
+	  } // for ( ; i != yb.end(); i++ )
 	}
 	else
 	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -385,11 +419,26 @@ namespace efscape {
 			     aCr_internal_input)
     {
       // delegate output processing to output producers
-      std::vector<AdevsInputConsumerPtr>::iterator iConsumer;
-      for (iConsumer = mC1_InputConsumers.begin();
-	   iConsumer != mC1_InputConsumers.end();
-	   iConsumer++) {
-	(*(*iConsumer))(aCr_current, aCr_external_input, aCr_internal_input);
+      for (int i = 0; i < aCr_external_input.size(); i++) {
+	std::vector<AdevsInputConsumerPtr>::iterator iConsumer;
+	for (int j = 0; j < mC1_InputConsumers.size(); j++) {
+	  adevs::Event<efscape::impl::IO_Type> e;
+	  if ( (*mC1_InputConsumers[j])(aCr_current,
+					aCr_external_input[j],
+					e) ) {
+	    aCr_internal_input.insert(e);
+	    break;
+	  }
+	  
+	}
+	// for (iConsumer = mC1_InputConsumers.begin();
+	//      iConsumer != mC1_InputConsumers.end();
+	//      iConsumer++) {
+	//   if ( (*(*iConsumer))(aCr_current,
+	// 		       aCr_external_input[i],
+	// 		       aCr_internal_input) )
+	//     break;
+	// }
       }
     }
 
@@ -402,13 +451,52 @@ namespace efscape {
     void ModelTie::translateOutput(const Ice::Current& aCr_current,
 				   ::efscape::Message& aCr_external_output)
     {
-      // delegate output processing to output producers
-      std::vector<AdevsOutputProducerPtr>::iterator iProducer;
-      for (iProducer = mC1_OutputProducers.begin();
-	   iProducer != mC1_OutputProducers.end();
-	   iProducer++) {
-	(*(*iProducer))(aCr_current, mCC_OutputBuffer, aCr_external_output);
+      std::cout << "ModelTie::translateOutput(...): processing output...\n";
+      adevs::Bag< adevs::Event<efscape::impl::IO_Type> >::iterator
+	i = mCC_OutputBuffer.begin();
+      for ( ; i != mCC_OutputBuffer.end(); i++) {
+	std::cout << "Processing event on port<"
+		  << (*i).value.port << ">...\n";
+	try {
+
+	  // first try to extract a boost::property_tree::ptree	  
+	  if (::efscape::utils::is_type<boost::property_tree::ptree>((*i).value.value)) {
+
+	    boost::property_tree::ptree pt =
+	      boost::any_cast<boost::property_tree::ptree>( (*i).value.value );
+
+	    // generate JSON output from the ptree
+	    std::string lC_json_str = ::efscape::utils::ptree_to_json(pt);
+	    std::cout << "json=" << lC_json_str;
+
+	    // Create a JsonDataset servant
+	    std::string lC_schema("");
+	    JsonDatasetIPtr lCp_JsonDataset =
+	      new JsonDatasetI(lC_json_str,
+			       lC_schema);
+	    ::efscape::JsonDatasetPrx lCp_JsonDatasetPrx =
+		::efscape::JsonDatasetPrx::uncheckedCast(aCr_current.adapter
+							 ->addWithUUID( lCp_JsonDataset ) );
+	    // add content to message
+	    ::efscape::ContentPtr lCp_content =
+		new ::efscape::Content((*i).value.port,
+				       lCp_JsonDatasetPrx);
+	    aCr_external_output.push_back( lCp_content );
+	  }
+	  
+	}
+	catch (const boost::bad_any_cast &) {
+	  std::cout << "Unable to translate output\n";
+	}
       }
+
+      // // delegate output processing to output producers
+      // std::vector<AdevsOutputProducerPtr>::iterator iProducer;
+      // for (iProducer = mC1_OutputProducers.begin();
+      // 	   iProducer != mC1_OutputProducers.end();
+      // 	   iProducer++) {
+      // 	(*(*iProducer))(aCr_current, mCC_OutputBuffer, aCr_external_output);
+      // }
 
       mCC_OutputBuffer.clear();
 

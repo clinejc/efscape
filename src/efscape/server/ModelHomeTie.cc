@@ -8,6 +8,7 @@
 
 #include <efscape/server/ModelTie.hh>
 #include <efscape/server/SimulatorI.hh>
+#include <efscape/server/JsonDatasetI.hpp>
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hh>
@@ -185,12 +186,34 @@ namespace efscape {
     ModelHomeTie::createSim(const ::efscape::ModelPrx& rootModel,
 			  const Ice::Current& current)
     {
-      SimulatorI* lCp_simulator = new SimulatorI(rootModel);
+      SimulatorIPtr lCp_simulator = new SimulatorI(rootModel);
 
-      efscape::SimulatorPrx lCp_SimulatorPrx =
-	efscape::SimulatorPrx::uncheckedCast(current.adapter
-					   ->addWithUUID( lCp_simulator ) );
+      ::efscape::SimulatorPrx lCp_SimulatorPrx =
+	  ::efscape::SimulatorPrx::uncheckedCast(current.adapter
+						 ->addWithUUID( lCp_simulator ) );
       return lCp_SimulatorPrx;
+    }
+
+    /**
+     * Creates a JsonDataset object.
+     *
+     * @param data data for JsonDataset
+     * @param schema schema for JsonDataset
+     * @param current method invocation
+     * @returns ::efscape::JsonDataset proxy
+     */
+    ::efscape::JsonDatasetPrx
+    ModelHomeTie::createJsonDataset(const ::std::string& data,
+				    const ::std::string& schema,
+				    const Ice::Current& current)
+    {
+      JsonDatasetIPtr lCp_JsonDataset = new JsonDatasetI(data,schema);
+
+      ::efscape::JsonDatasetPrx lCp_JsonDatasetPrx =
+	  ::efscape::JsonDatasetPrx::uncheckedCast(current.adapter
+						   ->addWithUUID( lCp_JsonDataset ) );
+
+      return lCp_JsonDatasetPrx;
     }
 
     //--------------------------------------------------------------------------

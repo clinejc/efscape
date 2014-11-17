@@ -7,13 +7,13 @@
 
 #include <efscape/impl/RepastModelWrapper.hpp>
 
+#include <efscape/impl/ModelHomeI.hh>
+#include <efscape/utils/type.hpp>
 #include <repast_hpc/RepastProcess.h>
 #include <repast_hpc/logger.h>
+#include <boost/property_tree/ptree.hpp>
 #include <log4cxx/logger.h>
-#include <efscape/impl/ModelHomeI.hh>
 #include <iostream>
-
-#include <efscape/utils/type.hpp>
 
 namespace efscape {
   namespace impl {
@@ -172,17 +172,33 @@ namespace efscape {
      */
     template <class ModelType>
     void RepastModelWrapper<ModelType>::output_func(adevs::Bag<IO_Type>& yb) {
-      std::map<std::string,std::string> lC_properties_map;
+      // copy the model properties to a boost::property_tree::ptree
       const repast::Properties& lCr_properties = mCp_model->getProperties();
       repast::Properties::key_iterator iter = lCr_properties.keys_begin();
+      boost::property_tree::ptree lC_ptree;
       for ( ; iter != lCr_properties.keys_end(); iter++) {
-	lC_properties_map[*iter] = lCr_properties.getProperty(*iter);
+	lC_ptree.put( *iter,
+		      lCr_properties.getProperty(*iter) );
       }
 
       // output properties map
       efscape::impl::IO_Type y("properties_out",
-			       lC_properties_map);
+			       lC_ptree);
       yb.insert(y);
+
+      // get model output
+      repast::ScheduleRunner& runner =
+	repast::RepastProcess::instance()->getScheduleRunner();
+
+      std::map< std::string, boost::any > lC_output =
+	mCp_model->getOutput();
+      std::map< std::string, boost::any >::iterator iter2 =
+	lC_output.begin();
+      for ( ; iter2 != lC_output.end(); iter2++) {
+	y.port = iter2->first;
+	y.value = iter2->second;
+	yb.insert(y);
+      }
     }
 
     /**
@@ -219,9 +235,9 @@ namespace efscape {
     void RepastModelWrapper<ModelType>::gc_output(adevs::Bag<IO_Type>& g) {
     }
 
-    //------------------------------------------
+    //-----------------------------------------------
     // end of class RepastModelWrapper implementation
-    //------------------------------------------
+    //-----------------------------------------------
 
   } // namespace impl
 }   // namespace efscape

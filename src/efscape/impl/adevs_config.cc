@@ -21,7 +21,7 @@ namespace efscape {
     char const gcp_libname[] = "efscapeimpl";
 
     /**
-     * Helper function for injecting a bag events.
+     * Helper function for injecting a bag events into a model.
      *
      * @param e time
      * @param xb bag of events
@@ -42,6 +42,31 @@ namespace efscape {
 	  components.begin();
 	for (; iter != components.end(); iter++) {
 	  inject_events(e, xb, *iter);
+	}
+      }
+    }
+
+    /**
+     * Helper function for extracting a bag events from a model.
+     *
+     * @param yb bag of events
+     * @param aCp_model handle to model
+     */
+    void get_output(adevs::Bag<IO_Type>& xb,
+		    DEVS* aCp_model)
+    {
+      ATOMIC* lCp_atomic = NULL;
+      if ( (lCp_atomic = aCp_model->typeIsAtomic() ) != NULL ) {
+	lCp_atomic->output_func(xb);
+      }
+      else {
+	NETWORK* lCp_network = NULL;
+	adevs::Set<DEVS*> components;
+	lCp_network->getComponents(components);
+	/*typename*/ adevs::Set<DEVS*>::iterator iter =
+	  components.begin();
+	for (; iter != components.end(); iter++) {
+	  get_output(xb, *iter);
 	}
       }
     }

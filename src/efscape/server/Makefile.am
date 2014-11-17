@@ -1,6 +1,7 @@
 ## source directory for the ICE DEVS simulator implementation
 
 hh_sources = ClockTie.hh
+hh_sources += JsonDatasetI.hpp
 hh_sources += ModelHomeTie.hh
 hh_sources += ModelTie.hh
 hh_sources += SimulatorI.hh
@@ -9,6 +10,7 @@ hh_sources += adevs_ice_config.hh
 hh_sources += RunServer.hpp
 
 cc_sources = ClockTie.cc
+cc_sources += JsonDatasetI.cpp
 cc_sources += ModelHomeTie.cc
 cc_sources += SimulatorI.cc
 cc_sources += ModelTie.cc
@@ -43,6 +45,7 @@ efserver_SOURCES = $(top_srcdir)/src/efscape/impl/driver.cc
 efserver_LDADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 efserver_LDADD += $(top_srcdir)/src/efscape/server/libefscape-ice.la
 efserver_LDADD += $(BOOST_MPI_LIBS)
+efserver_LDADD += $(BOOST_REGEX_LIBS)
 efserver_LDADD += $(DEPS_LIBS)
 efserver_LDADD += $(NETCDF_CXX_LIBS)
 

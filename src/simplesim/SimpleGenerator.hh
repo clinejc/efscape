@@ -79,14 +79,15 @@ namespace simplesim {
    * example.
    *
    * @author Jon C. Cline <clinej@stanfordalumni.org>
-   * @version 0.0.9 created 11 Oct 2006, revised 06 Dec 2009
+   * @version 0.1.0 created 11 Oct 2006, revised 02 Oct 2014
    *
    * ChangeLog:
-   *   - 2009.12.06 parent class changed from ModelI (removed) to EntityI
-   *   - 2009.03.04 Extensive modifications due to API changes
+   *   - 2014-10-02 updated to support major revision of efscape
+   *   - 2009-12-06 parent class changed from ModelI (removed) to EntityI
+   *   - 2009-03-04 Extensive modifications due to API changes
    *     - changes to serialization interface
    *     - changes to implementation of adevs model hierarchy
-   *   - 2007.10.09 changed port type as per changes to base model class
+   *   - 2007-10-09 changed port type as per changes to base model class
    *   - 2007-02-06 changes propagating from efscape::data interface
    *   - 2007-01-23 added support for efscape::data interface
    *   - 2007-01-12 implemented changes to ModelType_impl interface

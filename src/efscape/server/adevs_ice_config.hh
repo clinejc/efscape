@@ -22,11 +22,11 @@ namespace efscape {
   namespace server {
 
     /**
-     * Base class for converting external model input into a bag of internal
-     * events.
+     * Base class for converting external model input into an internal
+     * event.
      *
      * @author Jon C. Cline <clinej@stanfordalumni.org>
-     * @version 0.01 created 21 Apr 2008, revised 21 Apr 2008
+     * @version 0.0.2 created 21 Apr 2008, revised 27 Oct 2014
      */
     class AdevsInputConsumer
     {
@@ -35,19 +35,27 @@ namespace efscape {
       AdevsInputConsumer();
       virtual ~AdevsInputConsumer();
 
+      /**
+       * Converts external model input into an internal event.
+       *
+       * @param current method invocation
+       * @param aCr_external_input reference to external input
+       * @param aCr_internal_event reference to generated event
+       * @returns whether an event was generated
+       */
       virtual
       bool operator()(const Ice::Current& aCr_current,
-		      const ::efscape::Message& aCr_external_input,
-		      adevs::Bag<adevs::Event<efscape::impl::IO_Type> >&
-		      aCr_internal_input) = 0;
+		      const ::efscape::ContentPtr& aCr_external_input,
+		      adevs::Event<efscape::impl::IO_Type>&
+		      aCr_internal_event) = 0;
     };
 
     /**
      * Base class for converting internal model output into a message containing
-     * external events.
+     * an external event.
      *
      * @author Jon C. Cline <clinej@stanfordalumni.org>
-     * @version 0.01 created 21 Apr 2008, revised 21 Apr 2008
+     * @version 0.0.1 created 21 Apr 2008, revised 29 Oct 2014
      */
     class AdevsOutputProducer
     {
@@ -58,8 +66,8 @@ namespace efscape {
 
       virtual
       bool operator()(const Ice::Current& aCr_current,
-		      const adevs::Bag<adevs::Event<efscape::impl::IO_Type> >&
-		      aCr_internal_output,
+		      adevs::Event<efscape::impl::IO_Type>&
+		      aCr_internal_event,
 		      ::efscape::Message& aCr_external_output) = 0;
 
     };
@@ -70,35 +78,27 @@ namespace efscape {
     typedef std::pair<std::string,::Ice::ObjectPrx> ObjectPrxPair;
     typedef std::map<std::string,::Ice::ObjectPrx> ObjectPrxMap;
 
-    // /**
-    //  * Inserts outgoing DataFrame objects into a message containing external
-    //  * events.
-    //  *
-    //  * @author Jon C. Cline <clinej@stanfordalumni.org>
-    //  * @version 0.02 created 21 Apr 2008, revised 30 May 2009
-    //  */
-    // class DataFrameProducer : public AdevsOutputProducer
-    // {
-    // public:
-    //   DataFrameProducer(efscape::impl::PortType aC_OutputPort);
+    /**
+     * Inserts outgoing JSON data into a message a message containing
+     * an external event.
+     */
+    class JsonOutputProducer : public AdevsOutputProducer
+    {
+    public:
+      JsonOutputProducer();
 
-    //   bool operator()(const Ice::Current& aCr_current,
-    // 		      const adevs::Bag<adevs::Event<efscape::impl::IO_Type> >&
-    // 		      aCr_internal_output,
-    // 		      ::efscape::Message& aCr_external_output);
-    // protected:
-
-    //   /** outgoing port */
-    //   efscape::impl::PortType mC_OutputPort;
-
-    // };				// class DataFrameProducer
+      bool operator()(const Ice::Current& aCr_current,
+		      adevs::Event<efscape::impl::IO_Type>&
+		      aCr_internal_event,
+		      ::efscape::Message& aCr_external_output);
+    };
 
     /**
      * Inserts outgoing GridCoverage objects into a message containing external
      * events.
      *
      * @author Jon C. Cline <clinej@stanfordalumni.org>
-     * @version 0.01 created 30 May 2009
+     * @version 0.0.2 created 30 May 2009, updated 27 Oct 2014
      */
     class GridCoverageProducer : public AdevsOutputProducer
     {
@@ -106,8 +106,8 @@ namespace efscape {
       GridCoverageProducer(efscape::impl::PortType aC_OutputPort);
 
       bool operator()(const Ice::Current& aCr_current,
-		      const adevs::Bag<adevs::Event<efscape::impl::IO_Type> >&
-		      aCr_internal_output,
+		      adevs::Event<efscape::impl::IO_Type>&
+		      aCr_internal_event,
 		      ::efscape::Message& aCr_external_output);
     protected:
 

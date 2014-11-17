@@ -158,14 +158,15 @@ EfscapeClient::run(int argc, char* argv[])
 	  lCp_Clock =
 	    efscape::ClockPrx::checkedCast(lC_message[i]->value);
 	}
+
       }
 
-      // if (!lCp_Clock)
-      // 	throw "Invalid Clock proxy";
+      if (!lCp_Clock)
+      	throw "Invalid Clock proxy";
 
-      // std::cout << "\tstart time:\t" << lCp_Clock->timeCurrent() << "\n"
-      // 		<< "\tend time:\t" << lCp_Clock->timeMax() << "\n"
-      // 		<< "\ttime delta:\t" << lCp_Clock->timeDelta() << "\n";
+      std::cout << "\tstart time:\t" << lCp_Clock->timeCurrent() << "\n"
+      		<< "\tend time:\t" << lCp_Clock->timeMax() << "\n"
+      		<< "\ttime delta:\t" << lCp_Clock->timeDelta() << "\n";
 
       while ( (ld_time = lCp_Simulator->nextEventTime()) < DBL_MAX/*lCp_Clock->timeMax()*/) {
 	lCp_Simulator->execNextEvent();
@@ -175,14 +176,19 @@ EfscapeClient::run(int argc, char* argv[])
 	  std::cout << "time step = " << ld_time
 		    << ", message size = "
 		    << lC_message.size() << std::endl;
-	  // for (int i = 0; i < lC_message.size(); i++) {
-	  //   ::efscape::data::DataFramePrx lCp_DataFrame =
-	  //     ::efscape::data::DataFramePrx::checkedCast(lC_message[i]->value);
-	  //   if (lCp_DataFrame)
+	  for (int i = 0; i < lC_message.size(); i++) {
+	    ::efscape::JsonDatasetPrx lCp_JsonDataset =
+	      ::efscape::JsonDatasetPrx::checkedCast(lC_message[i]->value);
+	    std::cout << "message on port <" << lC_message[i]->port << ">\n";;
+	    if (lCp_JsonDataset) {
+	      std::cout << "JSON dataset=>"
+			<< lCp_JsonDataset->getData()
+			<< std::endl;
+	    }
 	  //     std::cout << "observer <" << lCp_DataFrame->getName()
 	  // 		<< ">, number of rows = "
 	  // 		<< lCp_DataFrame->numRows() << "\n";
-	  // }
+	  }
 	}
       }
 

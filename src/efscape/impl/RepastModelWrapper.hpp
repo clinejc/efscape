@@ -24,13 +24,18 @@ namespace efscape {
      * Assumes that the wrapped model has implemented a single function:
      *  -# void setup(repast::Properties&)
      *  -# const repast::Properties& getProperties()
+     *  -# std::map<std::string,boost::any> getOutput()
+     *    - Should return only output available for recording
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.0 created 09 Aug 2014, updated 13 Sep 2014
+     * @version 0.0.3 created 09 Aug 2014, updated 05 Nov 2014
      *
      * ChangeLog:
-     *  - 2014-09-13 created version that loads
-     *  - 2014-08-09 create template class RepastModelWrapper<T>
+     *  - 2014-11-06 implemented output_func(...)
+     *    - added output of properties as a property_tree
+     *    - added support for mCp_model->getOutput()
+     *  - 2014-09-13 created version that loads the model.props file
+     *  - 2014-08-09 created template class RepastModelWrapper<T>
      */
     template <class ModelType>
     class RepastModelWrapper : public ATOMIC

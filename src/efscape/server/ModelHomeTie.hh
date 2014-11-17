@@ -52,6 +52,11 @@ namespace efscape {
 
       virtual ::efscape::SimulatorPrx createSim(const ::efscape::ModelPrx&,
 						const Ice::Current&);
+
+      virtual
+      ::efscape::JsonDatasetPrx createJsonDataset(const ::std::string&,
+						  const ::std::string&,
+						  const Ice::Current&);
       //
       // local (server-side) methods
       //

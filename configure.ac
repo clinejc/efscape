@@ -54,6 +54,7 @@ BOOST_FILESYSTEM()
 BOOST_SYSTEM()
 BOOST_PROGRAM_OPTIONS()
 BOOST_DATE_TIME()
+BOOST_REGEX()
 
 dnl ---------------------------------------------------------------------------
 dnl Check for gdal (borrowed from grass 6.X.X.)

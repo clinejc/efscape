@@ -17,11 +17,14 @@
  * services, for an Internet Connection Environment (ICE)-based framework.
  *
  * @author Jon C. Cline <clinej@stanfordalumni.org>
- * @version 0.0.10 created 06 Dec 2006, revised 24 Sep 2014
+ * @version 0.0.11 created 06 Dec 2006, revised 02 Nov 2014
  *
  * ChangeLog:
+ *   - 2014-11-02 Added method to ModelHome for creating JsonDataset objects
+ *      - JsonDataset createJsonDataset(string, string)
+ *   - 2014-10-28 Added Interface JsonDataset
  *   - 2014-09-24 Revised ModelHome interface
- *      - Aadded Model::createWithConfig(string name, string config)
+ *      - Model* createWithConfig(string name, string config)
  *   - 2014-02-06 removed use of Data module (deprecated)
  *   - 2010-06-26 Restored destroy methods.
  *   - 2007-12-01 Revised ModelHomeI interface
@@ -79,6 +82,18 @@ module efscape {
   interface Entity {
     ["cpp:const"]
     idempotent string getName();
+  };
+
+  /**
+   * interface JsonDataset -- a simple interface for accessing JSON datasets.
+   * The components of a JSON dataset are:
+   *  - schema
+   *  - data
+   */
+  interface JsonDataset {
+    string getSchema();
+    string getData();
+    void setData(string data, string schema);
   };
 
   /**
@@ -214,6 +229,7 @@ module efscape {
     ModelList getModelList();
 
     Simulator* createSim(Model* rootModel);
+    JsonDataset* createJsonDataset(string data, string schema);
   };
 
 };

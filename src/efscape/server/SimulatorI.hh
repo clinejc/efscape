@@ -9,16 +9,23 @@
 
 #include <Ice/Ice.h>
 #include <efscape/efscape.h>
+#include <IceUtil/Handle.h>
 
 namespace efscape {
 
   namespace server {
 
+    // forward declarations
+    class SimulatorI;
+
+    // typedefs
+    typedef IceUtil::Handle<SimulatorI> SimulatorIPtr;
+
     /**
      * This class implements the Simulator interface
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.02 created 26 Aug 2007, revised 11 Mar 2009
+     * @version 0.0.2 created 26 Aug 2007, revised 11 Mar 2009
      *
      * ChangeLog:
      *   - 2009.03.11 moved to namespace efscape/server

@@ -38,6 +38,35 @@ namespace efscape {
     // class DataFrameProducer implementation
     //----------------------------------------
 
+    /** default constructor */
+    JsonOutputProducer::JsonOutputProducer() {}
+
+    bool
+    JsonOutputProducer::operator()(const Ice::Current& aCr_current,
+				   adevs::Event<efscape::impl::IO_Type>&
+				   aCr_internal_event,
+				   ::efscape::Message& aCr_external_output)
+    {
+      // if event is associated with the following output ports:
+      //  - 'json_out'
+      // -  'geojson_out'
+      // the event value is assumed to be stored in a string
+      if (aCr_internal_event.value.port == "json_out" ||
+	  aCr_internal_event.value.port == "geojson_out") {
+
+	try {
+	  std::string lC_string_value =
+	    boost::any_cast<std::string>(aCr_internal_event.value.value);
+	}
+	catch (const boost::bad_any_cast &) {
+	  return false;
+	}
+	return true;
+      }
+
+      return false;
+    }
+
     // /**
     //  * constructor
     //  *

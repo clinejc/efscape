@@ -38,7 +38,12 @@ namespace efscape {
      * Implements an adevs-based ICE ::efscape::model wrapper.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.10 created 24 Dec 2006, revised 31 May 2010
+     * @version 0.1.0 created 24 Dec 2006, revised 01 Sep 2014
+     *
+     * ChangeLog:
+     *  - 2014-09-01 updated to support major revision of efscape 
+     *  - 2010-05-31 revised
+     *  - ...
      */
     class AdevsModel : virtual public EntityI,
 		       public ModelDecorator,
