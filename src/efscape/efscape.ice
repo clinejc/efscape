@@ -17,9 +17,14 @@
  * services, for an Internet Connection Environment (ICE)-based framework.
  *
  * @author Jon C. Cline <clinej@stanfordalumni.org>
- * @version 0.0.11 created 06 Dec 2006, revised 02 Nov 2014
+ * @version 0.0.12 created 06 Dec 2006, revised 14 Dec 2014
  *
  * ChangeLog:
+ *   - 2014-12-14 Removed JsonDataset and associated operations
+ *     - All IO in both directions is via JSON strings
+ *     - Interface Clock is deprecated (no longer accessible via this module)
+ *   - 2014-12-10 Added data member to efscape.Content to simplify proxy io
+ *      - String valueToJson
  *   - 2014-11-02 Added method to ModelHome for creating JsonDataset objects
  *      - JsonDataset createJsonDataset(string, string)
  *   - 2014-10-28 Added Interface JsonDataset
@@ -66,9 +71,10 @@ module efscape {
   /**
    * class Content
    */
-  class Content {
+  struct /*class*/ Content {
     string port;
-    Object* value;
+    string valueToJson;
+    // Object* value;
   };
 
   /**
@@ -82,57 +88,6 @@ module efscape {
   interface Entity {
     ["cpp:const"]
     idempotent string getName();
-  };
-
-  /**
-   * interface JsonDataset -- a simple interface for accessing JSON datasets.
-   * The components of a JSON dataset are:
-   *  - schema
-   *  - data
-   */
-  interface JsonDataset {
-    string getSchema();
-    string getData();
-    void setData(string data, string schema);
-  };
-
-  /**
-   * interface Clock -- simulation clock
-   **/
-  interface Clock extends Entity {
-
-    /**
-     * Returns time units of the simulation.
-     *
-     * @return time units
-     **/
-    ["cpp:const"]
-    idempotent string timeUnits();
-
-    /**
-     * Returns the minimum time step of the simulation.
-     *
-     * @return minimum time step
-     **/
-    ["cpp:const"]
-    idempotent double timeDelta();
-
-    /**
-     * Returns the end time of the simulation.
-     *
-     * @return end time
-     **/
-    ["cpp:const"]
-    idempotent double timeMax();
-
-    /**
-     * Returns the current time.
-     *
-     * @return current time
-     **/
-    ["cpp:const"]
-    idempotent double timeCurrent();
-
   };
 
   /**
@@ -229,7 +184,6 @@ module efscape {
     ModelList getModelList();
 
     Simulator* createSim(Model* rootModel);
-    JsonDataset* createJsonDataset(string data, string schema);
   };
 
 };

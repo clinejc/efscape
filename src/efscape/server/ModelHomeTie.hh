@@ -20,9 +20,11 @@ namespace efscape {
      * models. It replaces the ModelRepository interface.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.9 created 24 Dec 2006, revised 24 Sep 2014
+     * @version 0.0.11 created 24 Dec 2006, revised 14 Dec 2014
      *
      * ChangeLog:
+     *   - 2014-12-14 removed method for accessing JsonDataset
+     *   - 2014-11-02 added implemention of new method for accessing JsonDataset
      *   - 2014-09-24 removed efscape::impl::ModelHomeI member
      *   - 2014-09-24 implemented createWithConfig(...) method
      *   - 2009-03-11 moved to directory and namespace efscape/server
@@ -52,11 +54,6 @@ namespace efscape {
 
       virtual ::efscape::SimulatorPrx createSim(const ::efscape::ModelPrx&,
 						const Ice::Current&);
-
-      virtual
-      ::efscape::JsonDatasetPrx createJsonDataset(const ::std::string&,
-						  const ::std::string&,
-						  const Ice::Current&);
       //
       // local (server-side) methods
       //

@@ -10,7 +10,6 @@
 #include <efscape/impl/AdevsModel.hh>
 #include <efscape/utils/type.hpp>
 #include <efscape/utils/boost_utils.ipp>
-#include <efscape/server/JsonDatasetI.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -208,16 +207,19 @@ namespace efscape {
     bool ModelTie::confluentTransition(const ::efscape::Message& msg,
 				       const Ice::Current& current)
     {
-      //---------------------------
-      // 1) internalTransition(...)
-      //---------------------------
-      double ld_time = mCp_simulator->nextEventTime();
-      internalTransition(current);
+      std::cout << "ModelTie::confluentTransition:"
+		<< "message length = " << msg.size() << std::endl;
+	
+      // //---------------------------
+      // // 1) internalTransition(...)
+      // //---------------------------
+      // double ld_time = mCp_simulator->nextEventTime();
+      // internalTransition(current);
 
-      //--------------------------
-      // 2) externalTranstion(...)
-      //--------------------------
-      externalTransition(ld_time, msg, current);
+      // //--------------------------
+      // // 2) externalTranstion(...)
+      // //--------------------------
+      // externalTransition(ld_time, msg, current);
 
       return true;
     }
@@ -226,13 +228,13 @@ namespace efscape {
      * Output function.
      *
      * @param current method invocation
-     * @returns message
+     * @returns output message
      */
     ::efscape::Message
     ModelTie::outputFunction(const Ice::Current& current)
     {
       ::efscape::Message lC_message;
-
+      
       //   send clock proxy to port <clock_out>
       if (!mCp_ClockPrx) {
 	if (mCp_ClockTie.get()) {
@@ -243,13 +245,25 @@ namespace efscape {
       }
 
       // add content to message
-      ::efscape::ContentPtr lCp_content =
-	  new ::efscape::Content(std::string("clock_out"),
-				 mCp_ClockPrx);
-      lC_message.push_back( lCp_content );
+      std::map<std::string, std::string> lC_ClockAttributes;
+      lC_ClockAttributes["time_max"] =
+	boost::lexical_cast<std::string>(mCp_ClockTie->getClock()->timeMax());
+      boost::property_tree::ptree lC_pt =
+	::efscape::utils::map_to_ptree<std::string,std::string>("clock",
+								lC_ClockAttributes);
+      std::string lC_json_str = ::efscape::utils::ptree_to_json(lC_pt);
+
+      // ::efscape::ContentPtr lCp_content =
+      // 	  new ::efscape::Content(std::string("clock_out"),
+      // 				 mCp_ClockPrx);
+      ::efscape::Content lC_content;
+      lC_content.port = "clock_out";
+      lC_content.valueToJson = ::efscape::utils::ptree_to_json(lC_pt);
+      lC_message.push_back( lC_content );
 
       translateOutput(current, lC_message);
 
+      std::cout << "Returning output message\n";
       return lC_message;
     }
 
@@ -466,22 +480,10 @@ namespace efscape {
 	      boost::any_cast<boost::property_tree::ptree>( (*i).value.value );
 
 	    // generate JSON output from the ptree
-	    std::string lC_json_str = ::efscape::utils::ptree_to_json(pt);
-	    std::cout << "json=" << lC_json_str;
-
-	    // Create a JsonDataset servant
-	    std::string lC_schema("");
-	    JsonDatasetIPtr lCp_JsonDataset =
-	      new JsonDatasetI(lC_json_str,
-			       lC_schema);
-	    ::efscape::JsonDatasetPrx lCp_JsonDatasetPrx =
-		::efscape::JsonDatasetPrx::uncheckedCast(aCr_current.adapter
-							 ->addWithUUID( lCp_JsonDataset ) );
-	    // add content to message
-	    ::efscape::ContentPtr lCp_content =
-		new ::efscape::Content((*i).value.port,
-				       lCp_JsonDatasetPrx);
-	    aCr_external_output.push_back( lCp_content );
+	    ::efscape::Content lC_content;
+	    lC_content.port = (*i).value.port;
+	    lC_content.valueToJson = ::efscape::utils::ptree_to_json(pt);
+	    aCr_external_output.push_back( lC_content );
 	  }
 	  
 	}

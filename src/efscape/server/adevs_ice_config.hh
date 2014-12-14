@@ -45,7 +45,7 @@ namespace efscape {
        */
       virtual
       bool operator()(const Ice::Current& aCr_current,
-		      const ::efscape::ContentPtr& aCr_external_input,
+		      const ::efscape::Content& aCr_external_input,
 		      adevs::Event<efscape::impl::IO_Type>&
 		      aCr_internal_event) = 0;
     };
