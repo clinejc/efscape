@@ -186,7 +186,7 @@ EfscapeClient::run(int argc, char* argv[])
     li_status = 1;
   }
 
-  Ice::collectGarbage();
+  // Ice::collectGarbage();
 
   return li_status;
 }

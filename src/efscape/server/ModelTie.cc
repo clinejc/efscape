@@ -56,8 +56,7 @@ namespace efscape {
       mCp_simulator->addEventListener(this);
 
       // initialize the simulation clock
-      efscape::impl::ClockIPtr lCp_clock;
-      lCp_clock.reset(new efscape::impl::ClockI);
+      mCp_clock.reset(new efscape::impl::ClockI);
 
       efscape::impl::EntityI* lCp_WrappedModel =
 	dynamic_cast<efscape::impl::EntityI*>(lCp_model);
@@ -68,7 +67,7 @@ namespace efscape {
       	if (lCp_RootModel) {
 	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 			"Setting simulation environment from root model attributes");
-      	  lCp_clock = lCp_RootModel->getClockIPtr();
+      	  mCp_clock = lCp_RootModel->getClockIPtr();
       	  lC_ParmName =
       	    lCp_RootModel->getWorkDir() + "/" +
       	    lCp_RootModel->name() + ".xml";
@@ -76,7 +75,6 @@ namespace efscape {
       }
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		    "Setting the simulation clock");
-      mCp_ClockTie = new ClockTie(lCp_clock);
 
       try {
 	// compute the initial state of the model
@@ -107,12 +105,12 @@ namespace efscape {
 		boost::any_cast<boost::property_tree::ptree>( (*i).value );
 	      boost::optional<int> lC_stop_at = pt.get_optional<int>("stop.at");
 	      if (lC_stop_at) {
-		mCp_ClockTie->getClock()->timeMax() =
+		mCp_clock->timeMax() =
 		  ((double)lC_stop_at.get());
 
 		LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 			      "Setting the simulation stop time to "
-			      << mCp_ClockTie->getClock()->timeMax());
+			      << mCp_clock->timeMax());
 	      }
 	    }
 	    catch (const boost::bad_any_cast &) {
@@ -152,7 +150,7 @@ namespace efscape {
      */
     ::Ice::Double ModelTie::timeAdvance(const Ice::Current& current)
     {
-      return (mCp_ClockTie->getClock()->time() =
+      return (mCp_clock->time() =
 	      mCp_simulator->nextEventTime());
     }
 
@@ -235,19 +233,10 @@ namespace efscape {
     {
       ::efscape::Message lC_message;
       
-      //   send clock proxy to port <clock_out>
-      if (!mCp_ClockPrx) {
-	if (mCp_ClockTie.get()) {
-	  mCp_ClockPrx =
-	    efscape::ClockPrx::uncheckedCast(current.adapter
-					     ->addWithUUID( mCp_ClockTie ) );
-	}
-      }
-
       // add content to message
       std::map<std::string, std::string> lC_ClockAttributes;
       lC_ClockAttributes["time_max"] =
-	boost::lexical_cast<std::string>(mCp_ClockTie->getClock()->timeMax());
+	boost::lexical_cast<std::string>(mCp_clock->timeMax());
       boost::property_tree::ptree lC_pt =
 	::efscape::utils::map_to_ptree<std::string,std::string>("clock",
 								lC_ClockAttributes);

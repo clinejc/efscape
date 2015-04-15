@@ -55,12 +55,17 @@ namespace efscape {
     void get_output(adevs::Bag<IO_Type>& xb,
 		    DEVS* aCp_model)
     {
+      if (aCp_model == NULL) {
+	
+      }
       ATOMIC* lCp_atomic = NULL;
       if ( (lCp_atomic = aCp_model->typeIsAtomic() ) != NULL ) {
 	lCp_atomic->output_func(xb);
       }
       else {
 	NETWORK* lCp_network = NULL;
+	if ( (lCp_network = aCp_model->typeIsNetwork()) == NULL);
+	     return;
 	adevs::Set<DEVS*> components;
 	lCp_network->getComponents(components);
 	/*typename*/ adevs::Set<DEVS*>::iterator iter =

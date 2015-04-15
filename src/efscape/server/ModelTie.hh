@@ -13,8 +13,8 @@
 
 #include <efscape/server/adevs_ice_config.hh>
 #include <efscape/impl/adevs_config.hh>
-#include <efscape/server/ClockTie.hh>
-
+#include <efscape/impl/ClockI.hh>
+#include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
 
 namespace efscape {
@@ -118,15 +118,12 @@ namespace efscape {
       adevs::Bag< adevs::Event<efscape::impl::IO_Type> > mCC_OutputBuffer;
 
       /** simulation clock (implementation) */
-      ClockTiePtr mCp_ClockTie;
+      ::efscape::impl::ClockIPtr mCp_clock;
 
     private:
 
       /** model name */
       std::string mC_name;
-
-      /** simulation clock proxy */
-      ::efscape::ClockPrx mCp_ClockPrx;
 
       /** vector of input consumers */
       std::vector<AdevsInputConsumerPtr> mC1_InputConsumers;
