@@ -12,6 +12,13 @@
 #include <sstream>
 #include <cfloat>
 #include <stdexcept>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <log4cxx/logger.h>
+#include <log4cxx/basicconfigurator.h>
+
+// Create logger
+log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("org.efscape.client"));
 
 /**
  * Catches exceptions to handle known on the exit.
@@ -24,10 +31,10 @@ void singleton_terminate(void) {
         std::cout << "no active exception" << std::endl;
   }
   catch (const std::logic_error& err) {
-    std::cout << "Caught logic error: " << err.what() << std::endl;
+    std::cerr << "Caught logic error: " << err.what() << std::endl;
   }
   catch (...) {
-    std::cout << "unknown exception occurred." << std::endl;
+    std::cerr << "unknown exception occurred." << std::endl;
   }
   exit(0);			// ensure a clean exit
 }
@@ -49,6 +56,8 @@ main(int argc, char* argv[])
 {
   EfscapeClient app;
 
+  log4cxx::BasicConfigurator::configure();
+
   // attempt to retrieve the root directory of efscape ICE configuration
   std::string lC_EfscapeIcePath = "."; // default location
   char* lcp_env_variable =	// get EFSCAPE_HOME
@@ -59,8 +68,8 @@ main(int argc, char* argv[])
 
   std::string lC_config = lC_EfscapeIcePath
     + "/config.client";
-  std::cout
-    << "efscape ICE server config=<" << lC_config << ">\n";
+  LOG4CXX_DEBUG(logger,
+		"efscape ICE server config=<" << lC_config << ">");
 
   return app.main(argc, argv, lC_config.c_str());
 }
@@ -75,16 +84,12 @@ EfscapeClient::run(int argc, char* argv[])
   
   // server requires either:
   //   - a single parameter: an xml file containing the parameters, or
-  //   - two parameters: the model class name and a text parameter file
-  if (argc < 2 || argc > 3) {
+  if (argc != 2) {
     std::cerr << argv[0] << " usage: " << argv[0]
 	      << " <parmfile>\n";
     return EXIT_FAILURE;
-  } else if (argc == 2) {
+  } else {
     lC_ParmName = argv[1];
-  } else {			// argv == 3
-    lC_ModelName = argv[1];
-    lC_ParmName = argv[2];
   }
 
   try {
@@ -97,39 +102,82 @@ EfscapeClient::run(int argc, char* argv[])
 					   ->ice_timeout(-1)
 					   ->ice_secure(false));
     if (!lCp_ModelHome)
-      throw "Invalid proxy";
+      throw "Invalid ModelHome proxy";
 
-    std::cout << "ModelHome accessed successfully!\n";
+    LOG4CXX_DEBUG(logger,
+		  "ModelHome accessed successfully!");
 
+    efscape::ModelNameList lC1_ModelNameList =
+      lCp_ModelHome->getModelList();
+
+    std::cout << "Accessing list of available models\n";
+    
+    for (int i = 0; i < lC1_ModelNameList.size(); i++) {
+      std::cout << "mode #" << i << "=<"
+		<< lC1_ModelNameList[i]
+		<< ">\n";
+      ::efscape::ModelInfo lC_ModelInfo =
+	  lCp_ModelHome->getModelInfo(lC1_ModelNameList[i].c_str());
+      std::cout << "\tmodel info=>\n"
+		<< lC_ModelInfo.infoToJson
+		<< "\n"
+		<< "\tmodel properties=>\n"
+		<< lC_ModelInfo.propertiesToJson
+		<< "\n";
+    }
+
+    return 0;
+    
     efscape::ModelPrx lCp_Model;
 
     // try to load the parameter file
     std::ifstream parmFile(lC_ParmName.c_str());
 
     // if file can be opened
-    std::wostringstream buf;
     if ( parmFile ) {
-      // convert file to string
-      char ch;
-      while (buf && parmFile.get( ch ))
-	buf.put( (wchar_t)ch );
-      std::cout << buf << std::endl;
-    }
-    else {
-      std::cout << "No parameter file\n";
-    }
-    if (lC_ModelName == "") {	// loading model from xml file
-      lCp_Model = lCp_ModelHome->createFromXML(buf.str());
+      boost::filesystem::path p =
+	boost::filesystem::path(lC_ParmName.c_str());
+
+      LOG4CXX_DEBUG(logger,
+		    "Using input parameter file <"
+		    << lC_ParmName
+		    << "> with file extension <"
+		    << p.extension()
+		    << ">");
+
+      // convert file to a string
+      if (p.extension().string() == ".xml") {
+	std::wostringstream wbuf;
+	char ch;
+	while (wbuf && parmFile.get( ch ))
+	  wbuf.put( (wchar_t)ch );
+	LOG4CXX_DEBUG(logger,
+		      "XML buffer=>");
+	LOG4CXX_DEBUG(logger,
+		      wbuf.str() );
+	lCp_Model = lCp_ModelHome->createFromXML(wbuf.str());
+      }
+      else if (p.extension().string() == ".json") {
+	std::ostringstream buf;
+	char ch;
+	while (buf && parmFile.get( ch ))
+	  buf.put( ch );
+	LOG4CXX_DEBUG(logger,
+		      "JSON buffer=>");
+	LOG4CXX_DEBUG(logger,
+		      buf.str() );
+	lCp_Model = lCp_ModelHome->createFromJSON(buf.str());
+      }
     } else {
-      lCp_Model = lCp_ModelHome->createWithConfig(lC_ModelName,
-						  buf.str());
+      throw "Unable to open parameter file\n";
     }
 
     if (!lCp_Model) {
       throw "Invalid Model proxy";
     }
 
-    std::cout << "Model created!\n";
+    LOG4CXX_DEBUG(logger,
+		  "Model created!");
 
     // get a simulator for the model
     efscape::SimulatorPrx lCp_Simulator =
@@ -138,7 +186,8 @@ EfscapeClient::run(int argc, char* argv[])
     if (!lCp_Simulator)
       throw "Invalid Simulator proxy";
       
-    std::cout << "Simulator created!\n";
+    LOG4CXX_DEBUG(logger,
+		  "Simulator created!");
 
     double ld_time = 0.0;
 
@@ -150,9 +199,10 @@ EfscapeClient::run(int argc, char* argv[])
 
       // get a handle to the simulation model clock
       for (int i = 0; i < lC_message.size(); i++) {
-	std::cout << "message " << i << ": value on port <"
-		  << lC_message[i].port << "> = "
-		  << lC_message[i].valueToJson << "\n";
+	LOG4CXX_DEBUG(logger,
+		      "message " << i << ": value on port <"
+		      << lC_message[i].port << "> = "
+		      << lC_message[i].valueToJson);
 
       }
 
@@ -161,13 +211,15 @@ EfscapeClient::run(int argc, char* argv[])
 	efscape::Message lC_message =
 	  lCp_Model->outputFunction();
 	if (lC_message.size() > 0) {
-	  std::cout << "time step = " << ld_time
-		    << ", message size = "
-		    << lC_message.size() << std::endl;
+	  LOG4CXX_DEBUG(logger,
+			"time step = " << ld_time
+			<< ", message size = "
+			<< lC_message.size() );
 	  for (int i = 0; i < lC_message.size(); i++) {
-	    std::cout << "message " << i << ": value on port <"
-		      << lC_message[i].port << "> = "
-		      << lC_message[i].valueToJson << "\n";
+	    LOG4CXX_DEBUG(logger,
+			  "message " << i << ": value on port <"
+			  << lC_message[i].port << "> = "
+			  << lC_message[i].valueToJson);
 	  }
 	}
       }

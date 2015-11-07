@@ -146,7 +146,8 @@ namespace efscape {
     const bool
     lb_AdevsModel_registered =
 	    Singleton<ModelHomeI>::Instance().
-	    GetModelFactory().RegisterModel<AdevsModel>("A generic root model",
+	    GetModelFactory().RegisterModel<AdevsModel>("{\"info\": \"A generic root model\"}",
+							"{}",
 							gcp_libname);
 
   } // namespace impl

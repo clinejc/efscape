@@ -205,19 +205,20 @@ namespace efscape {
     bool ModelTie::confluentTransition(const ::efscape::Message& msg,
 				       const Ice::Current& current)
     {
-      std::cout << "ModelTie::confluentTransition:"
-		<< "message length = " << msg.size() << std::endl;
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "ModelTie::confluentTransition:"
+		    << "message length = " << msg.size() );
 	
-      // //---------------------------
-      // // 1) internalTransition(...)
-      // //---------------------------
-      // double ld_time = mCp_simulator->nextEventTime();
-      // internalTransition(current);
+      //---------------------------
+      // 1) internalTransition(...)
+      //---------------------------
+      double ld_time = mCp_simulator->nextEventTime();
+      internalTransition(current);
 
-      // //--------------------------
-      // // 2) externalTranstion(...)
-      // //--------------------------
-      // externalTransition(ld_time, msg, current);
+      //--------------------------
+      // 2) externalTranstion(...)
+      //--------------------------
+      externalTransition(ld_time, msg, current);
 
       return true;
     }
@@ -242,9 +243,6 @@ namespace efscape {
 								lC_ClockAttributes);
       std::string lC_json_str = ::efscape::utils::ptree_to_json(lC_pt);
 
-      // ::efscape::ContentPtr lCp_content =
-      // 	  new ::efscape::Content(std::string("clock_out"),
-      // 				 mCp_ClockPrx);
       ::efscape::Content lC_content;
       lC_content.port = "clock_out";
       lC_content.valueToJson = ::efscape::utils::ptree_to_json(lC_pt);
@@ -252,7 +250,8 @@ namespace efscape {
 
       translateOutput(current, lC_message);
 
-      std::cout << "Returning output message\n";
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "Returning output message");
       return lC_message;
     }
 

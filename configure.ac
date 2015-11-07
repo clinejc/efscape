@@ -104,7 +104,7 @@ if test "$GEOS_CONFIG" = "no" ; then
 fi
 
 GEOS_CCLIBS=`"$GEOS_CONFIG" --cclibs`
-GEOS_CFAGS=`"$GEOS_CONFIG" --cflags`
+GEOS_CFLAGS=`"$GEOS_CONFIG" --cflags`
 
 AC_SUBST(GEOS_CCLIBS)
 AC_SUBST(GEOS_CFLAGS)
@@ -112,8 +112,8 @@ AC_SUBST(GEOS_CFLAGS)
 dnl ---------------------------------------------------------------------------
 dnl Set netcdf_c++ library options (to be edited manually)
 dnl ---------------------------------------------------------------------------
-NETCDF_CXX_LIBS="-L/Users/jcc/local/lib -lnetcdf_c++"
-NETCDF_CXX_CFLAGS="-I/Users/jcc/local/include"
+NETCDF_CXX_LIBS=`nc-config --libs`" -lnetcdf_c++"
+NETCDF_CXX_CFLAGS=`nc-config --cflags`
 
 AC_SUBST(NETCDF_CXX_LIBS)
 AC_SUBST(NETCDF_CXX_CFLAGS)

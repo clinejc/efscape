@@ -28,28 +28,39 @@ namespace efscape {
      * A simple structure for holding information about a model
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.1 created 03 Mar 2009, revised 03 Mar 2009
+     * @version 0.0.2 created 03 Mar 2009, revised 05 June 2015
      */
     struct ModelInfo {
 
       ModelInfo() :
+	info("{}"),
+	properties("{}"),
 	version(1),
-	info(""),
 	library_name("") {}
 
-      ModelInfo(int ai_version,
-		const char* acp_info,
+      ModelInfo(const char* acp_info,
+		const char* acp_properties,
+		int ai_version,
 		const char* acp_library_name = "efscape") :
-	version(ai_version),
 	info(acp_info),
+	properties(acp_properties),
+	version(ai_version),
 	library_name(acp_library_name) {}
 
       // data members
-      int version;
       std::string info;
+      std::string properties;
+      int version;
       std::string library_name;
     };
 
+    /**
+     * This utility function loads information from a JSON file.
+     * 
+     * @return JSON string
+     */
+    std::string loadInfoFromJSON(const char* acp_path);
+    
     /**
      * This template function create an adevs DEVS object of type T.
      *
@@ -65,7 +76,7 @@ namespace efscape {
      * Implements a factory for simulation models.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.3 created 10 Sep 2009, revised 24 Sep 2014
+     * @version 0.0.4 created 10 Sep 2009, revised 05 Jun 2015
      */
     template <class BaseType>
     class ModelFactoryTmpl
@@ -81,10 +92,11 @@ namespace efscape {
 
       // methods for registering models and listing model info
       template <class DerivedType>
-      bool RegisterModel(const char* acp_info);
+      bool RegisterModel(std::string aC_info);
       template <class DerivedType>
-      bool RegisterModel(const char* acp_info  = "",
-			 const char* acp_library_name = "efscapeimpl");
+      bool RegisterModel(std::string aC_info  = std::string("{}"),
+			 std::string acp_properties = std::string("{}"),
+			 std::string acp_library_name = std::string("efscapeimpl"));
       void ListModels(std::set<std::string>& aC1r_ModelNames);
       void ListModels(std::set<std::string>& aC1r_ModelNames,
 		      bool(*aFp_ModelMatch)(const BaseType*));

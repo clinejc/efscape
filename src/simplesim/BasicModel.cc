@@ -36,7 +36,8 @@ namespace simplesim {
 
   const bool registered = efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
     GetModelFactory().
-      RegisterModel<SimpleGenerator>("A simple generator",
+      RegisterModel<SimpleGenerator>("{ \"info\":\"A simple generator\"}",
+				     "{}",
 				     simplesim::gcp_libname);
 
 

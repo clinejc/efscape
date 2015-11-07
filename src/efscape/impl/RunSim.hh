@@ -20,9 +20,10 @@ namespace efscape {
      * CommandOpt class.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.02 created 01 Feb 2008, revised 14 Jul 2014
+     * @version 0.04 created 01 Feb 2008, revised 01 Jun 2015
      *
      * ChangeLog:
+     *   - 2015-06-01 Added support for loading model configurations from JSON
      *   - 2014-07-14 Implementation pared down to bare essentials.
      *   - 2008-02-01 Created class RunSim.
      */

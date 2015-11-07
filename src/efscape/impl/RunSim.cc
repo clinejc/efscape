@@ -13,6 +13,10 @@
 
 #include <efscape/impl/AdevsModel.hh>
 
+#include <boost/filesystem/operations.hpp>
+#include <fstream>
+#include <sstream>
+
 namespace efscape {
 
   namespace impl {
@@ -20,7 +24,7 @@ namespace efscape {
     // class variables
     const char* RunSim::mScp_program_name = "efdriver";
     const char* RunSim::mScp_program_version =
-      "version 0.0.3 (2014/09/13)";
+      "version 0.0.4 (2015/06/01)";
 
     /** default constructor */
     RunSim::RunSim() {
@@ -67,22 +71,26 @@ namespace efscape {
       // create a root model from the model repository
       //----------------------------------------------
       try {
+	ModelHomeI::getLogger()->setLevel(log4cxx::Level::getDebug());
 	if (mC_variable_map.count("debug")) {
-	  std::cout << "debug is set\n";
+	  LOG4CXX_INFO(ModelHomeI::getLogger(),
+		       "debug is set");
 	}
 	else
-	  std::cout << "debug is not set\n";
+	  LOG4CXX_INFO(ModelHomeI::getLogger(),
+			"debug is not set");
 
 	if (debug_on()) {
-	  std::cout << "Setting logger to Debug...\n";
+	  LOG4CXX_INFO(ModelHomeI::getLogger(),
+		       "Setting logger to Debug...");
 
 	  // note (2008.06.05):
 	  // The default debug setting is not working.
 	  ModelHomeI::getLogger()->setLevel(log4cxx::Level::getDebug());
 	}
 	else {
-	  std::cout << "Setting logger to error...\n";
-	  ModelHomeI::getLogger()->setLevel(log4cxx::Level::getError());
+	  LOG4CXX_INFO(ModelHomeI::getLogger(),
+		       "logger level = INFO");
 	}
 
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
@@ -93,15 +101,36 @@ namespace efscape {
 	boost::scoped_ptr<DEVS> lCp_model;
 	if (files() == 1) {
 	  std::string lC_ParmName = (*this)[0];
-	  std::cout << "Running with a single parameter <"
-		    << lC_ParmName << ">\n";
+	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+			"Running with a single parameter <"
+			<< lC_ParmName << ">");
 
 	  // attempt to create model from parameter file
 	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 			"Loading file <" << lC_ParmName << ">");
 
-	  lCp_model.reset( Singleton<ModelHomeI>::Instance().
-			   CreateModelFromFile(lC_ParmName.c_str()) );
+	  boost::filesystem::path p =
+	    boost::filesystem::path(lC_ParmName.c_str());
+	  if (p.extension().string() == ".xml") {
+	    lCp_model.reset( Singleton<ModelHomeI>::Instance().
+			     CreateModelFromXML(lC_ParmName.c_str()) );
+	  }
+	  else if (p.extension().string() == ".json") {
+	    // try to load the parameter file
+	    std::ifstream parmFile(lC_ParmName.c_str());
+
+	    // if file can be opened
+	    if ( parmFile ) {
+	      std::ostringstream buf;
+	      char ch;
+	      while (buf && parmFile.get( ch ))
+		buf.put( ch );
+	      std::cout << buf << std::endl;
+
+	      lCp_model.reset( Singleton<ModelHomeI>::Instance().
+			       CreateModelFromJSON(buf.str()) );
+	    }
+	  }
 
 	  if (lCp_model.get() == 0) {
 	    LOG4CXX_ERROR(ModelHomeI::getLogger(),
@@ -110,31 +139,6 @@ namespace efscape {
 	    return EXIT_FAILURE;
 	  }
 	} // if (files() == 1)
-	else if (files() == 2) {
-	  std::string lC_model_name = (*this)[0];
-	  std::string lC_props_file = (*this)[1];
-	  std::cout << "Running with model name <"
-		    << lC_model_name << "> with parameter file <"
-		    << lC_props_file << ">\n";
-
-	  // attempt to create model from parameter file
-	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			"Creating model <" << lC_model_name
-			<< "> with property file <"
-			<< lC_props_file << ">");
-
-	  lCp_model.reset( Singleton<ModelHomeI>::Instance().
-			   CreateModelWithConfig(lC_model_name.c_str(),
-						 lC_props_file.c_str()) );
-
-	  if (lCp_model.get() == 0) {
-	    LOG4CXX_ERROR(ModelHomeI::getLogger(),
-			  "Unable to create model <" << lC_model_name
-			  << "> from properties file <"
-			  << lC_props_file << ">");
-	    return EXIT_FAILURE;
-	  }
-	}
 
       	// create simulator
       	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
@@ -143,8 +147,8 @@ namespace efscape {
       	lCp_simulator.reset( new adevs::Simulator<IO_Type>(lCp_model.get()) );
 
       	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-      		      "Attempt to create simulation model successful!\n"
-      		      << "\tInitializing simulation...");
+      		      "Attempt to create simulation model successful!"
+      		      << "...Initializing simulation...");
 
       	if (!initializeModel(lCp_model.get()) ) // initialize model
       	  throw std::logic_error("Unable to initialize model\n");

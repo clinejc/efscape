@@ -12,6 +12,7 @@
 #include <repast_hpc/RepastProcess.h>
 #include <repast_hpc/logger.h>
 #include <boost/property_tree/ptree.hpp>
+#include <boost/foreach.hpp>
 #include <log4cxx/logger.h>
 #include <iostream>
 
@@ -124,27 +125,39 @@ namespace efscape {
 			"Found port=" << properties_in);
 	  try {
 	    // 1) try to extract the properties file name
-	    std::string lC_propsFile =
-	      boost::any_cast<std::string>( (*i).value );
+	    boost::property_tree::ptree pt =
+	      boost::any_cast<boost::property_tree::ptree>( (*i).value );
 
 	    // 2) if time < 0., need to initialize the model
 	    if ( e < 0.) {
 	      // 2014-09-26 added by jcline: (re-)sets clock to 0.
 	      repast::RepastProcess::instance()->getScheduleRunner().init();
 
+	      // 2015-05-27 currently ignoring the 'world' variable
 	      boost::mpi::communicator* world =
 		repast::RepastProcess::instance()->getCommunicator();
 
 	      // Load properties and initialize
-	      repast::Properties lC_props(lC_propsFile,
-					  world);
+	      repast::Properties lC_props;
+
+	      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+			    "Loading properties...");
+	      BOOST_FOREACH( boost::property_tree::ptree::value_type const& rowPair,
+			     pt.get_child( "" ) ) {
+		LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+			      "=> property "
+			      << "<" << rowPair.first << ">="
+			      << "<" << rowPair.second.get_value<std::string>() << ">");
+		lC_props.putProperty(rowPair.first,
+				     rowPair.second.get_value<std::string>() );
+	      }
+	      
 	      mCp_model->setup(lC_props);
 	    }
 	  }
 	  catch(const boost::bad_any_cast &) {
-	    std::cout << "Unable to cast output\n";
 	    LOG4CXX_ERROR(ModelHomeI::getLogger(),
-			  "Unable to cast input as <std::string>");
+			  "Unable to cast input as <boost::property_tree>");
 	  }
 	} // 'if ( (*i).port == properties_in)'
 

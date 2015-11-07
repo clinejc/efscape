@@ -68,7 +68,7 @@ namespace efscape {
       try {
 	// attempt create the model
 	adevs::Devs<efscape::impl::IO_Type>* lCp_modelI =
-	  impl::Singleton<impl::ModelHomeI>::Instance().CreateModelFromStr(configuration);
+	  impl::Singleton<impl::ModelHomeI>::Instance().CreateModelFromXML(configuration);
 
 	if (lCp_modelI) {
 	  // tie the model
@@ -103,56 +103,46 @@ namespace efscape {
     } // ModelHomeTie::createFromXML(...)
 
     /**
-     * Create a new ::efscape::Model proxy from the specified XML configuration.
+     * Create a new ::efscape::Model proxy from the specified JSON configuration.
      *
-     * @param name model class name
-     * @param configuration model configuration
+     * @param configuration model JSON configuration
      * @param current method invocation
      * @returns ::efscape::Model proxy
      */
     ::efscape::ModelPrx
-    ModelHomeTie::createWithConfig(const ::std::string& name,
-				   const ::std::wstring& configuration,
-				   const Ice::Current& current)
+    ModelHomeTie::createFromJSON(const ::std::string& configuration,
+				const Ice::Current& current)
     {
       efscape::ModelPtr lCp_model = 0;
 
       try {
 	// attempt create the model
 	adevs::Devs<efscape::impl::IO_Type>* lCp_modelI =
-	  impl::Singleton<impl::ModelHomeI>::Instance().CreateModelWithConfig(name.c_str(),
-					       configuration);
+	  impl::Singleton<impl::ModelHomeI>::Instance().CreateModelFromJSON(configuration);
 
 	if (lCp_modelI) {
 	  // tie the model
-	  lCp_model = new ModelTie(lCp_modelI, name.c_str());
-	  ModelTie* modelTest = new ModelTie(lCp_modelI, name.c_str());
-
+	  lCp_model = new ModelTie(lCp_modelI);
 	}
 	else {
-	  LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 			"efscape::server::ModelHomeTie(): model implementation not found!");
 	}
       }
-      catch (std::logic_error excp) {
+      catch (std::logic_error exp) {
 	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
 		      "efscape::server::ModelHomeTie()"
-		      << excp.what() );
+		      << exp.what() );
       }
 
       if (lCp_model) {
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		      "Model proxy for <" << lCp_model->getName() << "> created...");
+		      "Model <" << lCp_model->getName() << "> found...");
 
-	try {
-	  efscape::ModelPrx lCp_ModelPrx =
-	    efscape::ModelPrx::uncheckedCast(current.adapter
-					     ->addWithUUID( lCp_model ) );
-	  return lCp_ModelPrx;
-	}
-	catch (std::exception excp) {
-	  std::cerr << "*** Failed to set Model Proxy: " << excp.what() << " ***\n";
-	}
+	efscape::ModelPrx lCp_ModelPrx =
+	  efscape::ModelPrx::uncheckedCast(current.adapter
+					   ->addWithUUID( lCp_model ) );
+	return lCp_ModelPrx;
 					   
       }
 
@@ -160,7 +150,7 @@ namespace efscape {
 		    "Model not found...");
       return 0;
 
-    } // ModelHomeTie::createWithConfig(...)
+    } // ModelHomeTie::createFromJSON(...)
 
     /**
      * Returns a list of available models.
@@ -168,12 +158,47 @@ namespace efscape {
      * @param current method invocation
      * @returns list of available models
      */
-    ::efscape::ModelList ModelHomeTie::getModelList(const Ice::Current& current)
+    ::efscape::ModelNameList ModelHomeTie::getModelList(const Ice::Current& current)
     {
-      ::efscape::ModelList lC1_ModelList;
-      return lC1_ModelList;
+      ::efscape::ModelNameList lC1_ModelNameList;
+      std::set<std::string> lC1_ModelNames;
+
+      // retrieve the list of available models
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "*** Available models: ***");
+      impl::Singleton<impl::ModelHomeI>::Instance().
+      	GetModelFactory().ListModels(lC1_ModelNames);
+      std::set<std::string>::iterator iter;
+      for (iter = lC1_ModelNames.begin(); iter != lC1_ModelNames.end(); iter++) {
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "=> modelName=" << *iter);
+	lC1_ModelNameList.push_back(*iter);
+      }
+	
+      return lC1_ModelNameList;
     }
 
+    /**
+     * Returns a list of available models.
+     *
+     * @param aC_name type of model
+     * @param current method invocation
+     * @returns list of available models
+     */
+    ::efscape::ModelInfo ModelHomeTie::getModelInfo(const ::std::string& aC_name,
+						    const Ice::Current& current)
+    {
+      ::efscape::ModelInfo lC_ModelInfo;
+      efscape::impl::ModelInfo lC_ModelInfoI =
+	impl::Singleton<impl::ModelHomeI>::Instance().
+	GetModelFactory().getModelInfo(aC_name.c_str());
+
+      // copy metadata
+      lC_ModelInfo.infoToJson = lC_ModelInfoI.info;
+      lC_ModelInfo.propertiesToJson = lC_ModelInfoI.properties;
+
+      return lC_ModelInfo;
+    }
     /**
      * Creates a simulator object for a model.
      *

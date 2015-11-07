@@ -126,6 +126,10 @@ namespace efscape {
     ModelInfo
     ModelFactoryTmpl<BaseType>::getModelInfo(const char* acp_classname)
     {
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		    "Attempting to get info about model<"
+		    << acp_classname
+		    << ">");
       std::map< std::string, ModelInfo >::iterator iModel;
       if ( (iModel = mCC_ModelInfoMap.find(acp_classname) ) !=
 	   mCC_ModelInfoMap.end() )
@@ -140,16 +144,18 @@ namespace efscape {
      *
      * @tparam BaseType base model type
      * @tparam DerivedType derived model type
-     * @param acp_info class info
-     * @param acp_library_name library this class belongs to
+     * @param aC_info class info in a JSON string
      * @returns whether registration was successful 
      */
     template <class BaseType> template<class DerivedType>
     bool
-    ModelFactoryTmpl<BaseType>::RegisterModel(const char* acp_info)
+    ModelFactoryTmpl<BaseType>::RegisterModel(std::string aC_info)
     {
-      const char* lcp_library_name = "efscapeimpl";
-      RegisterModel((const char*)acp_info,(const char*)lcp_library_name);
+      std::string lC_properties = "{}";
+      std::string lC_library_name = "efscapeimpl";
+      RegisterModel(aC_info,
+		    lC_properties,
+		    lC_library_name);
     }
 
     /**
@@ -157,15 +163,17 @@ namespace efscape {
      *
      * @tparam BaseType base model type
      * @tparam DerivedType derived model type
-     * @param acp_info class info
-     * @param acp_library_name library this class belongs to
+     * @param aC_info class info in a JSON string
+     * @param aC_properties properties in a JSON string
+     * @param aC_library_name library this class belongs to
      * @returns whether registration was successful 
      */
     template <class BaseType> template<class DerivedType>
     bool
-    ModelFactoryTmpl<BaseType>::RegisterModel(const char* acp_info,
-					      const char*
-					      acp_library_name)
+    ModelFactoryTmpl<BaseType>::RegisterModel(std::string aC_info,
+					      std::string aC_properties,
+					      std::string
+					      aC_library_name)
     {
       boost::scoped_ptr<DerivedType> lCp_proto( new DerivedType() );
       std::string lC_id = efscape::utils::type<DerivedType>(*lCp_proto);
@@ -174,12 +182,17 @@ namespace efscape {
       
       LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		    "Registering model class <" << lC_id
-		    << "> of version " << li_version << "...");
-
+		    << "> of version " << li_version
+		    << ": model info="
+		    << aC_info
+		    << "; default model properties ="
+		    << aC_properties);
+      
       // insert model info
-      mCC_ModelInfoMap[lC_id] = ModelInfo(li_version,
-					  acp_info,
-					  acp_library_name);
+      mCC_ModelInfoMap[lC_id] = ModelInfo(aC_info.c_str(),
+					  aC_properties.c_str(),
+					  li_version,
+					  aC_library_name.c_str());
 
       bool lb_ModelRegistered =
 	mCp_factory->Register(lC_id, createModel<BaseType,DerivedType>);

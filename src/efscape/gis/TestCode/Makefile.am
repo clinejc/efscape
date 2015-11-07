@@ -13,12 +13,14 @@ efgistest_LDADD += $(top_srcdir)/src/efscape/utils/libefscape-utils.la
 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 AM_CPPFLAGS += -I$(top_srcdir)/src/efscape/utils
+AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 AM_CPPFLAGS += $(GDAL_CFLAGS)
 AM_CPPFLAGS += $(GEOS_CFLAGS)
 AM_CPPFLAGS += $(NETCDF_CXX_CFLAGS)
 
 LIBS = $(DEPS_LIBS)
-LIBS += $(BOOST_DATE_TIME_LIB)
+LIBS += $(BOOST_DATE_TIME_LIBS)
+LIBS += $(BOOST_SYSTEM_LIBS)
 
 copyright:
 	cp $(top_srcdir)/Copyright.doc $(top_srcdir)/Makefile.cr $(top_srcdir)/Sed.cr .

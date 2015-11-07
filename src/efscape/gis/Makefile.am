@@ -34,6 +34,7 @@ lib_LTLIBRARIES = libefscape-gis.la
 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 AM_CPPFLAGS += -I$(top_srcdir)/src/efscape/utils
+AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 AM_CPPFLAGS += $(GDAL_CFLAGS)
 AM_CPPFLAGS += $(GEOS_CFLAGS)
 AM_CPPFLAGS += $(NETCDF_CXX_CFLAGS)

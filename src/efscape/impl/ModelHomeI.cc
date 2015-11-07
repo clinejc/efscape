@@ -24,7 +24,12 @@
 #include <efscape/impl/ModelFactory.hpp>
 #include <efscape/impl/ModelBuilder.hh>
 #include <boost/scoped_ptr.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/optional.hpp>
+#include <boost/foreach.hpp>
 #include <fstream>
+#include <sstream>
 #include <cstdlib>
 
 // Includes for loading dynamic libraries
@@ -111,9 +116,11 @@ namespace efscape {
 	std::set<std::string> lC1_ModelNames;
 	GetModelFactory().ListModels(lC1_ModelNames);
 	std::set<std::string>::iterator iter;
-	std::cout << "*** Available models: ***\n";
+	LOG4CXX_DEBUG(getLogger(),
+		      "*** Available models: ***");
 	for (iter = lC1_ModelNames.begin(); iter != lC1_ModelNames.end(); iter++)
-	  std::cout << "\t" << *iter << std::endl;
+	  LOG4CXX_DEBUG(getLogger(),
+			"=> modelName=" << *iter);
 
 	delete lCp_ModelI;
 	return 0;
@@ -135,12 +142,9 @@ namespace efscape {
      * @throws std::logic_error
      */
     adevs::Devs<IO_Type>*
-    ModelHomeI::CreateModelFromStr(const std::wstring& aCr_buffer)
+    ModelHomeI::CreateModelFromXML(const std::wstring& aCr_buffer)
       throw(std::logic_error)
     {
-      // create a temporary file to store the simulation configuration
-      // char* lcp_FileName = NULL;
-      // lcp_FileName = tmpnam(NULL);
       char lcp_FileName[] = "/tmp/fileXXXXXX";
       int fd;			// file descriptor
       
@@ -160,13 +164,13 @@ namespace efscape {
       lC_OutFile.close();
 
       try {
-	return this->CreateModelFromFile(lcp_FileName);
+	return this->CreateModelFromXML(lcp_FileName);
       }
       catch(std::logic_error excp) {
 	throw excp;
       }
 
-    } // ModelHomeI::CreateModelFromStr(const std::wstring&)
+    } // ModelHomeI::CreateModelFromXML(const std::wstring&)
 
     /**
      * Creates a model from a model configuration stored in an XML file.
@@ -176,10 +180,10 @@ namespace efscape {
      * @throws std::logic_error
      */
     adevs::Devs<IO_Type>*
-    ModelHomeI::CreateModelFromFile(const char* acp_filename)
+    ModelHomeI::CreateModelFromXML(const char* acp_filename)
       throw(std::logic_error)
     {
-      std::string lC_message = "ModelHomeI::CreateModelFromFile("
+      std::string lC_message = "ModelHomeI::CreateModelFromXML("
 	+ std::string(acp_filename) + "):";
 
       adevs::Devs<IO_Type>* lCp_model = NULL;
@@ -251,87 +255,86 @@ namespace efscape {
 
       return lCp_model;
 
-    } // ModelHomeI::CreateModelFromFile(...)
+    } // ModelHomeI::CreateModelFromXML(...)
 
     /**
-     * Creates a model from a model configuration stored in an XML file.
+     * Creates a model from a model configuration stored in a JSON
+     * string.
      *
-     * @param acp_classname model class name
-     * @param acp_propsfile name of configuration file
-     * @returns handle to root model
+     * @param aCr_JSONstring model configuration embedded in a JSON string
+     * @returns handle to model
      * @throws std::logic_error
      */
     adevs::Devs<IO_Type>*
-    ModelHomeI::CreateModelWithConfig(const char* acp_classname,
-				      const char* acp_propsfile)
-      throw(std::logic_error)
+    ModelHomeI::CreateModelFromJSON(const std::string& aCr_JSONstring)
+	throw(std::logic_error)
     {
-      std::string lC_message = "ModelHomeI::CreateModelWithConfig("
-	+ std::string(acp_classname)
-	+ std::string(",")
-	+ std::string(acp_propsfile) + "):";
+      LOG4CXX_DEBUG(getLogger(),
+		    "Attempting to create model from a JSON configuration...");
+      std::stringstream lC_OutStream;
+      if (!lC_OutStream) {
+	std::string lC_ErrorMsg = "Unable to open string stream";
+
+	throw std::logic_error(lC_ErrorMsg.c_str());
+      }
+
+      // write buffer to the temporary file
+      lC_OutStream << aCr_JSONstring;
+
+      LOG4CXX_DEBUG(getLogger(),
+		    "Received JSON string =>"
+		    << aCr_JSONstring);
+
+      // read in the JSON data via a property tree extracted from the temp file
+      boost::property_tree::ptree pt;
+      boost::property_tree::read_json( lC_OutStream, pt );
+
+      BOOST_FOREACH( boost::property_tree::ptree::value_type const& rowPair,
+		     pt.get_child( "" ) ) {
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "=> property "
+		      << "<" << rowPair.first << ">="
+		      << "<" << rowPair.second.get_value<std::string>() << ">");
+	boost::optional<std::string> lC_propOpt =
+	  pt.get_optional<std::string>(rowPair.first);
+	if (!lC_propOpt) {
+	  LOG4CXX_DEBUG(getLogger(),
+			"property access failed!");
+	}
+	else
+	  LOG4CXX_DEBUG(getLogger(),
+			"property access ok!");
+      }
+
+      std::string lC_modelName;
+      boost::optional<std::string> lC_modelNameOpt =
+	pt.get_optional<std::string>("modelName");
+      if (lC_modelNameOpt) {
+	lC_modelName =
+	  ((std::string)lC_modelNameOpt.get());
+	LOG4CXX_DEBUG(getLogger(),
+		      "property <modelName> found");
+      }
+      else
+	LOG4CXX_ERROR(getLogger(),
+		      "property <modelName> not found!");
 
       adevs::Devs<IO_Type>* lCp_model = NULL;
-      if ( (lCp_model = CreateModel(acp_classname) ) != NULL ) {
+      if ( (lCp_model = CreateModel(lC_modelName.c_str()) ) != NULL ) {
 	// inject input (model properties file)
 	// note: must be done before initializing the simulator
 	adevs::Bag<efscape::impl::IO_Type> xb;
 	efscape::impl::IO_Type e;
 	e.port = "properties_in";
-	e.value = std::string(acp_propsfile);
+	e.value = pt;
 	xb.insert(e);
 
 	inject_events(-0.1, xb, lCp_model);
       }
 
       return lCp_model;
-
-    } // ModelHomeI::CreateModelWithConfig(const char*,const char*)
-
-    /**
-     * Creates a model from a model configuration stored in an XML file.
-     *
-     * @param acp_classname model class name
-     * @param aCr_propsfile string containing configuration file
-     * @returns handle to root model
-     * @throws std::logic_error
-     */
-    adevs::Devs<IO_Type>*
-    ModelHomeI::CreateModelWithConfig(const char* acp_classname,
-				      const std::wstring& aCr_propsfile)
-      throw(std::logic_error)
-    {
-      // create a temporary file to store the simulation configuration
-      // char* lcp_FileName = NULL;
-      // lcp_FileName = tmpnam(NULL);
-      char lcp_FileName[] = "/tmp/fileXXXXXX";
-      int fd;			// file descriptor
-      
-      if ( (fd = mkstemp(lcp_FileName) ) == -1)
-	throw std::logic_error("Unable to open temporary file");
-
-      std::wofstream lC_OutFile(lcp_FileName);
-      if (!lC_OutFile) {
-	std::string lC_ErrorMsg = "Unable to open temporary file name <"
-	  + std::string(lcp_FileName) + ">";
-
-	throw std::logic_error(lC_ErrorMsg.c_str());
-      }
-
-      // write buffer to the temporary file
-      lC_OutFile << aCr_propsfile;
-      lC_OutFile.close();
-
-      try {
-	return this->CreateModelWithConfig(acp_classname,
-					   lcp_FileName);
-      }
-      catch(std::logic_error excp) {
-	throw excp;
-      }
-
-    } // ModelHomeI::CreateModelWithConfig(const char*, const std::wstring&)
-
+    } // ModelHomeI::CreateModelFromJSON(const char*)
+    
     /**
      * Loads the specified library.
      *
@@ -358,7 +361,7 @@ namespace efscape {
       }
 
     } // ModelHomeI::LoadLibrary(const char*)
-
+    
     /**
      * This function dynamically loads libraries in the simulator library
      * directory. All simulation libraries containing self-registering classes

@@ -9,10 +9,44 @@
 
 #include <efscape/impl/ModelFactory.ipp>
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
+#include <sstream>
+#include <iostream>
+
 namespace efscape {
 
   namespace impl {
 
+    // utility function for loading info from a JSON file
+    std::string loadInfoFromJSON(const char* acp_path) {
+      // path is relative
+      std::string lC_FileName =
+	ModelHomeI::getHomeDir() + std::string("/") + acp_path;
+
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		    "model info path = <" << lC_FileName << "> ***");
+
+      boost::property_tree::ptree pt;
+      std::string lC_JsonStr = "{}";
+      try {
+	boost::property_tree::read_json( lC_FileName.c_str(), pt );
+
+	std::ostringstream lC_buffer;
+	boost::property_tree::write_json(lC_buffer, pt, false);
+	lC_JsonStr = lC_buffer.str();
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "JSON=>" << lC_JsonStr);
+      }
+      catch (...) {
+	LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		      "unknown exception occurred parsing model info JSON file.");
+      }
+
+      return lC_JsonStr;
+    }
+    
     //
     // class ModelFactory implementation
     //
