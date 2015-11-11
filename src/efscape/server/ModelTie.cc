@@ -103,7 +103,7 @@ namespace efscape {
 	      // attempt to extract time parameters for the simulation
 	      boost::property_tree::ptree pt =
 		boost::any_cast<boost::property_tree::ptree>( (*i).value );
-	      boost::optional<int> lC_stop_at = pt.get_optional<int>("stop.at");
+	      boost::optional<int> lC_stop_at = pt.get_optional<int>("stopAt");
 	      if (lC_stop_at) {
 		mCp_clock->timeMax() =
 		  ((double)lC_stop_at.get());
