@@ -64,7 +64,7 @@ namespace efscape {
       }
       else {
 	NETWORK* lCp_network = NULL;
-	if ( (lCp_network = aCp_model->typeIsNetwork()) == NULL);
+	if ( (lCp_network = aCp_model->typeIsNetwork()) == NULL)
 	     return;
 	adevs::Set<DEVS*> components;
 	lCp_network->getComponents(components);
