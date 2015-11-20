@@ -131,6 +131,11 @@ namespace efscape {
 			       CreateModelFromJSON(buf.str()) );
 	    }
 	  }
+	  else {
+	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+			  "Missing parameters: exiting now ...");
+	    return EXIT_FAILURE;
+	  }
 
 	  if (lCp_model.get() == 0) {
 	    LOG4CXX_ERROR(ModelHomeI::getLogger(),
@@ -139,6 +144,8 @@ namespace efscape {
 	    return EXIT_FAILURE;
 	  }
 	} // if (files() == 1)
+	else {
+	}
 
       	// create simulator
       	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
@@ -238,9 +245,9 @@ namespace efscape {
       std::cerr << "usage:\n"
 		<< program_name() << " "
 		<< "[-d] [-h] [-v] \n\t"
-		<< "[[-i] input_files]\n\t"
+		<< "[[-i] input_files] (currently ignored)\n\t"
 		<< "[-o output_file]\n\t"
-		<< "[class_name] param_name\n\n"
+		<< "param_name\n\n"
 		<< "where [] indicates optional option:\n\n"
 		<< mC_description
 		<< "examples:\n\t\t"
@@ -250,18 +257,5 @@ namespace efscape {
       exit( exit_value );
     }
 
-    /**
-     * Creates a new RunSim.
-     *
-     * @returns a handle to a new RunSim object
-     */
-    efscape::utils::CommandOpt* create_RunSim() {
-      return (efscape::utils::CommandOpt*)new RunSim;
-    }
-
-    const bool registered = Singleton<ModelHomeI>::Instance().
-				     TheCommandFactory().
-				     Register(RunSim::ProgramName(),
-					      create_RunSim);
   } // namespace impl
 }   // namespace efscape

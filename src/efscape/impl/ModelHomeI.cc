@@ -21,8 +21,6 @@
 // __COPYRIGHT_END__
 #include <efscape/impl/ModelHomeI.hh>
 
-#include <efscape/impl/ModelFactory.hpp>
-#include <efscape/impl/ModelBuilder.hh>
 #include <boost/scoped_ptr.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -45,10 +43,9 @@
 #include <efscape/utils/xerces_utils.hpp>
 #include <efscape/utils/xerces_strings.hpp>
 
-
+#include <efscape/utils/boost_utils.ipp>
 #include <efscape/impl/EfscapeBuilder.hh>
 
-// using namespace repast;
 using namespace xercesc;
 using namespace efscape::utils;
 namespace fs = boost::filesystem;
@@ -56,8 +53,6 @@ namespace fs = boost::filesystem;
 namespace efscape {
 
   namespace impl {
-
-    // template class ModelFactoryTmpl<DEVS>;
 
     // instantiate class data
     std::string ModelHomeI::mSC_HomeDir = ".";
@@ -84,9 +79,9 @@ namespace efscape {
 
       // initialize factories
       mCp_ModelFactory.reset( new ModelFactory );
-      mCp_CommandFactory.reset( new CommandFactory );
 
-      std::cout << "Created EFSCAPE model respository...\n";
+      LOG4CXX_INFO(mSCp_logger, "Created EFSCAPE model respository...");
+      
     } // ModelHomeI::ModelHomeI()
 
     /** destructor */
@@ -222,8 +217,8 @@ namespace efscape {
 	// 1) top tag is used to identify the appropriate parser/builder
 	std::string lC_TagName = toNative(lCp_SimConfig->getTagName());
 
-	lCp_builder.reset( TheBuilderFactory::Instance().
-			   CreateObject(lC_TagName) );
+	lCp_builder.reset( GetModelFactory().
+			   createBuilder(lC_TagName) );
 
 	if (!lCp_builder.get()) {
 	  lC_message += "\n\tbad document root <" + lC_TagName
@@ -463,17 +458,20 @@ namespace efscape {
     }
 
     /**
-     * Returns a reference to the CommandFactory
+     * Creates a command from the specified command name.
      *
-     * @returns reference to the CommandFactory (singleton)
+     * @param aC_cmd_name command name
+     * @returns handle to command object
      */
-    CommandFactory& ModelHomeI::TheCommandFactory() {
-      if (mCp_CommandFactory.get() == NULL)
-	mCp_CommandFactory.reset( new CommandFactory );
+    CommandOpt*
+    ModelHomeI::createCommand(std::string aC_cmd_name) {
+      if (mCpF_CommandFactory.get() == NULL)
+	return NULL;
 
-      return *mCp_CommandFactory;
+      return createObject<CommandOpt>(*mCpF_CommandFactory,
+				      aC_cmd_name.c_str());
     }
-
+    
     /**
      * Returns smart handle to logger.
      *

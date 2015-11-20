@@ -7,7 +7,7 @@
 #include "CreateSimpleSim.hh"
 
 // definitions for accessing the model factory
-#include <efscape/impl/ModelHomeI.hh>
+#include <efscape/impl/ModelHomeI.ipp>
 #include <efscape/impl/ModelHomeSingleton.hh>
 
 #include "efscape/impl/AdevsModel.hh"
@@ -177,8 +177,7 @@ namespace simplesim {
     return (efscape::utils::CommandOpt*)new CreateSimpleSim;
   }
 
-  const bool registered = efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
-		       TheCommandFactory().
-		       Register(CreateSimpleSim::ProgramName(),
-				create_CreateSimpleSim);
+  const bool registered =
+		 efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
+		 registerCommand<CreateSimpleSim>( CreateSimpleSim::ProgramName() );
 }

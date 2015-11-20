@@ -32,24 +32,7 @@ namespace efscape {
       return efscape::impl::loadAdevs(acp_filename);
 
     } // EfscapeBuilder::parse(const char*)
-
-    //---------------
-    // register class
-    //---------------
-    /**
-     * Creates a new EfscapeBuilder.
-     *
-     * @returns a handle to a new EfscapeBuilder object
-     */
-    ModelBuilder* create_EfscapeBuilder() {
-      return (ModelBuilder*)new EfscapeBuilder;
-    }
-
-    const bool registered =
-      TheBuilderFactory::Instance().
-      Register(EfscapeBuilder::name(),
-	       create_EfscapeBuilder);
-
+      
   } // namespace impl
 
 }   // namespace efscape

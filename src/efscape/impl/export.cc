@@ -20,8 +20,20 @@
 
 // model factory definitions
 #include <efscape/impl/ModelHomeI.hh>
+#include <efscape/impl/ModelHomeI.ipp> // needed for CommandOpt factory registry
 #include <efscape/impl/ModelHomeSingleton.hh>
 #include <efscape/impl/ModelFactory.ipp>
+
+//--------------------------------------------
+// efscape::impl::ModelBuilder-derived classes
+//--------------------------------------------
+#include <efscape/impl/EfscapeBuilder.hh>
+
+//--------------------------------------------
+// efscape::utils::CommandOpt-derived classes
+//--------------------------------------------
+#include <efscape/impl/BuildModel.hh>
+#include <efscape/impl/RunSim.hh>
 
 #include <fstream>
 
@@ -140,15 +152,31 @@ namespace efscape {
       return lCp_model;
     }
 
-    //---------------
-    // register class
-    //---------------
+    //-----------------
+    // register classes
+    //-----------------
     const bool
     lb_AdevsModel_registered =
-	    Singleton<ModelHomeI>::Instance().
-	    GetModelFactory().RegisterModel<AdevsModel>("{\"info\": \"A generic root model\"}",
-							"{}",
-							gcp_libname);
+      Singleton<ModelHomeI>::Instance().
+      GetModelFactory().RegisterModel<AdevsModel>("{\"info\": \"A generic root model\"}",
+						  "{}",
+						  gcp_libname);
+
+    const bool
+    lb_EfscapeBuilder_registered =
+      Singleton<ModelHomeI>::Instance().
+      GetModelFactory().registerBuilder<EfscapeBuilder>(EfscapeBuilder::name());
+
+    const bool
+    lb_BuildModel_registered =
+      Singleton<ModelHomeI>::Instance().
+      registerCommand<BuildModel>( BuildModel::ProgramName() );
+
+    const bool
+    lb_RunSim_registered =
+      Singleton<ModelHomeI>::Instance().
+      registerCommand<RunSim>( RunSim::ProgramName() );
+   
 
   } // namespace impl
 

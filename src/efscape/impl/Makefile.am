@@ -10,6 +10,7 @@ hh_sources += InitObject.hh
 hh_sources += ModelBuilder.hh
 hh_sources += EfscapeBuilder.hh
 hh_sources += ModelHomeI.hh
+hh_sources += ModelHomeI.ipp
 hh_sources += ModelHomeSingleton.hh
 hh_sources += ModelFactory.hpp
 hh_sources += ModelFactory.ipp

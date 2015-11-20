@@ -9,8 +9,6 @@
 
 #include <efscape/impl/singletondll_export.h>
 
-#include <loki/Singleton.h>
-
 namespace efscape {
 
   namespace impl {

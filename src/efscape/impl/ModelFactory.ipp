@@ -11,6 +11,7 @@
 
 #include <efscape/impl/ModelHomeI.hh>
 #include <efscape/utils/type.hpp>
+#include <efscape/utils/boost_utils.ipp>
 
 // boost serialization definitions
 #include <boost/serialization/version.hpp>
@@ -29,7 +30,8 @@ namespace efscape {
      */
     template <class BaseType>
     ModelFactoryTmpl<BaseType>::ModelFactoryTmpl() {
-      mCp_factory.reset(new FactoryType);
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+    		    "Creating ModelFactory...");
     }
 
     /**
@@ -38,7 +40,10 @@ namespace efscape {
      * @tparam BaseType base type of factory
      */
     template <class BaseType>
-    ModelFactoryTmpl<BaseType>::~ModelFactoryTmpl() {}
+    ModelFactoryTmpl<BaseType>::~ModelFactoryTmpl() {
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+    		    "Shutting down ModelFactory...");
+    }
 
     /**
      * Returns a model object of type <acp_name>.
@@ -51,7 +56,9 @@ namespace efscape {
     BaseType* ModelFactoryTmpl<BaseType>::CreateModel(const char* acp_name)
     {
       try {
-	return mCp_factory->CreateObject(acp_name);
+	// return mCF_factories[acp_name]();
+	return efscape::utils::createObject<BaseType>(mCF_factories,
+						      acp_name);
       }
       catch(...) {
 	LOG4CXX_ERROR(ModelHomeI::getLogger(),
@@ -194,9 +201,12 @@ namespace efscape {
 					  li_version,
 					  aC_library_name.c_str());
 
+      // mCF_factories[lC_id] = boost::factory<DerivedType*>();
+      
       bool lb_ModelRegistered =
-	mCp_factory->Register(lC_id, createModel<BaseType,DerivedType>);
-
+	(mCF_factories.
+	 insert( std::make_pair(lC_id,
+				boost::factory<DerivedType*>()) ) ).second;
       if (lb_ModelRegistered) {
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "Model class <" << lC_id << "> successfully registered!");
@@ -219,6 +229,40 @@ namespace efscape {
       // register model
       return ( lb_ModelRegistered );
     }
+
+    /**
+     * Registers a model builder in the builder factory repository.
+     *
+     * @tparam BaseType base model type
+     * @tparam DerivedType derived model builder type
+     * @param aC_name builder name
+     * @returns whether registration was successful 
+     */
+    template <class BaseType> template<class DerivedType>
+    bool
+    ModelFactoryTmpl<BaseType>::registerBuilder(std::string aC_name) {
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		    "Registering model builder <" << aC_name << ">...");
+
+      return (mCF_builder_factories.
+	      insert( std::make_pair(aC_name,
+				     boost::factory<DerivedType*>()) ) ).second;
+    }
+    
+    /**
+     * Creates a model builder object from the builder factory repository.
+     *
+     * @tparam BaseType base model type
+     * @param 
+     * @returns handle to model_builder
+     */
+    template <class BaseType>
+    typename ModelFactoryTmpl<BaseType>::model_builder*
+    ModelFactoryTmpl<BaseType>::createBuilder(std::string aC_name) {
+      return efscape::utils::createObject<ModelBuilder>(mCF_builder_factories,
+							aC_name);
+    }
+
 
   } // namespace impl
 

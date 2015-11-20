@@ -10,19 +10,16 @@
 // model implementation definition
 #include <efscape/impl/adevs_config.hh>
 
-#include <loki/Factory.h>
+#include <efscape/impl/ModelBuilder.hh>
 #include <set>
 #include <map>
 #include <boost/scoped_ptr.hpp>
+#include <boost/function.hpp>
+#include <boost/functional/factory.hpp>
 
 namespace efscape {
 
   namespace impl {
-
-    // typedefs
-    typedef std::string ModelKeyType;
-    typedef ::Loki::Factory<DEVS, ModelKeyType> DevsFactory;
-    typedef ::Loki::Factory<CellDevs, ModelKeyType> CellDevsFactory;
 
     /**
      * A simple structure for holding information about a model
@@ -62,29 +59,24 @@ namespace efscape {
     std::string loadInfoFromJSON(const char* acp_path);
     
     /**
-     * This template function create an adevs DEVS object of type T.
-     *
-     * @returns handle to new adevs DEVS object of derived type T
-     */
-    template < class BaseType, class DerivedType >
-    inline BaseType* createModel() {
-      return ( dynamic_cast< BaseType* >( new DerivedType) );
-    }
-
-
-    /**
      * Implements a factory for simulation models.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.4 created 10 Sep 2009, revised 05 Jun 2015
+     * @version 0.1.0 created 10 Sep 2009, revised 18 Nov 2015
+     * @tparam BaseType base type of factory
      */
     template <class BaseType>
     class ModelFactoryTmpl
     {
     public:
 
-      typedef ::Loki::Factory<BaseType,ModelKeyType> FactoryType;
+      typedef boost::function< BaseType*() > model_factory;
+      typedef std::map< std::string, model_factory > model_factory_map;
 
+      typedef ModelBuilderTmpl<BaseType> model_builder;
+      typedef boost::function< model_builder*() > builder_factory;
+      typedef std::map< std::string, builder_factory > builder_factory_map;
+      
       ModelFactoryTmpl();
       ~ModelFactoryTmpl();
 
@@ -103,53 +95,26 @@ namespace efscape {
 
       ModelInfo getModelInfo(const char* acp_classname);
 
-      /**
-       * Returns reference to underlying factory.
-       *
-       * @returns reference to underlying factory
-       */
-      FactoryType& GetFactory() { return *mCp_factory; }
-
+      // methods supporting the underlying model builder factory
+      template <class DerivedType>
+      bool registerBuilder(std::string aC_name);
+      model_builder* createBuilder(std::string aC_name);
+      
     protected:
 
       /** model factory */
-      boost::scoped_ptr<FactoryType> mCp_factory;
+      model_factory_map mCF_factories;
 
       /** model info map */
       std::map< std::string, ModelInfo > mCC_ModelInfoMap;
 
+      /** model builder factories */
+      builder_factory_map mCF_builder_factories;
+
     };				// class ModelFactoryTmpl<>
 
-
-    /**
-     * Implements a factory for simulation models based on adevs.
-     *
-     * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.4 created 07 Jan 2007, revised 10 Sep 2009
-     */
-    class ModelFactory : public ModelFactoryTmpl<DEVS>
-    {
-    public:
-
-      ModelFactory();
-      ~ModelFactory();
-
-    };				// class ModelFactory definition
-
-    /**
-     * Implements a factory for simulation models based on adevs cell models.
-     *
-     * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.1 created 11 Sep 2009
-     */
-    class CellModelFactory : public ModelFactoryTmpl<CellDevs>
-    {
-    public:
-
-      CellModelFactory();
-      ~CellModelFactory();
-
-    };				// class CellModelFactory definition
+    // Model Factories for specific base model types
+    typedef ModelFactoryTmpl<DEVS> ModelFactory;
 
   } // namespace impl
 

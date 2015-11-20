@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
     log4cxx::PropertyConfigurator::configure(lC_logger_config.c_str());
 
     lCp_command.reset( efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
-		       TheCommandFactory().CreateObject(lC_program_name) );
+		       createCommand(lC_program_name) );
   }
   catch(...) {
     std::cerr << "*** error *** Problem creating command object\n";

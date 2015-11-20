@@ -31,7 +31,6 @@ dnl Checks for libraries
 dnl -----------------------------------------------
 
 PKG_CHECK_MODULES(DEPS,
-	loki >= 0.1.5
 	adevs >= 2.0
 	liblog4cxx > 0.1
 	xerces-c >= 3.0

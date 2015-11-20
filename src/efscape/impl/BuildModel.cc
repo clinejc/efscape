@@ -328,22 +328,6 @@ namespace efscape {
 
     } // BuildModel::saveConfig()
 
-    //---------------
-    // register class
-    //---------------
-    /**
-     * Creates a new BuildModel.
-     *
-     * @returns a handle to a new BuildModel object
-     */
-    efscape::utils::CommandOpt* create_BuildModel() {
-      return (efscape::utils::CommandOpt*)new BuildModel;
-    }
-
-    const bool registered = Singleton<ModelHomeI>::Instance().
-				     TheCommandFactory().
-				     Register(BuildModel::ProgramName(),
-					      create_BuildModel);
   } // namespace impl
 
 } // namespace efscape

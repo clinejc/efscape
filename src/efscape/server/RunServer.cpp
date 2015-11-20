@@ -10,7 +10,7 @@
 #include <efscape/server/ModelHomeTie.hh>
 
 // definitions for accessing the model factory
-#include <efscape/impl/ModelHomeI.hh>
+#include <efscape/impl/ModelHomeI.ipp>
 #include <efscape/impl/ModelHomeSingleton.hh>
 
 namespace efscape {
@@ -213,19 +213,9 @@ namespace efscape {
     // end of RunServer implementation
     //================================
 
-    /**
-     * Creates a new RunServer.
-     *
-     * @returns a handle to a new RunServer object
-     */
-    efscape::utils::CommandOpt* create_RunServer() {
-      return (efscape::utils::CommandOpt*)new RunServer;
-    }
-
-    const bool registered = impl::Singleton<impl::ModelHomeI>::Instance().
-      TheCommandFactory().
-      Register(RunServer::ProgramName(),
-	       create_RunServer);
+    const bool registered =
+		   impl::Singleton<impl::ModelHomeI>::Instance().
+		   registerCommand<RunServer>( RunServer::ProgramName() );
 
   } // namespace server
 

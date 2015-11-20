@@ -9,12 +9,9 @@
 namespace efscape {
 
   namespace impl {
-
-    /** constructor */
-    ModelBuilder::ModelBuilder() {}
-
-    /** destructor */
-    ModelBuilder::~ModelBuilder() {}
+    
+    // instantiate template classes
+    template class ModelBuilderTmpl<DEVS>;
 
   }
 }

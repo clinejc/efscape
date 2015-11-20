@@ -46,38 +46,41 @@ namespace efscape {
 
       return lC_JsonStr;
     }
-    
-    //
-    // class ModelFactory implementation
-    //
-    /** constructor */
-    ModelFactory::ModelFactory() {
-      if ( ModelHomeI::getLogger() != NULL)
-	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Creating ModelFactory...");
-    }
 
-    /** destructor */
-    ModelFactory::~ModelFactory() {
-      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		    "Shutting down ModelFactory...");
-    }
+    // instantiate modelfactory
+    template class ModelFactoryTmpl<DEVS>;
 
-    //
-    // class CellModelFactory implementation
-    //
-    /** constructor */
-    CellModelFactory::CellModelFactory() {
-      if ( ModelHomeI::getLogger() != NULL)
-	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Creating CellModelFactory...");
-    }
+    // //
+    // // class ModelFactory implementation
+    // //
+    // /** constructor */
+    // ModelFactory::ModelFactory() {
+    //   if ( ModelHomeI::getLogger() != NULL)
+    // 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+    // 		      "Creating ModelFactory...");
+    // }
 
-    /** destructor */
-    CellModelFactory::~CellModelFactory() {
-      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		    "Shutting down CellModelFactory...");
-    }
+    // /** destructor */
+    // ModelFactory::~ModelFactory() {
+    //   LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+    // 		    "Shutting down ModelFactory...");
+    // }
+
+    // //
+    // // class CellModelFactory implementation
+    // //
+    // /** constructor */
+    // CellModelFactory::CellModelFactory() {
+    //   if ( ModelHomeI::getLogger() != NULL)
+    // 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+    // 		      "Creating CellModelFactory...");
+    // }
+
+    // /** destructor */
+    // CellModelFactory::~CellModelFactory() {
+    //   LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+    // 		    "Shutting down CellModelFactory...");
+    // }
 
   } // namespace impl
 

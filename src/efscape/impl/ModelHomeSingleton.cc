@@ -8,12 +8,19 @@
 #include <efscape/impl/ModelHomeSingleton.hh>
 #include <efscape/impl/ModelHomeI.hh>
 
-#include <efscape/impl/ModelFactory.ipp>
+#include <efscape/impl/ModelFactory.ipp> // template implementations
+// #include <loki/Singleton.h>		 // Loki::Singleton
+#include <efscape/utils/Singleton.hpp>	 // alternative to Loki::Singleton
 
-typedef Loki::SingletonHolder<efscape::impl::ModelHomeI>
-ModelHomeSingleton;
+// start of Loki::Singleton implementation
+// typedef Loki::SingletonHolder<efscape::impl::ModelHomeI>
+// ModelHomeSingleton;
 
-LOKI_SINGLETON_INSTANCE_DEFINITION(ModelHomeSingleton)
+// LOKI_SINGLETON_INSTANCE_DEFINITION(ModelHomeSingleton)
+// end of Loki::Singleton implementation
+
+// instantiate Singleton template class
+typedef  efscape::utils::Singleton< efscape::impl::ModelHomeI > ModelHomeSingleton2;
 
 namespace efscape {
 
@@ -23,11 +30,9 @@ namespace efscape {
     template<>
     ModelHomeI& Singleton<ModelHomeI>::Instance()
     {
-      return ::ModelHomeSingleton::Instance();
+      return ::ModelHomeSingleton2::instance();
+      // return ::ModelHomeSingleton::Instance();
     }
-
-    // instantiate modelfactory
-    template class ModelFactoryTmpl<DEVS>;
 
   } // namespace impl
 
