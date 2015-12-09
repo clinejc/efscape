@@ -8,7 +8,6 @@
 #include <efscape/impl/ModelHomeSingleton.hh>
 #include <efscape/impl/ModelHomeI.hh>
 
-#include <efscape/impl/ModelFactory.ipp> // template implementations
 // #include <loki/Singleton.h>		 // Loki::Singleton
 #include <efscape/utils/Singleton.hpp>	 // alternative to Loki::Singleton
 

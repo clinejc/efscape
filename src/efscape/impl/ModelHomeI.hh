@@ -23,16 +23,18 @@
 #define EFSCAPE_IMPL_MODELHOME_I_HH
 
 #include <efscape/impl/adevs_config.hh>
+#include <efscape/impl/ModelBuilder.hh>
 #include <efscape/utils/CommandOpt.hh>
-#include <efscape/impl/ModelFactory.hpp>
 #include <boost/function.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <log4cxx/logger.h>
 
 // boost serialization definitions
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/type_info_implementation.hpp>
 
+#include <efscape/utils/Factory.hpp>
 #include <efscape/utils/type.hpp>
 #include <string>
 #include <map>
@@ -43,17 +45,19 @@ namespace efscape {
   namespace impl {
 
     // typedefs
-    typedef boost::function< efscape::utils::CommandOpt*() > command_factory;
-    typedef std::map< std::string, command_factory > command_factory_map;
+    typedef efscape::utils::Factory< std::string, DEVS > model_factory;
+    typedef efscape::utils::Factory< std::string, ModelBuilder > builder_factory;
+    typedef efscape::utils::Factory< std::string, efscape::utils::CommandOpt > command_factory;
     
     /**
      * Implements the local server-side ModelHome interface, a factory for
      * simulation models.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.1.0 created 24 Dec 2006, revised 18 Nov 2015
+     * @version 0.1.1 created 24 Dec 2006, revised 08 Dec 2015
      *
      * ChangeLog:
+     *   - 2015-12-08 Refactored all factory interfaces (now three separate)
      *   - 2015-11-18 Added factory methods for CommandOpt-derived classes
      *   - 2015-05-31 Removed deprecated model creation methods
      *   - 2015-05-27 Added method for creating model from JSON config
@@ -81,11 +85,9 @@ namespace efscape {
       adevs::Devs<IO_Type>* CreateModelFromJSON(const std::string& aCr_JSONstring)
 	throw(std::logic_error);
 
-      ModelFactory& GetModelFactory();
-
-      template <class DerivedType>
-      bool registerCommand(std::string aC_cmd_name);
-      efscape::utils::CommandOpt* createCommand(std::string aC_cmd_name);
+      model_factory& getModelFactory();
+      builder_factory& getBuilderFactory();
+      command_factory& getCommandFactory();
 
       /**
        * Returns the output path on the server.
@@ -101,10 +103,10 @@ namespace efscape {
        */
       void setHomeDir(const char* acp_path) { mSC_HomeDir = acp_path;}
 
-      static void LoadLibrary(const char* acp_libname)
+      /*static*/ void LoadLibrary(const char* acp_libname)
 	throw(std::logic_error);
 
-      static void LoadLibraries()
+      /*static*/ void LoadLibraries()
 	throw(std::logic_error);
 
       static log4cxx::LoggerPtr& getLogger();
@@ -117,10 +119,19 @@ namespace efscape {
       /** smart handle to program log */
       static log4cxx::LoggerPtr mSCp_logger;
 
-      boost::scoped_ptr<ModelFactory> mCp_ModelFactory;
-      boost::scoped_ptr< command_factory_map > mCpF_CommandFactory;
+      boost::scoped_ptr<model_factory> mCp_ModelFactory;
+      boost::scoped_ptr<builder_factory> mCp_BuilderFactory;
+      boost::scoped_ptr< command_factory > mCp_CommandFactory;
 
     };				// class ModelHomeI definition
+
+    /**
+     * This utility function loads information from a JSON file.
+     * 
+     * @param aC_path relative path of the JSON file
+     * @return JSON property tree
+     */
+    boost::property_tree::ptree loadInfoFromJSON(std::string aC_path);
     
   } // namespace impl
 

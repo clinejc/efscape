@@ -13,7 +13,11 @@
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hh>
 #include <efscape/impl/ModelHomeSingleton.hh>
-#include <efscape/impl/ModelFactory.ipp>
+//#include <efscape/impl/ModelFactory.ipp>
+
+#include <efscape/utils/type.hpp>
+
+#include <boost/property_tree/ptree.hpp>
 
 #include <fstream>
 
@@ -24,21 +28,24 @@ namespace simplesim {
 
   char const gcp_libname[] = "simplesim";
 
-
   /**
-   * Creates a new CccgsemWrapper model
+   * Creates SimpleGenerator class metadata
    *
-   * @returns a handle to a new CcgsemWrapper
+   * @returns metadata in a JSON property tree
    */
-  efscape::impl::DEVS* create_BasicModel() {
-    return (efscape::impl::DEVS*)new SimpleGenerator();
+  boost::property_tree::ptree create_SimpleGenerator_info() {
+    boost::property_tree::ptree lC_ptree;
+    lC_ptree.put("info",
+                 "A simple generator");
+    lC_ptree.put("library", std::string(gcp_libname) );
+
+    return lC_ptree;
   }
-
-  const bool registered = efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
-    GetModelFactory().
-      RegisterModel<SimpleGenerator>("{ \"info\":\"A simple generator\"}",
-				     "{}",
-				     simplesim::gcp_libname);
-
+  
+  const bool registered =
+    efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
+    getModelFactory().
+    registerType<SimpleGenerator>(efscape::utils::type<SimpleGenerator>(),
+				  create_SimpleGenerator_info());
 
 } // end of namespace simplesim

@@ -12,7 +12,6 @@
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hh>
 #include <efscape/impl/ModelHomeSingleton.hh>
-#include <efscape/impl/ModelFactory.ipp>
 
 namespace efscape {
 
@@ -83,7 +82,7 @@ namespace efscape {
      * @returns handle to model (null if missing from the factory)
      */
     DEVS* createModel( const char* acp_classname ) {
-      return ( Singleton<ModelHomeI>::Instance().GetModelFactory().CreateModel(acp_classname) );
+      return ( Singleton<ModelHomeI>::Instance().getModelFactory().createObject(acp_classname) );
     }
 
     /**

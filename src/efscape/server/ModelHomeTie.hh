@@ -20,9 +20,14 @@ namespace efscape {
      * models. It replaces the ModelRepository interface.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.13 created 24 Dec 2006, revised 31 May 2015
+     * @version 0.1.0 created 24 Dec 2006, revised 08 Dec 2015
      *
      * ChangeLog:
+     *   - 2015-12-08 Removed newly added method
+     *     * string getModelProperties(...)
+     *   - 2015-11-22 One revised and one new method
+     *     * string getModelInfo(...) -- revised
+     *     * string getModelProperties(...) -- new
      *   - 2015-05-31 removed createWithConfig(...) method
      *   - 2015-05-27 implemented createFromJSON(...) method
      *   - 2014-12-14 removed method for accessing JsonDataset
@@ -53,8 +58,8 @@ namespace efscape {
 
       virtual ::efscape::ModelNameList getModelList(const Ice::Current&);
 
-      virtual ::efscape::ModelInfo getModelInfo(const ::std::string&,
-						const Ice::Current&);
+      virtual ::std::string getModelInfo(const ::std::string&,
+					 const Ice::Current&);
 
       virtual ::efscape::SimulatorPrx createSim(const ::efscape::ModelPrx&,
 						const Ice::Current&);

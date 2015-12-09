@@ -10,7 +10,7 @@
 #include <efscape/server/ModelHomeTie.hh>
 
 // definitions for accessing the model factory
-#include <efscape/impl/ModelHomeI.ipp>
+#include <efscape/impl/ModelHomeI.hh>
 #include <efscape/impl/ModelHomeSingleton.hh>
 
 namespace efscape {
@@ -214,8 +214,8 @@ namespace efscape {
     //================================
 
     const bool registered =
-		   impl::Singleton<impl::ModelHomeI>::Instance().
-		   registerCommand<RunServer>( RunServer::ProgramName() );
+		   impl::Singleton<impl::ModelHomeI>::Instance().getCommandFactory().
+		   registerType<RunServer>( RunServer::ProgramName() );
 
   } // namespace server
 

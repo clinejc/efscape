@@ -52,17 +52,6 @@ namespace efscape {
     // helper function for converting a ptree to JSON
     std::string ptree_to_json(const boost::property_tree::ptree& aCr_pt);
 
-
-    //----------------------------------------------------
-    // helper function for creating objects from a factory
-    //----------------------------------------------------
-    template <class BaseType>
-    BaseType*
-    createObject(std::map<
-		 std::string,
-		 boost::function<BaseType*()>
-		 >& aCr_factory,
-		 std::string);
   }
 }
 

@@ -203,13 +203,22 @@ namespace efscape {
       repast::ScheduleRunner& runner =
 	repast::RepastProcess::instance()->getScheduleRunner();
 
-      std::map< std::string, boost::any > lC_output =
-	mCp_model->getOutput();
-      std::map< std::string, boost::any >::iterator iter2 =
-	lC_output.begin();
-      for ( ; iter2 != lC_output.end(); iter2++) {
-	y.port = iter2->first;
-	y.value = iter2->second;
+      // std::map< std::string, boost::any > lC_output =
+      // 	mCp_model->getOutput();
+      // std::map< std::string, boost::any >::iterator iter2 =
+      // 	lC_output.begin();
+      // for ( ; iter2 != lC_output.end(); iter2++) {
+      // 	y.port = iter2->first;
+      // 	y.value = iter2->second;
+      // 	yb.insert(y);
+      // }
+
+      boost::property_tree::ptree lC_output =
+	mCp_model->outputFunction();
+      BOOST_FOREACH(boost::property_tree::ptree::value_type &v,
+		    lC_output.get_child("")) {
+        y.port = v.first;
+	y.value = v.second;
 	yb.insert(y);
       }
     }

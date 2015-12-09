@@ -78,7 +78,9 @@ namespace efscape {
       setHomeDir(lC_EfscapeHome.c_str());
 
       // initialize factories
-      mCp_ModelFactory.reset( new ModelFactory );
+      mCp_ModelFactory.reset( new model_factory );
+      mCp_BuilderFactory.reset( new builder_factory );
+      mCp_CommandFactory.reset( new command_factory );
 
       LOG4CXX_INFO(mSCp_logger, "Created EFSCAPE model respository...");
       
@@ -103,21 +105,19 @@ namespace efscape {
 	+ std::string(acp_classname) + "): ";
 
       // attempt to retrieve model from the model factory
-      DEVS* lCp_ModelI = GetModelFactory().CreateModel(acp_classname);
+      DEVS* lCp_ModelI = getModelFactory().createObject(acp_classname);
       if (lCp_ModelI == 0) {
 	LOG4CXX_ERROR(getLogger(),
 		      lC_LogMsg << "model not found");
 
-	std::set<std::string> lC1_ModelNames;
-	GetModelFactory().ListModels(lC1_ModelNames);
+	std::set<std::string> lC1_ModelNames =
+	  getModelFactory().getTypeIDs();
 	std::set<std::string>::iterator iter;
 	LOG4CXX_DEBUG(getLogger(),
 		      "*** Available models: ***");
 	for (iter = lC1_ModelNames.begin(); iter != lC1_ModelNames.end(); iter++)
 	  LOG4CXX_DEBUG(getLogger(),
 			"=> modelName=" << *iter);
-
-	delete lCp_ModelI;
 	return 0;
       }
 
@@ -217,8 +217,8 @@ namespace efscape {
 	// 1) top tag is used to identify the appropriate parser/builder
 	std::string lC_TagName = toNative(lCp_SimConfig->getTagName());
 
-	lCp_builder.reset( GetModelFactory().
-			   createBuilder(lC_TagName) );
+	lCp_builder.reset( getBuilderFactory().
+			   createObject(lC_TagName) );
 
 	if (!lCp_builder.get()) {
 	  lC_message += "\n\tbad document root <" + lC_TagName
@@ -328,6 +328,7 @@ namespace efscape {
       }
 
       return lCp_model;
+      
     } // ModelHomeI::CreateModelFromJSON(const char*)
     
     /**
@@ -443,7 +444,20 @@ namespace efscape {
 
       	LoadLibrary(lC_filename.c_str()); // attempt to load library
       }
- 
+
+      //-------------------------------------
+      // List all the models currently loaded
+      //-------------------------------------
+      std::set<std::string> lC1_ModelNames =
+	getModelFactory().getTypeIDs();
+      std::set<std::string>::iterator iter;
+      int li_cnt = 0;
+      LOG4CXX_DEBUG(getLogger(),
+		    "*** Available models: ***");
+      for (iter = lC1_ModelNames.begin(); iter != lC1_ModelNames.end(); iter++)
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "=>" << ++li_cnt << ") " << *iter);
+
     } // ModelHomeI::LoadLibraries()
 
     /**
@@ -451,25 +465,33 @@ namespace efscape {
      *
      * @returns reference to ModelFactory (singleton)
      */
-    ModelFactory& ModelHomeI::GetModelFactory() {
+    model_factory& ModelHomeI::getModelFactory() {
       if (mCp_ModelFactory.get() == NULL)
-	mCp_ModelFactory.reset( new ModelFactory );
+	mCp_ModelFactory.reset( new model_factory );
       return *mCp_ModelFactory;
+
     }
 
     /**
-     * Creates a command from the specified command name.
+     * Returns a reference to the BuilderFactory
      *
-     * @param aC_cmd_name command name
-     * @returns handle to command object
+     * @returns reference to BuilderFactory (singleton)
      */
-    CommandOpt*
-    ModelHomeI::createCommand(std::string aC_cmd_name) {
-      if (mCpF_CommandFactory.get() == NULL)
-	return NULL;
-
-      return createObject<CommandOpt>(*mCpF_CommandFactory,
-				      aC_cmd_name.c_str());
+    builder_factory& ModelHomeI::getBuilderFactory() {
+      if (mCp_BuilderFactory.get() == NULL)
+	mCp_BuilderFactory.reset( new builder_factory );
+      return *mCp_BuilderFactory;
+    }
+    
+    /**
+     * Returns a reference to the BuilderFactory
+     *
+     * @returns reference to BuilderFactory (singleton)
+     */
+    command_factory& ModelHomeI::getCommandFactory() {
+      if (mCp_CommandFactory.get() == NULL)
+	mCp_CommandFactory.reset( new command_factory );
+      return *mCp_CommandFactory;
     }
     
     /**
@@ -480,6 +502,39 @@ namespace efscape {
     log4cxx::LoggerPtr& ModelHomeI::getLogger() {
       return mSCp_logger;
     }
+
+    //---------------------------------------
+    // end of class ModelHomeI implementation
+    //---------------------------------------
+
+    // utility function for loading info from a JSON file
+    boost::property_tree::ptree loadInfoFromJSON(std::string aC_path) {
+      // path is relative
+      std::string lC_FileName =
+	ModelHomeI::getHomeDir() + std::string("/") + aC_path;
+
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		    "model info path = <" << lC_FileName << "> ***");
+
+      boost::property_tree::ptree pt;
+      std::string lC_JsonStr = "{}";
+      try {
+	boost::property_tree::read_json( lC_FileName.c_str(), pt );
+
+	std::ostringstream lC_buffer;
+	boost::property_tree::write_json(lC_buffer, pt, false);
+	lC_JsonStr = lC_buffer.str();
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "JSON=>" << lC_JsonStr);
+      }
+      catch (...) {
+	LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		      "unknown exception occurred parsing model info JSON file.");
+      }
+
+      return pt;
+    }
+
 
   } // namespace impl
 

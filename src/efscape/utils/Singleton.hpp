@@ -1,6 +1,6 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : boost_utils.hpp
+// File Name : Singleton.hpp
 // Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__

@@ -24,6 +24,12 @@ namespace efscape {
       return boost::units::detail::demangle(typeid(t).name());
     }
 
+    template <class T>
+    std::string type() {
+      T t;
+      return boost::units::detail::demangle(typeid(t).name());
+    }
+
   }
 }
 

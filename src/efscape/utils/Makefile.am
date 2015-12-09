@@ -2,12 +2,13 @@
 
 hh_sources = CommandOpt.hh
 hh_sources += DynamicLibrary.hh
+hh_sources += Factory.hpp
+hh_sources += Singleton.hpp
 hh_sources += xerces_strings.hpp
 hh_sources += xerces_utils.hpp
 hh_sources += type.hpp
 hh_sources += boost_utils.hpp
 hh_sources += boost_utils.ipp
-hh_sources += Singleton.hpp
 
 cc_sources = CommandOpt.cc
 cc_sources += DynamicLibrary.cc

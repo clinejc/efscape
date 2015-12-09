@@ -103,10 +103,10 @@ namespace efscape {
 	      // attempt to extract time parameters for the simulation
 	      boost::property_tree::ptree pt =
 		boost::any_cast<boost::property_tree::ptree>( (*i).value );
-	      boost::optional<int> lC_stop_at = pt.get_optional<int>("stopAt");
-	      if (lC_stop_at) {
+	      boost::optional<int> lC_timeMax = pt.get_optional<int>("timeMax");
+	      if (lC_timeMax) {
 		mCp_clock->timeMax() =
-		  ((double)lC_stop_at.get());
+		  ((double)lC_timeMax.get());
 
 		LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 			      "Setting the simulation stop time to "

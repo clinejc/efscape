@@ -22,13 +22,6 @@ namespace efscape {
 
   namespace impl {
 
-    // set the class name and port names
-    const char AdevsModel_strings::name[] = "efscape::impl::AdevsModel";
-    const char AdevsModel_strings::f_clock_out[] = "clock_out";
-    const char AdevsModel_strings::f_data_out[] = "data_out";
-    const char AdevsModel_strings::f_ogc_gc_out[] = "ogc_gc_out";
-    const char AdevsModel_strings::f_ogc_sf_out[] = "ogc_sf_out";
-
     // instantiate class data members
     int AdevsModel::mSi_nextJobID = 0;
 
@@ -213,24 +206,6 @@ namespace efscape {
      * @param acp_comment comment
      */
     void AdevsModel::comment(const char* acp_comment) { mC_comment = acp_comment; }
-
-    // /** @returns smart handle to landscape */
-    // efscape::gis::LandscapeIPtr& AdevsModel::getLandscapeIPtr() { return mCp_Landscape; }
-
-    // /**
-    //  * Sets the handle to the landscape.
-    //  *
-    //  * @param aCp_landscape handle to landscape
-    //  */
-    // void AdevsModel::setLandscapeIPtr(const efscape::gis::LandscapeIPtr& aCp_landscape) {
-    //   mCp_Landscape = aCp_landscape;
-    // }
-
-    // /** @returns handle to model landscape */
-    // efscape::gis::LandscapeI* AdevsModel::getLandscape() { return mCp_Landscape.get(); }
-
-    // /** @returns handle to model landscape */
-    // const efscape::gis::LandscapeI* AdevsModel::getLandscape() const { return mCp_Landscape.get(); }
 
     /**
      * Adds an observer.

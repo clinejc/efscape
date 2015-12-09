@@ -17,9 +17,14 @@
  * services, for an Internet Connection Environment (ICE)-based framework.
  *
  * @author Jon C. Cline <clinej@stanfordalumni.org>
- * @version 0.0.17 created 06 Dec 2006, revised 31 May 2015
+ * @version 0.1.1 created 06 Dec 2006, revised 08 Dec 2015
  *
  * ChangeLog:
+ *   - 2015-12-08 Removed newly added ModelInfo interface
+ *     - string ModelHome::getModelProperties(string)
+ *   - 2015-11-22 Streamlined ModelInfo interface into two separate calls
+ *     - string ModelHome::getModelInfo(string)
+ *     - string ModelHome::getModelProperties(string)
  *   - 2015-05-31 Removed 'createFromConfig(...)' method
  *   - 2015-05-27 Added method to ModelHome for creating models from JSON
  *   - 2014-12-14 Removed JsonDataset and associated operations
@@ -84,15 +89,6 @@ module efscape {
    */
   sequence<Content> Message;
 
-
-  /**
-   * ModelInfo: model metadata
-   */
-  struct ModelInfo {
-    string infoToJson;
-    string propertiesToJson;
-  };
-  
   /**
    * interface Entity -- base class for simulation objects
    **/
@@ -192,7 +188,7 @@ module efscape {
     Model* createFromJSON(["cpp:type:string"] string configuration);
 
     ModelNameList getModelList();
-    ModelInfo getModelInfo(string name);
+    string getModelInfo(string name);
 
     Simulator* createSim(Model* rootModel);
   };

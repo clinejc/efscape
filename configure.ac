@@ -142,7 +142,5 @@ AC_CONFIG_FILES([Makefile
 		 src/efscape/gis/Makefile
 		 src/efscape/gis/TestCode/Makefile
 		 src/efscape/server/Makefile
-		 src/ogis/Makefile
-		 src/ogis/impl/Makefile
 		 src/simplesim/Makefile])
 AC_OUTPUT

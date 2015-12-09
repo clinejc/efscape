@@ -116,13 +116,10 @@ EfscapeClient::run(int argc, char* argv[])
       std::cout << "mode #" << i << "=<"
 		<< lC1_ModelNameList[i]
 		<< ">\n";
-      ::efscape::ModelInfo lC_ModelInfo =
-	  lCp_ModelHome->getModelInfo(lC1_ModelNameList[i].c_str());
+      std::string lC_ModelInfo =
+	lCp_ModelHome->getModelInfo(lC1_ModelNameList[i].c_str());
       std::cout << "\tmodel info=>\n"
-		<< lC_ModelInfo.infoToJson
-		<< "\n"
-		<< "\tmodel properties=>\n"
-		<< lC_ModelInfo.propertiesToJson
+		<< lC_ModelInfo
 		<< "\n";
     }
 

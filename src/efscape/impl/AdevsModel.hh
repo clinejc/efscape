@@ -69,15 +69,6 @@ namespace efscape {
       /** clock output port */
       ClockI* clock_out;
 
-      // /** data output port */
-      // DataFrameI* data_out;
-
-      // /** grid coverage output port */
-      // boost::any ogc_gc_out;
-
-      // /** simple feature output port */
-      // boost::any ogc_sf_out;
-
       //-------------------------
       // accessor/mutator methods
       //-------------------------
@@ -93,14 +84,6 @@ namespace efscape {
       //
       const char* comment() const;
       void comment(const char* acp_comment);
-
-      //
-      // landscape
-      //
-      efscape::gis::LandscapeIPtr& getLandscapeIPtr();
-      void setLandscapeIPtr(const efscape::gis::LandscapeIPtr& aCp_landscape);
-      efscape::gis::LandscapeI* getLandscape();
-      const efscape::gis::LandscapeI* getLandscape() const;
 
       log4cxx::LoggerPtr getLogger() const;
 
@@ -162,9 +145,6 @@ namespace efscape {
       /** comment */
       std::string mC_comment;
 
-     //  /** handle to model landscape */
-     // efscape::gis::LandscapeIPtr mCp_Landscape;
-
       /** set of observers */
       std::set<ObserverPtr> mCCp_observers;
 
@@ -182,20 +162,10 @@ namespace efscape {
     // utility method for retrieving the root AdevsModel
     const AdevsModel* getAdevsModel(adevs::Devs<IO_Type>* aCp_model);
 
-    // class AdevsModel reflection
-    struct AdevsModel_strings {
-      static const char name[];
-      static const char f_clock_out[];
-      static const char f_data_out[];
-      static const char f_ogc_gc_out[];
-      static const char f_ogc_sf_out[];
-    };
-
-
   } // namespace impl
 
 } // namespace efscape
 
-BOOST_CLASS_VERSION(efscape::impl::AdevsModel,10)
+BOOST_CLASS_VERSION(efscape::impl::AdevsModel,11)
 
 #endif	// #ifndef EFSCAPE_IMPL_ADEVSMODEL_HH

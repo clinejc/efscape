@@ -85,25 +85,5 @@ namespace efscape {
       return parent;
     }
 
-    //----------------------------------------------------
-    // helper function for creating objects from a factory
-    //----------------------------------------------------
-    template <class BaseType>
-    BaseType*
-    createObject(std::map<
-		 std::string,
-		 boost::function<BaseType*()>
-		 >& aCr_factory,
-		 std::string aC_name)
-    {
-      BaseType* lCp_object = NULL;
-      typename std::map< std::string, boost::function<BaseType*()> >::iterator iter;
-      if ( (iter = aCr_factory.find(aC_name) ) !=
-	   aCr_factory.end() )
-	lCp_object = (iter->second)();
-
-      return lCp_object;
-    }
-
   } // namespace utils
 }   // namespace efscape

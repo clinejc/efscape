@@ -13,6 +13,10 @@
 #include <efscape/impl/ModelHomeI.hh>
 #include <efscape/impl/ModelHomeSingleton.hh>
 
+#include <boost/property_tree/json_parser.hpp>
+
+#include <sstream>
+
 namespace efscape {
 
   namespace server {
@@ -161,13 +165,13 @@ namespace efscape {
     ::efscape::ModelNameList ModelHomeTie::getModelList(const Ice::Current& current)
     {
       ::efscape::ModelNameList lC1_ModelNameList;
-      std::set<std::string> lC1_ModelNames;
 
       // retrieve the list of available models
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		      "*** Available models: ***");
-      impl::Singleton<impl::ModelHomeI>::Instance().
-      	GetModelFactory().ListModels(lC1_ModelNames);
+      std::set<std::string> lC1_ModelNames =
+	impl::Singleton<impl::ModelHomeI>::Instance().
+      	getModelFactory().getTypeIDs();
       std::set<std::string>::iterator iter;
       for (iter = lC1_ModelNames.begin(); iter != lC1_ModelNames.end(); iter++) {
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -179,26 +183,37 @@ namespace efscape {
     }
 
     /**
-     * Returns a list of available models.
+     * Returns info about the specified model in a JSON string
      *
      * @param aC_name type of model
      * @param current method invocation
-     * @returns list of available models
+     * @returns info about the specified model in a JSON string
      */
-    ::efscape::ModelInfo ModelHomeTie::getModelInfo(const ::std::string& aC_name,
-						    const Ice::Current& current)
+    ::std::string ModelHomeTie::getModelInfo(const ::std::string& aC_name,
+					     const Ice::Current& current)
     {
-      ::efscape::ModelInfo lC_ModelInfo;
-      efscape::impl::ModelInfo lC_ModelInfoI =
+      boost::property_tree::ptree lC_ModelInfo =
 	impl::Singleton<impl::ModelHomeI>::Instance().
-	GetModelFactory().getModelInfo(aC_name.c_str());
+	getModelFactory().getProperties(aC_name.c_str());
 
-      // copy metadata
-      lC_ModelInfo.infoToJson = lC_ModelInfoI.info;
-      lC_ModelInfo.propertiesToJson = lC_ModelInfoI.properties;
+      std::string lC_JsonStr = "{}";
+      try {
+	std::ostringstream lC_buffer;
+	boost::property_tree::write_json(lC_buffer,
+					 lC_ModelInfo,
+					 false);
+	lC_JsonStr = lC_buffer.str();
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "JSON=>" << lC_JsonStr);
+      }
+      catch (...) {
+	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+		      "unknown exception converting JSON to string.");
+      }
 
-      return lC_ModelInfo;
+      return lC_JsonStr;
     }
+
     /**
      * Creates a simulator object for a model.
      *
