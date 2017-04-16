@@ -34,7 +34,7 @@ namespace efscape {
     {
       // attempt create the model
       adevs::Devs<efscape::impl::IO_Type>* lCp_model =
-	impl::Singleton<impl::ModelHomeI>::Instance().CreateModel(name.c_str());
+	impl::Singleton<impl::ModelHomeI>::Instance().createModel(name.c_str());
 
       if (lCp_model) {
 	// wrap the model
@@ -72,7 +72,7 @@ namespace efscape {
       try {
 	// attempt create the model
 	adevs::Devs<efscape::impl::IO_Type>* lCp_modelI =
-	  impl::Singleton<impl::ModelHomeI>::Instance().CreateModelFromXML(configuration);
+	  impl::Singleton<impl::ModelHomeI>::Instance().createModelFromXML(configuration);
 
 	if (lCp_modelI) {
 	  // tie the model
@@ -122,7 +122,7 @@ namespace efscape {
       try {
 	// attempt create the model
 	adevs::Devs<efscape::impl::IO_Type>* lCp_modelI =
-	  impl::Singleton<impl::ModelHomeI>::Instance().CreateModelFromJSON(configuration);
+	  impl::Singleton<impl::ModelHomeI>::Instance().createModelFromJSON(configuration);
 
 	if (lCp_modelI) {
 	  // tie the model

@@ -54,20 +54,7 @@ namespace efscape {
      * simulation models.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 3.0.0 created 24 Dec 2006, revised 16 Apr 2017
-     *
-     * ChangeLog:
-     *   - 2015-12-08 Refactored all factory interfaces (now three separate)
-     *   - 2015-11-18 Added factory methods for CommandOpt-derived classes
-     *   - 2015-05-31 Removed deprecated model creation methods
-     *   - 2015-05-27 Added method for creating model from JSON config
-     *   - 2014-09-13 Added methods for loading models with config files 
-     *   - 2014-08-12 Added CommandFactory (moved from efscape::utils)
-     *   - 2014-07-16 Merged all singletons into ModelHome*
-     *   - 2009-09-11 Added class accessor method for a adevs cell factory.
-     *   - 2009-03-11 revised
-     *   - 2009-02-28 replaced ModelI* return with adevs
-     *   - 2006-12-24 created Class
+     * @version 3.1.0 created 24 Dec 2006, revised 16 Apr 2017
      */
     class ModelHomeI
     {
@@ -77,12 +64,12 @@ namespace efscape {
       virtual ~ModelHomeI();
 
       // methods for creating models
-      adevs::Devs<IO_Type>* CreateModel(const char* acp_classname);
-      adevs::Devs<IO_Type>* CreateModelFromXML(const char* acp_filename)
+      adevs::Devs<IO_Type>* createModel(const char* acp_classname);
+      adevs::Devs<IO_Type>* createModelFromXML(const char* acp_filename)
 	throw(std::logic_error);
-      adevs::Devs<IO_Type>* CreateModelFromXML(const std::wstring& aCr_buffer)
+      adevs::Devs<IO_Type>* createModelFromXML(const std::wstring& aCr_buffer)
 	throw(std::logic_error);
-      adevs::Devs<IO_Type>* CreateModelFromJSON(const std::string& aCr_JSONstring)
+      adevs::Devs<IO_Type>* createModelFromJSON(const std::string& aCr_JSONstring)
 	throw(std::logic_error);
 
       model_factory& getModelFactory();

@@ -113,7 +113,7 @@ namespace efscape {
 	    boost::filesystem::path(lC_ParmName.c_str());
 	  if (p.extension().string() == ".xml") {
 	    lCp_model.reset( Singleton<ModelHomeI>::Instance().
-			     CreateModelFromXML(lC_ParmName.c_str()) );
+			     createModelFromXML(lC_ParmName.c_str()) );
 	  }
 	  else if (p.extension().string() == ".json") {
 	    // try to load the parameter file
@@ -128,7 +128,7 @@ namespace efscape {
 	      std::cout << buf << std::endl;
 
 	      lCp_model.reset( Singleton<ModelHomeI>::Instance().
-			       CreateModelFromJSON(buf.str()) );
+			       createModelFromJSON(buf.str()) );
 	    }
 	  }
 	  else {

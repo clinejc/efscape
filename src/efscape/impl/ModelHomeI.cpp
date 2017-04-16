@@ -99,9 +99,9 @@ namespace efscape {
      * @returns handle to model
      */
     adevs::Devs<IO_Type>*
-    ModelHomeI::CreateModel(const char* acp_classname)
+    ModelHomeI::createModel(const char* acp_classname)
     {
-      std::string lC_LogMsg = "ModelHomeI::CreateModel("
+      std::string lC_LogMsg = "ModelHomeI::createModel("
 	+ std::string(acp_classname) + "): ";
 
       // attempt to retrieve model from the model factory
@@ -126,7 +126,7 @@ namespace efscape {
 
       return dynamic_cast<adevs::Devs<IO_Type>* >(lCp_ModelI);
 
-    } // ModelHomeI::CreateModel(const char*)
+    } // ModelHomeI::createModel(const char*)
 
     /**
      * Creates a model from a model configuration stored in a string
@@ -137,7 +137,7 @@ namespace efscape {
      * @throws std::logic_error
      */
     adevs::Devs<IO_Type>*
-    ModelHomeI::CreateModelFromXML(const std::wstring& aCr_buffer)
+    ModelHomeI::createModelFromXML(const std::wstring& aCr_buffer)
       throw(std::logic_error)
     {
       char lcp_FileName[] = "/tmp/fileXXXXXX";
@@ -159,13 +159,13 @@ namespace efscape {
       lC_OutFile.close();
 
       try {
-	return this->CreateModelFromXML(lcp_FileName);
+	return this->createModelFromXML(lcp_FileName);
       }
       catch(std::logic_error excp) {
 	throw excp;
       }
 
-    } // ModelHomeI::CreateModelFromXML(const std::wstring&)
+    } // ModelHomeI::createModelFromXML(const std::wstring&)
 
     /**
      * Creates a model from a model configuration stored in an XML file.
@@ -175,10 +175,10 @@ namespace efscape {
      * @throws std::logic_error
      */
     adevs::Devs<IO_Type>*
-    ModelHomeI::CreateModelFromXML(const char* acp_filename)
+    ModelHomeI::createModelFromXML(const char* acp_filename)
       throw(std::logic_error)
     {
-      std::string lC_message = "ModelHomeI::CreateModelFromXML("
+      std::string lC_message = "ModelHomeI::createModelFromXML("
 	+ std::string(acp_filename) + "):";
 
       adevs::Devs<IO_Type>* lCp_model = NULL;
@@ -250,7 +250,7 @@ namespace efscape {
 
       return lCp_model;
 
-    } // ModelHomeI::CreateModelFromXML(...)
+    } // ModelHomeI::createModelFromXML(...)
 
     /**
      * Creates a model from a model configuration stored in a JSON
@@ -261,7 +261,7 @@ namespace efscape {
      * @throws std::logic_error
      */
     adevs::Devs<IO_Type>*
-    ModelHomeI::CreateModelFromJSON(const std::string& aCr_JSONstring)
+    ModelHomeI::createModelFromJSON(const std::string& aCr_JSONstring)
 	throw(std::logic_error)
     {
       LOG4CXX_DEBUG(getLogger(),
@@ -315,7 +315,7 @@ namespace efscape {
 		      "property <modelName> not found!");
 
       adevs::Devs<IO_Type>* lCp_model = NULL;
-      if ( (lCp_model = CreateModel(lC_modelName.c_str()) ) != NULL ) {
+      if ( (lCp_model = createModel(lC_modelName.c_str()) ) != NULL ) {
 	// inject input (model properties file)
 	// note: must be done before initializing the simulator
 	adevs::Bag<efscape::impl::IO_Type> xb;
@@ -329,7 +329,7 @@ namespace efscape {
 
       return lCp_model;
       
-    } // ModelHomeI::CreateModelFromJSON(const char*)
+    } // ModelHomeI::createModelFromJSON(const char*)
     
     /**
      * Loads the specified library.

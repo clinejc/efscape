@@ -219,7 +219,7 @@ namespace efscape {
 
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		      "Retrieving the model from the factory");
-	mCp_model.reset( Singleton<ModelHomeI>::Instance().CreateModel( mC_ClassName.c_str() ) );
+	mCp_model.reset( Singleton<ModelHomeI>::Instance().createModel( mC_ClassName.c_str() ) );
 
 	if (mCp_model.get() == 0) {
 	  std::string lC_message = "Unable to create model <" + mC_ClassName
