@@ -1,11 +1,11 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : ModelHomeSingleton.hh
+// File Name : ModelHomeSingleton.hpp
 // Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-#ifndef EFSCAPE_IMPL_MODELHOME_SINGLETON_HH
-#define EFSCAPE_IMPL_MODELHOME_SINGLETON_HH
+#ifndef EFSCAPE_IMPL_MODELHOME_SINGLETON_HPP
+#define EFSCAPE_IMPL_MODELHOME_SINGLETON_HPP
 
 #include <efscape/impl/singletondll_export.h>
 
@@ -28,4 +28,4 @@ namespace efscape {
 
 } // namespace efscape
 
-#endif	// #ifndef EFSCAPE_IMPL_MODELHOME_SINGLETON_HH
+#endif	// #ifndef EFSCAPE_IMPL_MODELHOME_SINGLETON_HPP

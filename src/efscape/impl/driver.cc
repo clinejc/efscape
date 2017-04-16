@@ -24,7 +24,7 @@
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>
-#include <efscape/impl/ModelHomeSingleton.hh>
+#include <efscape/impl/ModelHomeSingleton.hpp>
 #include <boost/mpi/environment.hpp>
 
 void fnExit(void) {

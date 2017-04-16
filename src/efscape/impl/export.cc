@@ -23,7 +23,7 @@
 
 // model factory definitions
 #include <efscape/impl/ModelHomeI.hpp>
-#include <efscape/impl/ModelHomeSingleton.hh>
+#include <efscape/impl/ModelHomeSingleton.hpp>
 
 //--------------------------------------------
 // efscape::impl::ModelBuilder-derived classes

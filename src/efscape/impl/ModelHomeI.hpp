@@ -19,8 +19,8 @@
 //
 // Bugs, comments, and questions can be sent to clinej@stanfordalumni.org
 // __COPYRIGHT_END__
-#ifndef EFSCAPE_IMPL_MODELHOME_I_HH
-#define EFSCAPE_IMPL_MODELHOME_I_HH
+#ifndef EFSCAPE_IMPL_MODELHOME_I_HPP
+#define EFSCAPE_IMPL_MODELHOME_I_HPP
 
 #include <efscape/impl/adevs_config.hh>
 #include <efscape/impl/ModelBuilder.hh>
@@ -137,4 +137,4 @@ namespace efscape {
 
 } // namespace efscape
 
-#endif	// #ifndef EFSCAPE_IMPL_MODELHOME_I_HH
+#endif	// #ifndef EFSCAPE_IMPL_MODELHOME_I_HPP

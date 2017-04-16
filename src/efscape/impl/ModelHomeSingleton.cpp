@@ -1,25 +1,17 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : ModelHomeSingleton.cc
+// File Name : ModelHomeSingleton.cpp
 // Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 
-#include <efscape/impl/ModelHomeSingleton.hh>
+#include <efscape/impl/ModelHomeSingleton.hpp>
 #include <efscape/impl/ModelHomeI.hpp>
 
-// #include <loki/Singleton.h>		 // Loki::Singleton
 #include <efscape/utils/Singleton.hpp>	 // alternative to Loki::Singleton
 
-// start of Loki::Singleton implementation
-// typedef Loki::SingletonHolder<efscape::impl::ModelHomeI>
-// ModelHomeSingleton;
-
-// LOKI_SINGLETON_INSTANCE_DEFINITION(ModelHomeSingleton)
-// end of Loki::Singleton implementation
-
 // instantiate Singleton template class
-typedef  efscape::utils::Singleton< efscape::impl::ModelHomeI > ModelHomeSingleton2;
+typedef  efscape::utils::Singleton< efscape::impl::ModelHomeI > ModelHomeSingleton;
 
 namespace efscape {
 
@@ -29,8 +21,7 @@ namespace efscape {
     template<>
     ModelHomeI& Singleton<ModelHomeI>::Instance()
     {
-      return ::ModelHomeSingleton2::instance();
-      // return ::ModelHomeSingleton::Instance();
+      return ::ModelHomeSingleton::instance();
     }
 
   } // namespace impl

@@ -11,7 +11,7 @@
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hh>
-#include <efscape/impl/ModelHomeSingleton.hh>
+#include <efscape/impl/ModelHomeSingleton.hpp>
 
 #include <boost/property_tree/json_parser.hpp>
 
