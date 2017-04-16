@@ -6,7 +6,7 @@
 // __COPYRIGHT_END__
 
 #include <efscape/impl/ModelHomeSingleton.hh>
-#include <efscape/impl/ModelHomeI.hh>
+#include <efscape/impl/ModelHomeI.hpp>
 
 // #include <loki/Singleton.h>		 // Loki::Singleton
 #include <efscape/utils/Singleton.hpp>	 // alternative to Loki::Singleton

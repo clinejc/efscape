@@ -8,7 +8,7 @@
 #include "BasicModel.hh"
 
 #include <efscape/impl/AdevsModel.hh>
-#include <efscape/impl/ModelHomeI.hh>
+#include <efscape/impl/ModelHomeI.hpp>
 
 #include <boost/lexical_cast.hpp>
 

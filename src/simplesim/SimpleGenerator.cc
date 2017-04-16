@@ -3,7 +3,7 @@
 #include "SimpleGenerator.hh"
 
 #include <efscape/impl/AdevsModel.hh>
-#include <efscape/impl/ModelHomeI.hh>
+#include <efscape/impl/ModelHomeI.hpp>
 
 #include <iostream>
 #include <boost/multi_array.hpp>

@@ -10,7 +10,7 @@
 #include <efscape/utils/CommandOpt.hh>	// parent class definition
 
 #include <efscape/impl/adevs_config.hh>
-#include <efscape/impl/ModelHomeI.hh>
+#include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/AdevsModel.hh>
 
 #include <boost/date_time/posix_time/posix_time.hpp>

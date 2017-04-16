@@ -19,7 +19,7 @@
 //
 // Bugs, comments, and questions can be sent to clinej@stanfordalumni.org
 // __COPYRIGHT_END__
-#include <efscape/impl/ModelHomeI.hh>
+#include <efscape/impl/ModelHomeI.hpp>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/property_tree/ptree.hpp>

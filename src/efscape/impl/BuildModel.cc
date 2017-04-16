@@ -7,7 +7,7 @@
 #include <efscape/impl/BuildModel.hh>
 
 // definitions for accessing the model factory
-#include <efscape/impl/ModelHomeI.hh>
+#include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hh>
 
 #include <efscape/impl/AdevsModel.hh>

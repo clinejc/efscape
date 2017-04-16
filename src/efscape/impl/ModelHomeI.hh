@@ -1,6 +1,6 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : ModelHomeI.hh
+// File Name : ModelHomeI.hpp
 // Copyright (C) 2006-2009 by Jon C. Cline
 //
 // This library is free software; you can redistribute it and/or
@@ -54,7 +54,7 @@ namespace efscape {
      * simulation models.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.1.1 created 24 Dec 2006, revised 08 Dec 2015
+     * @version 3.0.0 created 24 Dec 2006, revised 16 Apr 2017
      *
      * ChangeLog:
      *   - 2015-12-08 Refactored all factory interfaces (now three separate)

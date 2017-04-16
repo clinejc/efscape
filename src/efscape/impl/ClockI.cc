@@ -6,7 +6,7 @@
 // __COPYRIGHT_END__
 #include <efscape/impl/ClockI.hh>
 
-#include <efscape/impl/ModelHomeI.hh>
+#include <efscape/impl/ModelHomeI.hpp>
 // #include <repast_hpc/RepastProcess.h>
 
 // using namespace repast;

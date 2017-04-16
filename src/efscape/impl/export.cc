@@ -14,12 +14,15 @@
 #include <boost/serialization/assume_abstract.hpp>
 
 // class boost serialization export definitions
-#include <efscape/impl/adevs_serialization.hh>
+// #include <efscape/impl/adevs_serialization.hh>
+#include <adevs/adevs_serialization.hpp>
+#include <efscape/impl/adevs_decorator_serialization.hpp>
+
 #include <efscape/impl/EntityI.hh>
 #include <efscape/impl/AdevsModel.hh>
 
 // model factory definitions
-#include <efscape/impl/ModelHomeI.hh>
+#include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hh>
 
 //--------------------------------------------
@@ -73,6 +76,18 @@ BOOST_CLASS_EXPORT(efscape::impl::DEVS)
 BOOST_CLASS_EXPORT(efscape::impl::ATOMIC)
 BOOST_CLASS_EXPORT(efscape::impl::NetworkModel)
 BOOST_CLASS_EXPORT(efscape::impl::ModelDecorator)
+
+namespace boost {
+ namespace serialization {
+   template<class Archive>
+   void serialize(Archive & ar, efscape::impl::DIGRAPH::node& node,
+		   const unsigned int version)
+   {
+     ar & BOOST_SERIALIZATION_NVP(node.model); // serialize model
+     ar & BOOST_SERIALIZATION_NVP(node.port); // serialize port
+   }
+ }
+}
 BOOST_CLASS_EXPORT(efscape::impl::DIGRAPH)
 BOOST_CLASS_EXPORT(efscape::impl::ModelWrapperBase)
 
