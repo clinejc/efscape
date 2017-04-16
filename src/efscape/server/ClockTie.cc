@@ -6,7 +6,7 @@
 // __COPYRIGHT_END__
 #include <efscape/server/ClockTie.hh>
 
-#include <efscape/impl/ModelHomeI.hh> // for server-side logging
+#include <efscape/impl/ModelHomeI.hpp> // for server-side logging
 
 namespace efscape {
 

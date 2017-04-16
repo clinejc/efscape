@@ -6,7 +6,7 @@
 // __COPYRIGHT_END__
 #include <efscape/server/ModelTie.hh>
 
-#include <efscape/impl/ModelHomeI.hh>
+#include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/AdevsModel.hh>
 #include <efscape/utils/type.hpp>
 #include <efscape/utils/boost_utils.ipp>
