@@ -1,11 +1,11 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : ModelTie.hh
-// Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-#ifndef EFSCAPE_SERVER_MODELTIE_HH
-#define EFSCAPE_SERVER_MODELTIE_HH
+#ifndef EFSCAPE_SERVER_MODELTIE_HPP
+#define EFSCAPE_SERVER_MODELTIE_HPP
 
 // parent class definitions
 #include <Ice/Ice.h>
@@ -127,4 +127,4 @@ namespace efscape {
 
 } // namespace efscape
 
-#endif	// #ifndef EFSCAPE_SERVER_MODELTIE_HH
+#endif	// #ifndef EFSCAPE_SERVER_MODELTIE_HPP

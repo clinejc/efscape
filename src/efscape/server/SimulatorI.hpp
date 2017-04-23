@@ -1,11 +1,11 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : SimulatorI.hh
-// Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
+// File Name : SimulatorI.hpp
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-#ifndef EFSCAPE_SERVER_SIMULATOR_I_HH
-#define EFSCAPE_SERVER_SIMULATOR_I_HH
+#ifndef EFSCAPE_SERVER_SIMULATOR_I_HPP
+#define EFSCAPE_SERVER_SIMULATOR_I_HPP
 
 #include <Ice/Ice.h>
 #include <efscape/efscape.h>
@@ -25,11 +25,7 @@ namespace efscape {
      * This class implements the Simulator interface
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.2 created 26 Aug 2007, revised 11 Mar 2009
-     *
-     * ChangeLog:
-     *   - 2009.03.11 moved to namespace efscape/server
-     *   - 2007.08.26 created class SimulatorI.
+     * @version 1.0.0 created 26 Aug 2007, revised 11 Mar 2009
      */
     class SimulatorI : virtual public ::efscape::Simulator,
 		       public IceUtil::Mutex
@@ -67,5 +63,5 @@ namespace efscape {
 
 } // namespace efscape
 
-#endif	// #define EFSCAPE_SERVER_SIMULATOR_I_HH
+#endif	// #define EFSCAPE_SERVER_SIMULATOR_I_HPP
 

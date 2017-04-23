@@ -1,7 +1,7 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : RunServer.hpp
-// Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 #ifndef EFSCAPE_SERVER_RUNSERVER_HPP
@@ -21,7 +21,7 @@ namespace efscape {
      * interface derived from the CommandOpt class.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.1 created 23 Sep 2014, revised 23 Sep 2014
+     * @version 1.0.0 created 23 Sep 2014, revised 23 Sep 2014
      *
      * ChangeLog:
      *   - 2014-09-23 Created class RunServer.

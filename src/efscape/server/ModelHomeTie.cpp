@@ -1,13 +1,13 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : ModelHomeTie.cc
+// File Name : ModelHomeTie.cpp
 // Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-#include <efscape/server/ModelHomeTie.hh>
+#include <efscape/server/ModelHomeTie.hpp>
 
 #include <efscape/server/ModelTie.hh>
-#include <efscape/server/SimulatorI.hh>
+#include <efscape/server/SimulatorI.hpp>
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>

@@ -1,13 +1,13 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : RunServer.cpp
-// Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 
 #include <efscape/server/RunServer.hpp>
 
-#include <efscape/server/ModelHomeTie.hh>
+#include <efscape/server/ModelHomeTie.hpp>
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>
@@ -20,7 +20,7 @@ namespace efscape {
     // class variables
     const char* RunServer::mScp_program_name = "efserver";
     const char* RunServer::mScp_program_version =
-      "version 0.0.1 (2014/09/23)";
+      "version 1.0.0 (2014/09/23)";
 
     /** default constructor */
     RunServer::RunServer() {
