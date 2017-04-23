@@ -58,20 +58,16 @@ namespace efscape {
       // initialize the simulation clock
       mCp_clock.reset(new efscape::impl::ClockI);
 
-      efscape::impl::EntityI* lCp_WrappedModel =
-	dynamic_cast<efscape::impl::EntityI*>(lCp_model);
-      efscape::impl::AdevsModel* lCp_RootModel; // note: root model derived from model
+      efscape::impl::AdevsModel* lCp_RootModel =
+	dynamic_cast<efscape::impl::AdevsModel*>(lCp_model);
       std::string lC_ParmName("efscape.xml"); // model parameter file
-      if (lCp_WrappedModel) {
-      	lCp_RootModel = dynamic_cast<efscape::impl::AdevsModel*>(lCp_model);
-      	if (lCp_RootModel) {
-	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-			"Setting simulation environment from root model attributes");
-      	  mCp_clock = lCp_RootModel->getClockIPtr();
-      	  lC_ParmName =
-      	    lCp_RootModel->getWorkDir() + "/" +
-      	    lCp_RootModel->name() + ".xml";
-      	}
+      if (lCp_RootModel) {
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "Setting simulation environment from root model attributes");
+	mCp_clock = lCp_RootModel->getClockIPtr();
+	lC_ParmName =
+	  lCp_RootModel->getWorkDir() + "/" +
+	  lCp_RootModel->name() + ".xml";
       }
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		    "Setting the simulation clock");
@@ -366,12 +362,7 @@ namespace efscape {
       setWrappedModel(aCp_model);
 
       // Set model name
-      efscape::impl::EntityI* lCp_model;
-      if ( (lCp_model =
-	    dynamic_cast<efscape::impl::EntityI*>(aCp_model) ) )
-	mC_name = lCp_model->name();
-      else
-	mC_name = efscape::utils::type<efscape::impl::DEVS>(*aCp_model);
+      mC_name = efscape::utils::type<efscape::impl::DEVS>(*aCp_model);
 
     }
 
@@ -420,28 +411,7 @@ namespace efscape {
 			     adevs::Bag<adevs::Event<efscape::impl::IO_Type> >&
 			     aCr_internal_input)
     {
-      // delegate output processing to output producers
-      for (int i = 0; i < aCr_external_input.size(); i++) {
-	std::vector<AdevsInputConsumerPtr>::iterator iConsumer;
-	for (int j = 0; j < mC1_InputConsumers.size(); j++) {
-	  adevs::Event<efscape::impl::IO_Type> e;
-	  if ( (*mC1_InputConsumers[j])(aCr_current,
-					aCr_external_input[j],
-					e) ) {
-	    aCr_internal_input.insert(e);
-	    break;
-	  }
-	  
-	}
-	// for (iConsumer = mC1_InputConsumers.begin();
-	//      iConsumer != mC1_InputConsumers.end();
-	//      iConsumer++) {
-	//   if ( (*(*iConsumer))(aCr_current,
-	// 		       aCr_external_input[i],
-	// 		       aCr_internal_input) )
-	//     break;
-	// }
-      }
+      /** @todo Convert JSON inputs into boost::property_tree::ptree objects */
     }
 
     /**
@@ -480,39 +450,9 @@ namespace efscape {
 	}
       }
 
-      // // delegate output processing to output producers
-      // std::vector<AdevsOutputProducerPtr>::iterator iProducer;
-      // for (iProducer = mC1_OutputProducers.begin();
-      // 	   iProducer != mC1_OutputProducers.end();
-      // 	   iProducer++) {
-      // 	(*(*iProducer))(aCr_current, mCC_OutputBuffer, aCr_external_output);
-      // }
-
       mCC_OutputBuffer.clear();
 
     } // ModelTie::translateOutput(...)
-
-    /**
-     * Adds an input consumer
-     *
-     * @param smart pointer to consumer
-     */
-    void ModelTie::addInputConsumer(const AdevsInputConsumerPtr&
-				    aCr_consumer )
-    {
-      mC1_InputConsumers.push_back(aCr_consumer);
-    }
-
-    /**
-     * Adds an output producer
-     *
-     * @param smart pointer to producer
-     */
-    void ModelTie::addOutputProducer(const AdevsOutputProducerPtr&
-				     aCr_producer )
-    {
-      mC1_OutputProducers.push_back(aCr_producer);
-    }
 
   } // namespace server
 

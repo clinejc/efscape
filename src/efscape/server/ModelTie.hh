@@ -11,7 +11,6 @@
 #include <Ice/Ice.h>
 #include <efscape/efscape.h>
 
-#include <efscape/server/adevs_ice_config.hh>
 #include <efscape/impl/adevs_config.hh>
 #include <efscape/impl/ClockI.hh>
 #include <boost/shared_ptr.hpp>
@@ -26,7 +25,7 @@ namespace efscape {
      * interface for server-side models.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.4 created 18 Oct 2008, revised 24 Sep 2014
+     * @version 1.0.0 created 18 Oct 2008, revised 22 Apr 2017
      */
     class ModelTie : virtual public ::efscape::Model,
 		     public adevs::EventListener<efscape::impl::IO_Type>
@@ -103,9 +102,6 @@ namespace efscape {
 			  adevs::Bag<adevs::Event<efscape::impl::IO_Type> >&
 			  aCr_internal_input);
 
-      void addInputConsumer(const AdevsInputConsumerPtr& aCr_consumer);
-      void addOutputProducer(const AdevsOutputProducerPtr& aCr_producer);
-
       /** handle to simulator */
       boost::scoped_ptr< adevs::Simulator<efscape::impl::IO_Type> >
       mCp_simulator;
@@ -124,12 +120,6 @@ namespace efscape {
 
       /** model name */
       std::string mC_name;
-
-      /** vector of input consumers */
-      std::vector<AdevsInputConsumerPtr> mC1_InputConsumers;
-
-      /** vector of output producers */
-      std::vector<AdevsOutputProducerPtr> mC1_OutputProducers;
 
     };				// class ModelTie
 

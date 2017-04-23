@@ -3,13 +3,11 @@
 hh_sources = ModelHomeTie.hh
 hh_sources += ModelTie.hh
 hh_sources += SimulatorI.hh
-hh_sources += adevs_ice_config.hh
 hh_sources += RunServer.hpp
 
 cc_sources = ModelHomeTie.cc
 cc_sources += SimulatorI.cc
 cc_sources += ModelTie.cc
-cc_sources += adevs_ice_config.cc
 cc_sources += RunServer.cpp
 
 # library
