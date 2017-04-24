@@ -1,6 +1,6 @@
 ## Source directory for efscape
 
-SUBDIRS = utils gis impl . server
+SUBDIRS = utils impl . server
 
 idl_sources = efscape.ice
 
