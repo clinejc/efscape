@@ -1,10 +1,10 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : DynamicLibrary.cc
-// Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
+// File Name : DynamicLibrary.cpp
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-#include <efscape/utils/DynamicLibrary.hh>
+#include <efscape/utils/DynamicLibrary.hpp>
 #include <ltdl.h>
 #include <iostream>
 

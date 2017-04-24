@@ -1,7 +1,7 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : type.hpp
-// Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 // 2015-11-08 from http://www.gilgil.net/communities/9180 (How to demangel a class name with Boost)

@@ -7,7 +7,7 @@
 #ifndef EFSCAPE_UTILS_RUNSIM_HH
 #define EFSCAPE_UTILS_RUNSIM_HH
 
-#include <efscape/utils/CommandOpt.hh>
+#include <efscape/utils/CommandOpt.hpp>
 #include <boost/scoped_ptr.hpp>
 
 namespace efscape {

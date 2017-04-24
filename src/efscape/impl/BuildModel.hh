@@ -7,7 +7,7 @@
 #ifndef EFSCAPE_IMPL_BUILDMODEL_HH
 #define EFSCAPE_IMPL_BUILDMODEL_HH
 
-#include <efscape/utils/CommandOpt.hh>	// parent class definition
+#include <efscape/utils/CommandOpt.hpp>	// parent class definition
 
 #include <efscape/impl/adevs_config.hh>
 #include <efscape/impl/ModelHomeI.hpp>

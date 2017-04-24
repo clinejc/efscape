@@ -31,7 +31,7 @@
 #include <cstdlib>
 
 // Includes for loading dynamic libraries
-#include <efscape/utils/DynamicLibrary.hh>
+#include <efscape/utils/DynamicLibrary.hpp>
 #include <ltdl.h>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>

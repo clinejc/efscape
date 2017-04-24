@@ -1,7 +1,7 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : Singleton.hpp
-// Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 
@@ -20,7 +20,7 @@ namespace efscape {
      * http://www.boost.org/doc/libs/1_55_0/doc/html/atomic/usage_examples.html#boost_atomic.usage_examples.singleton).
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.1 created 16 Nov 2015, revised 16 Nov 2015
+     * @version 1.0.0 created 16 Nov 2015, revised 16 Nov 2015
      */
     template <typename T>
     class Singleton {

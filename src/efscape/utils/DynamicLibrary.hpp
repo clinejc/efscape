@@ -1,7 +1,7 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : DynamicLibrary.hh
-// Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
+// File Name : DynamicLibrary.hpp
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 #ifndef EFSCAPE_UTILS_DYNAMICLIBRARY_HH
@@ -19,7 +19,7 @@ namespace efscape {
      * This class provides an interface to dynamic libraries.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.3 created 29 Jan 2006, revised 10 Jul 2014
+     * @version 1.0.0 created 29 Jan 2006, revised 10 Jul 2014
      */
     class DynamicLibrary {
 

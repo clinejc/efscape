@@ -16,7 +16,7 @@
  *   - 2008.02.03 created driver
  ***************************************************************************/
 
-#include <efscape/utils/CommandOpt.hh>
+#include <efscape/utils/CommandOpt.hpp>
 #include <map>
 #include <string>
 #include <boost/scoped_ptr.hpp>

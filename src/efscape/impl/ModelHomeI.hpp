@@ -24,7 +24,7 @@
 
 #include <efscape/impl/adevs_config.hh>
 #include <efscape/impl/ModelBuilder.hh>
-#include <efscape/utils/CommandOpt.hh>
+#include <efscape/utils/CommandOpt.hpp>
 #include <boost/function.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/property_tree/ptree.hpp>

@@ -1,7 +1,7 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : Factory.hpp
-// Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 
@@ -22,7 +22,7 @@ namespace efscape {
      * Defines an object factory with a metadata store.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.3 created 25 Nov 2015, revised 08 Dec 2015
+     * @version 1.0.0 created 25 Nov 2015, revised 08 Dec 2015
      *
      * @tparam IdentifierType factory key type
      * @tparam BaseType target object class
