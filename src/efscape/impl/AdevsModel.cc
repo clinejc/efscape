@@ -1,7 +1,7 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : AdevsModel.cc
-// Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 #include <efscape/impl/AdevsModel.hh>
@@ -50,60 +50,6 @@ namespace efscape {
       if (lCp_WrappedModel != NULL)
 	delete lCp_WrappedModel;
     }
-
-    /**
-     * Returns a copy of this object.
-     *
-     * @returns handle to new object copy
-     */
-    Cloneable* AdevsModel::clone() const {
-
-      // std::string lC_error_msg = "AdevsModel::clone()";
-      // std::string lC_class_name = efscape::utils::type<AdevsModel*>(*this);
-
-      // // create clone
-      // DEVS* lCp_model = dynamic_cast<DEVS*>(this->EntityI::clone());
-      // if (lCp_model == NULL)
-      // 	return 0;
-
-      // AdevsModel* lCp_clone;
-      // if ( (lCp_clone = dynamic_cast<AdevsModel*>(lCp_model)) == 0) {
-      // 	delete lCp_clone;
-      // 	lC_error_msg += "\n\tUnable to cast model class <"
-      // 	  + lC_class_name + "> as a AdevsModel model";
-      // 	throw std::logic_error( lC_error_msg );
-      // }
-
-      // // clone wrapped model
-      // const DEVS* lCp_WrappedModel = getWrappedModel();
-      // DEVS* lCp_WrappedModelClone;
-      // if (lCp_WrappedModel) {
-      // 	if ( ( lCp_WrappedModelClone = cloneModel(lCp_WrappedModel) ) ) {
-      // 	  lCp_clone->setWrappedModel(lCp_WrappedModelClone);
-      // 	}
-      // 	else {
-      // 	  delete lCp_clone;
-
-      // 	  lC_error_msg += "\n\tUnable to clone wrapped model for model class <"
-      // 	    + lC_class_name + ">";
-      // 	  throw std::logic_error( lC_error_msg );
-      // 	}
-      // }	// if (lCp_WrappedModel)
-
-      // // copy comment
-      // lCp_clone->comment(comment());
-
-      // // clone clock
-      // lCp_clone->mCp_ClockI = mCp_ClockI;
-
-      // // copy resource path
-      // lCp_clone->setResourcePath(getResourcePath().c_str());
-
-      // return dynamic_cast<Cloneable*>(lCp_model);
-
-      return NULL;
-
-    } // AdevsModel::clone() const
 
     /**
      * Initializes the model. The primary model is paired with a simulator.

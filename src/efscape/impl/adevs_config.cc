@@ -1,17 +1,19 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : adevs_config.cc
-// Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 #include <efscape/impl/adevs_config.hh>
 
-#include <efscape/impl/Cloneable.hh>
 #include <efscape/impl/InitObject.hh>
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
+
+#include <fstream>
+#include <sstream>
 
 namespace efscape {
 
@@ -92,116 +94,15 @@ namespace efscape {
      * @returns handle to model clone (null if cloning fails)
      */
     DEVS* cloneModel( const DEVS* aCp_model ) {
-      // first attempt to use the Cloneable interface if it is available
-      const Cloneable* lCp_cloneable;
-      if ( (lCp_cloneable = dynamic_cast<const Cloneable*>(aCp_model) ) )
-	return ( dynamic_cast<DEVS*>(lCp_cloneable->clone()) );
 
-      // next, if this is a digraph
-      const DIGRAPH* lCp_digraph = 0;
+      // serialize the model out to a buffer and then back in as a clone 
+      std::ostringstream lC_buffer_out;
+      saveAdevs(aCp_model, lC_buffer_out);
+      std::istringstream lC_buffer_in(lC_buffer_out.str().c_str());
+      DEVS* lCp_clone = loadAdevs(lC_buffer_in);
 
-      if ( ( lCp_digraph = dynamic_cast<const DIGRAPH*>(aCp_model) ) )
-	return (DEVS*)cloneDigraph(lCp_digraph);
-
-      return 0;
+      return lCp_clone;
     }
-
-    /**
-     * Helper function for cloning an adevs digraph model
-     *
-     * @param aCp_model handle to digraph model
-     * @returns handle to model clone (null if cloning fails)
-     */
-    DIGRAPH* cloneDigraph( const DIGRAPH* aCp_digraph ) {
-      if ( aCp_digraph == 0)
-	return 0;
-
-      // first check if this is a derived (and cloneable) class of digraph
-      DIGRAPH* lCp_digraph_clone = NULL;
-      const Cloneable* lCp_cloneable = NULL;
-
-      if ( ( lCp_cloneable = dynamic_cast<const Cloneable*>(aCp_digraph) ) ) {
-	if ( ( lCp_digraph_clone = dynamic_cast<DIGRAPH*>(lCp_cloneable->clone()) ) )
-	  ;
-	else
-	  return 0;
-      }
-      else
-	lCp_digraph_clone = new DIGRAPH;
-
-      // next, clone sub-components and couplings
-      typedef adevs::Set<const DEVS* > ComponentSet;
-      typedef std::map<const DEVS*,DEVS*> ModelCloneMap;
-
-      ComponentSet lC_models;
-      ComponentSet::iterator iModel;
-      ModelCloneMap lC_model_mirror;
-
-      // add digraph and its clone to map (needed for cloning coupling info)
-      lC_model_mirror[aCp_digraph] = lCp_digraph_clone;
-
-      // first clone each digraph component
-      aCp_digraph->getComponents(lC_models);
-
-      for (iModel = lC_models.begin(); iModel != lC_models.end(); iModel++) {
-
-	DEVS* lCp_clone = 0;
-
-	if ( ( lCp_cloneable = dynamic_cast<const Cloneable*>(*iModel) ) ) {
-	  // attempt to clone component and add cloned component
-	  if ( ( lCp_clone = dynamic_cast<DEVS*>(lCp_cloneable->clone()) ) ) {
-	    lCp_digraph_clone->add(lCp_clone);
-	    lC_model_mirror[*iModel] = lCp_clone;
-	  }
-	}
-
-	if (!lCp_clone) {	// if cloning failed, abort
-	  delete lCp_digraph_clone;
-	  return 0;
-	}
-      }
-
-      // next, clone the couplings
-      typedef std::map<DIGRAPH::node, adevs::Bag<DIGRAPH::node> > Graph;
-      Graph graph;
-      Graph::const_iterator graph_iter;
-      bool lb_cloning_is_successful = false;
-
-      for (graph_iter = graph.begin(); graph_iter != graph.end();
-	   graph_iter++) {
-
-	// find the cloned sub-model for the source node
-	ModelCloneMap::iterator iModelPair;
-	iModelPair = lC_model_mirror.find(graph_iter->first.model);
-	if ( iModelPair != lC_model_mirror.end() ) {
-	  DEVS* lCp_SrcModel = iModelPair->second;
-	  for (adevs::Bag<DIGRAPH::node>::iterator node_iter =
-		 graph_iter->second.begin();
-	       node_iter != graph_iter->second.end();
-	       node_iter++) {
-	    // find the cloned sub-model for the destination node
-	    if ( (iModelPair = lC_model_mirror.find( (*node_iter).model ) )
-		 != lC_model_mirror.end() ) {
-	      DEVS* lCp_DstModel = iModelPair->second;
-	      lCp_digraph_clone->couple( lCp_SrcModel, graph_iter->first.port,
-					 lCp_DstModel, (*node_iter).port );
-	    }
-	    else { // destination node not found - coupling failed!
-	      delete lCp_digraph_clone;
-	      return 0;
-	    }
-	  } // for (std::set<DIGRAPH::node>::iterator...
-	  
-	} // if ( iModelPair != ...
-	else {		// source node not found - coupling failed!
-	  delete lCp_digraph_clone;
-	  return 0;
-	}
-      }   // for (graph_iter...
-	
-      return lCp_digraph_clone;
-
-    } // cloneDigraph(const DIGRAPH*)
 
     /**
      * Helper function for initializing an adevs model

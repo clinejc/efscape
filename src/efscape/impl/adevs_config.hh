@@ -1,7 +1,7 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : adevs_config.hh
-// Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 #ifndef EFSCAPE_IMPL_ADEVSMODELS_HH
@@ -66,8 +66,7 @@ namespace efscape {
     // Helper functions for creating, cloning, and initializing an adevs model
     DEVS* createModel(const char* acp_classname);
     DEVS* cloneModel( const DEVS* aCp_model );
-    DIGRAPH* cloneDigraph( const DIGRAPH* aCp_digraph );
-
+ 
     bool initializeModel( DEVS* aCp_model );
 
     // Returns the root model of the adevs hierarchy.containing this model.

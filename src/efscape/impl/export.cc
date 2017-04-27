@@ -1,7 +1,7 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : export.cc
-// Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 
@@ -14,7 +14,6 @@
 #include <boost/serialization/assume_abstract.hpp>
 
 // class boost serialization export definitions
-// #include <efscape/impl/adevs_serialization.hh>
 #include <adevs/adevs_serialization.hpp>
 #include <efscape/impl/adevs_decorator_serialization.hpp>
 
@@ -24,11 +23,6 @@
 // model factory definitions
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
-
-//--------------------------------------------
-// efscape::impl::ModelBuilder-derived classes
-//--------------------------------------------
-#include <efscape/impl/EfscapeBuilder.hh>
 
 //--------------------------------------------
 // efscape::utils::CommandOpt-derived classes
@@ -168,11 +162,6 @@ namespace efscape {
     //-----------------
     // register classes
     //-----------------
-    const bool
-    lb_EfscapeBuilder_registered =
-      Singleton<ModelHomeI>::Instance().getBuilderFactory().
-      registerType<EfscapeBuilder>(EfscapeBuilder::name());
-
     const bool
     lb_BuildModel_registered =
       Singleton<ModelHomeI>::Instance().getCommandFactory().

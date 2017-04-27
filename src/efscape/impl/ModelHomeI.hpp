@@ -1,29 +1,13 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : ModelHomeI.hpp
-// Copyright (C) 2006-2009 by Jon C. Cline
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-//
-// Bugs, comments, and questions can be sent to clinej@stanfordalumni.org
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
+// Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 #ifndef EFSCAPE_IMPL_MODELHOME_I_HPP
 #define EFSCAPE_IMPL_MODELHOME_I_HPP
 
 #include <efscape/impl/adevs_config.hh>
-#include <efscape/impl/ModelBuilder.hh>
 #include <efscape/utils/CommandOpt.hpp>
 #include <boost/function.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -46,7 +30,6 @@ namespace efscape {
 
     // typedefs
     typedef efscape::utils::Factory< std::string, DEVS > model_factory;
-    typedef efscape::utils::Factory< std::string, ModelBuilder > builder_factory;
     typedef efscape::utils::Factory< std::string, efscape::utils::CommandOpt > command_factory;
     
     /**
@@ -54,7 +37,7 @@ namespace efscape {
      * simulation models.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 3.1.0 created 24 Dec 2006, revised 16 Apr 2017
+     * @version 3.2.0 created 24 Dec 2006, revised 23 Apr 2017
      */
     class ModelHomeI
     {
@@ -73,7 +56,6 @@ namespace efscape {
 	throw(std::logic_error);
 
       model_factory& getModelFactory();
-      builder_factory& getBuilderFactory();
       command_factory& getCommandFactory();
 
       /**
@@ -107,7 +89,6 @@ namespace efscape {
       static log4cxx::LoggerPtr mSCp_logger;
 
       boost::scoped_ptr<model_factory> mCp_ModelFactory;
-      boost::scoped_ptr<builder_factory> mCp_BuilderFactory;
       boost::scoped_ptr< command_factory > mCp_CommandFactory;
 
     };				// class ModelHomeI definition

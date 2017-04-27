@@ -6,7 +6,7 @@ AC_PREREQ(2.61)
 dnl --------------------------------
 dnl Specify INIT and CONFIG options
 dnl --------------------------------
-AC_INIT(efscape, 1.0.0)
+AC_INIT([efscape],[1.0.0])
 AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE
 #AM_INIT_AUTOMAKE([subdir-objects])
@@ -33,7 +33,6 @@ dnl -----------------------------------------------
 PKG_CHECK_MODULES(DEPS,
 	adevs >= 2.0
 	liblog4cxx > 0.1
-	xerces-c >= 3.0
 	zeroc-ice >= 3.5
 	repast >= 2.0)
 

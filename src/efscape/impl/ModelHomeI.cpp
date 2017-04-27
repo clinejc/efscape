@@ -1,23 +1,8 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : ModelHomeI.cc
-// Copyright (C) 2006-2009 by Jon C. Cline
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-//
-// Bugs, comments, and questions can be sent to clinej@stanfordalumni.org
+// File Name : ModelHomeI.cpp
+// Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
+// Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 #include <efscape/impl/ModelHomeI.hpp>
 
@@ -36,17 +21,9 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-// ---------------------------------------------------------------------------
-//  beginning of Xerces-c C++ XML Includes
-// ---------------------------------------------------------------------------
-#include <xercesc/dom/DOM.hpp>
-#include <efscape/utils/xerces_utils.hpp>
-#include <efscape/utils/xerces_strings.hpp>
-
 #include <efscape/utils/boost_utils.ipp>
-#include <efscape/impl/EfscapeBuilder.hh>
 
-using namespace xercesc;
+
 using namespace efscape::utils;
 namespace fs = boost::filesystem;
 
@@ -79,7 +56,6 @@ namespace efscape {
 
       // initialize factories
       mCp_ModelFactory.reset( new model_factory );
-      mCp_BuilderFactory.reset( new builder_factory );
       mCp_CommandFactory.reset( new command_factory );
 
       LOG4CXX_INFO(mSCp_logger, "Created EFSCAPE model respository...");
@@ -181,68 +157,9 @@ namespace efscape {
       std::string lC_message = "ModelHomeI::createModelFromXML("
 	+ std::string(acp_filename) + "):";
 
-      adevs::Devs<IO_Type>* lCp_model = NULL;
-      boost::scoped_ptr<ModelBuilder> lCp_builder;
-
-      //--------------------------------------------
-      // parse the file with the xerces-c DOM parser
-      //--------------------------------------------
-      try {
-	XercesInitializer lC_init;
-	xercesc::DOMImplementation*  lCp_DOMimpl = 
-	  DOMImplementationRegistry::getDOMImplementation(
-                fromNative("LS").c_str( )
-            );
-        if (lCp_DOMimpl == 0) {
-	  lC_message += "\n\tcouldn't create DOM implementation";
-	  throw std::logic_error(lC_message.c_str());
-        }
-
-        // Construct a DOMLSParser to parse simulation parameter file
-        DOMLSParser* lC_parser ( 
-	  static_cast<xercesc::DOMImplementationLS*>(lCp_DOMimpl)->
-	  createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0) );
-
-	//---------------------------------------------------------------------
-        // Parse simulation configuration xml file
-	//  - top tag should be "boost_serialization
-	//  - first child element tag should be "efscape"
-	//  - first element tag <class_name> should be name of root model class
-	//---------------------------------------------------------------------
-        DOMDocument* lCp_doc = 
-	  lC_parser->parseURI(acp_filename);
-
-	DOMElement* lCp_SimConfig = lCp_doc->getDocumentElement();
-
-	// 1) top tag is used to identify the appropriate parser/builder
-	std::string lC_TagName = toNative(lCp_SimConfig->getTagName());
-
-	lCp_builder.reset( getBuilderFactory().
-			   createObject(lC_TagName) );
-
-	if (!lCp_builder.get()) {
-	  lC_message += "\n\tbad document root <" + lC_TagName
-	    + "> -- unable to local parser for this XML file";
-	  throw std::logic_error(lC_message.c_str());
-	}
-
-	LOG4CXX_DEBUG(getLogger(),
-		      lC_message
-		      << " retrieved model builder <" << lC_TagName
-		      << ">");
-      }
-      catch(const xercesc::XMLException &toCatch) {
-	lC_message += std::string(" Error during Xerces-c Initialization.\n")
-	  + "  Exception message:"
-	  + ::toNative(toCatch.getMessage());
-
-	throw std::logic_error(lC_message.c_str());
-      }
-      catch (const std::logic_error& excp) {
-	throw excp;
-      }
-
-      lCp_model = lCp_builder->parse(acp_filename); // create root model
+      // attempt to load adevs model serialized in XML format
+      adevs::Devs<IO_Type>* lCp_model =
+	loadAdevs(acp_filename); // create root model
       if (!lCp_model) {
 	lC_message += " unable to create model from parameter file";
 	throw std::logic_error(lC_message.c_str());
@@ -473,20 +390,9 @@ namespace efscape {
     }
 
     /**
-     * Returns a reference to the BuilderFactory
+     * Returns a reference to the CommandFactory
      *
-     * @returns reference to BuilderFactory (singleton)
-     */
-    builder_factory& ModelHomeI::getBuilderFactory() {
-      if (mCp_BuilderFactory.get() == NULL)
-	mCp_BuilderFactory.reset( new builder_factory );
-      return *mCp_BuilderFactory;
-    }
-    
-    /**
-     * Returns a reference to the BuilderFactory
-     *
-     * @returns reference to BuilderFactory (singleton)
+     * @returns reference to CommandFactory (singleton)
      */
     command_factory& ModelHomeI::getCommandFactory() {
       if (mCp_CommandFactory.get() == NULL)

@@ -1,7 +1,7 @@
 ## source directory for the ICE DEVS simulator implementation
 
 hh_sources = ModelHomeTie.hpp
-hh_sources += ModelTie.hh
+hh_sources += ModelTie.hpp
 hh_sources += SimulatorI.hpp
 hh_sources += RunServer.hpp
 
