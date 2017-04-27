@@ -10,7 +10,7 @@ hh_sources += boost_utils.ipp
 
 cc_sources = CommandOpt.cpp
 cc_sources += DynamicLibrary.cpp
-cc_sources += type.cpp
+cc_sources += type.cp
 cc_sources += boost_utils.cpp
 
 library_includedir = $(includedir)/$(PACKAGE)/utils
@@ -29,5 +29,4 @@ copyright:
 	cp $(top_srcdir)/Copyright.doc $(top_srcdir)/Makefile.cr $(top_srcdir)/Sed.cr .
 	make -f Makefile.cr NAME="${PACKAGE}" FILES="${cc_sources}"
 	make -f Makefile.cr NAME="${PACKAGE}" FILES="${hh_sources}"
-	make -f Makefile.cr NAME="${PACKAGE}" FILES="driver.cc"
 	rm -f Copyright.doc Makefile.cr Sed.cr
