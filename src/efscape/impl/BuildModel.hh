@@ -11,7 +11,7 @@
 
 #include <efscape/impl/adevs_config.hh>
 #include <efscape/impl/ModelHomeI.hpp>
-#include <efscape/impl/AdevsModel.hh>
+#include <efscape/impl/ClockI.hh>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -22,23 +22,13 @@ namespace efscape {
 
   namespace impl {
 
-    // forward declarations
-    class BuildCmd;
-    typedef boost::shared_ptr<BuildCmd> BuildCmdPtr;
-
-    /**
+   /**
      * Implements a simple interactive model builder for the efscape modeling
      * framework. It provides a command-line interface derived from the
      * CommandOpt class.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.04 created 01 Feb 2008, revised 31 Aug 2014
-     *
-     * ChangeLog:
-     *   - 2014-08-31 Implementation pared down to bare essentials.
-     *   = 2009.03.04 Modifications due to revisions to adevs and ModelI API.
-     *   - 2008.04.14 Removed data member mCp_digraph (no longer needed).
-     *   - 2008.02.01 Created class BuildModel.
+     * @version 0.9.1 created 01 Feb 2008, revised 28 Apr 2017
      */
     class BuildModel : public efscape::utils::CommandOpt
     {
@@ -71,9 +61,6 @@ namespace efscape {
       /** handle to model */
       boost::scoped_ptr<DEVS> mCp_model;
 
-      /** handle to root model */
-      AdevsModel* mCp_RootModel;
-
       /** model class name */
       std::string mC_ClassName;
 
@@ -104,44 +91,6 @@ namespace efscape {
       static const char* mScp_program_version;
 
     };
-
-
-
-    /**
-     * Provides a base class for model builder commands.
-     *
-     * @version 0.01 created 06 Feb 2008, revised Feb 2008
-     */
-    class BuildCmd : std::unary_function<int,void>
-    {
-
-    public:
-
-      BuildCmd() {}
-      virtual ~BuildCmd() {}
-
-      virtual int operator()() {
-	return EXIT_SUCCESS;
-      }
-      virtual const char* usage() const { return ""; }
-      virtual int init(const std::vector<std::string>& aC1_args) = 0;
-      const char* name() const { return mC_name.c_str(); }
-      const char* info() const { return mC_info.c_str(); }
-      const char* errorMsg() const { return mC_ErrorMsg.str().c_str(); }
-
-    protected:
-
-      void name(const char* acp_name) { mC_name = acp_name; }
-      void info(const char* acp_info) { mC_info = acp_info; }
-      std::ostringstream mC_ErrorMsg;
-
-    private:
-
-      std::string mC_name;
-      std::string mC_info;
-
-    };
-
   } // namespace impl
 
 } // namespace efscape

@@ -14,6 +14,7 @@ hh_sources += BuildModel.hh
 hh_sources += RunSim.hh
 hh_sources += RepastModelWrapper.hpp
 hh_sources += RepastModelWrapper.ipp
+hh_sources += SimRunner.hpp
 
 cc_sources = adevs_config.cc
 cc_sources += ClockI.cc
@@ -23,6 +24,7 @@ cc_sources += ModelHomeSingleton.cpp
 cc_sources += AdevsModel.cc
 cc_sources += BuildModel.cc
 cc_sources += RunSim.cc
+cc_sources += SimRunner.cpp
 cc_sources += export.cc
 
 # library

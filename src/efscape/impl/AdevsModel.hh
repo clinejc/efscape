@@ -19,7 +19,6 @@
 
 // data member definitions
 #include <log4cxx/logger.h>
-#include <efscape/gis/LandscapeI.hpp>
 #include <efscape/impl/ClockI.hh>
 
 #include <boost/scoped_ptr.hpp>
@@ -158,6 +157,6 @@ namespace efscape {
 
 } // namespace efscape
 
-BOOST_CLASS_VERSION(efscape::impl::AdevsModel,11)
+BOOST_CLASS_VERSION(efscape::impl::AdevsModel,12)
 
 #endif	// #ifndef EFSCAPE_IMPL_ADEVSMODEL_HH

@@ -19,6 +19,7 @@
 
 #include <efscape/impl/EntityI.hh>
 #include <efscape/impl/AdevsModel.hh>
+#include <efscape/impl/SimRunner.hpp>
 
 // model factory definitions
 #include <efscape/impl/ModelHomeI.hpp>
@@ -90,6 +91,7 @@ BOOST_CLASS_EXPORT(efscape::impl::CellModelBase)
 
 BOOST_CLASS_EXPORT(efscape::impl::EntityI)
 BOOST_CLASS_EXPORT(efscape::impl::AdevsModel)
+BOOST_CLASS_EXPORT(efscape::impl::SimRunner)
 
 namespace efscape {
   namespace impl {

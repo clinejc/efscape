@@ -34,8 +34,6 @@ namespace efscape {
     {
       name("efscape");	// root model name (name of main library)
 
-      // mCp_Landscape.reset(new efscape::gis::LandscapeI);
-
       mi_JobID = ++mSi_nextJobID;
 
     } // AdevsModel::AdevsModel()

@@ -11,6 +11,7 @@
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
 #include <efscape/impl/AdevsModel.hh>
+#include <efscape/impl/SimRunner.hpp>
 
 #include <typeinfo>
 
@@ -25,11 +26,10 @@ namespace efscape {
     // class variables
     const char* BuildModel::mScp_program_name = "efbuilder";
     const char* BuildModel::mScp_program_version =
-      "version 0.0.3 (2014-08-31)";
+      "version 0.9.1 (2017-04-28)";
 
     /** default constructor */
     BuildModel::BuildModel() :
-      mCp_RootModel(0),
       md_TimeDelta(1.)
     {
     }
@@ -130,8 +130,15 @@ namespace efscape {
      */
     int BuildModel::parse_options(int argc, char *argv[]) {
 
+      // set default class name for root model
+      bool lb_using_AdevsModel = false;
       if (mC_ClassName == "") {
-	mC_ClassName = "efscape::impl::AdevsModel"; // default root model is of class efscape::impl::AdevsModel
+	if (lb_using_AdevsModel) {
+	  mC_ClassName = "efscape::impl::AdevsModel"; // default root model is of class efscape::impl::AdevsModel
+	}
+	else {
+	  mC_ClassName = "efscape::impl::SimRunner"; // default root model is of class efscape::impl::SimRunner
+	}
       }
 
       mC_description.add_options()
@@ -228,34 +235,40 @@ namespace efscape {
 	}
       }
       else {
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "Root model has already been created");
       }
 
       EntityI* lCp_EntityI = dynamic_cast<EntityI*>( mCp_model.get() );
       if (mC_Name != "" && lCp_EntityI != 0) {
-	lCp_EntityI->name( mC_Name.c_str() );
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		      "Set model name to <" << mC_Name << ">...");
+      	lCp_EntityI->name( mC_Name.c_str() );
+      	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+      		      "Set model name to <" << mC_Name << ">...");
       }
 
-      // attempt to narrow the cast to class <efscape::impl::AdevsModel>
-      AdevsModel* lCp_RootModel = dynamic_cast<AdevsModel*>( lCp_EntityI );
+      // attempt to narrow the cast to a root model wrapper
+      AdevsModel* lCp_AdevsModel =
+	dynamic_cast<AdevsModel*>( mCp_model.get() );
+      SimRunner* lCp_SimRunner =
+	dynamic_cast<SimRunner*>( mCp_model.get() );
 
-      if (lCp_RootModel == 0) {
-	std::string lC_message = "Unable to cast model <" + mC_ClassName
-	  + "> as a <efscape::impl::AdevsModel>...";
-	throw std::logic_error(lC_message.c_str());
+      if (lCp_AdevsModel == NULL) {
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "Root model <" << mC_ClassName
+		      << "> is not derived from <efscape::impl::AdevsModel>...");
       }
-
-      mCp_RootModel = lCp_RootModel;
-
+      else if (lCp_SimRunner == NULL) {
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "Root model <" << mC_ClassName
+		      << "> is not derived from <efscape::impl::SimRunner>...");
+      }
+      
       // set clock and resource path if this is the root model
-      if (lCp_RootModel) {
-	lCp_RootModel->setClockIPtr(mCp_ClockI);
-	if (mC_variable_map.count("ResourcePath"))
-	  mC_ResourcePath = mC_variable_map["ResourcePath"].as<std::string>();
-	lCp_RootModel->setResourcePath(mC_ResourcePath.c_str());
+      if (lCp_AdevsModel) {
+      	lCp_AdevsModel->setClockIPtr(mCp_ClockI);
+      	if (mC_variable_map.count("ResourcePath"))
+      	  mC_ResourcePath = mC_variable_map["ResourcePath"].as<std::string>();
+      	lCp_AdevsModel->setResourcePath(mC_ResourcePath.c_str());
       }
 
     } // BuildModel::createModel()
@@ -277,31 +290,45 @@ namespace efscape {
       }
 
       // first initialize the model
-      if (debug_on())
-	std::cout << "initializing model...\n";
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		    "initializing model...");
 
-      try {
+      // attempt to narrow the cast to a root model wrapper (deja vu?)
+      AdevsModel* lCp_AdevsModel =
+	dynamic_cast<AdevsModel*>( mCp_model.get() );
+
+      // use this information to determine how to initialize the model
+      if (lCp_AdevsModel != NULL) {
 	if (!efscape::impl::initializeModel(mCp_model.get() ) ) {
-	  throw std::logic_error("model initialization failed");
+	  LOG4CXX_ERROR(ModelHomeI::getLogger(),
+			"model initialization failed");
 	}
-
-	// create a simulator and compute initialize model state
-	boost::scoped_ptr<adevs::Simulator<IO_Type> > lCp_simulator;
-	lCp_simulator.reset( new adevs::Simulator<IO_Type>(mCp_model.get() ) );
-
-	// compute the initial state of the model
-	while ( lCp_simulator->nextEventTime() == 0) {
-	  lCp_simulator->execNextEvent();
-	}
-
       }
-      catch(std::logic_error lC_excp) {
-	lC_message
-	  += std::string
-	  (": Exception encounted during attempt to initialize model <")
-	  + "<" + mC_Name + ">: <"
-	  + lC_excp.what() + ">\n";
-	throw std::logic_error(lC_message.c_str());
+      else {
+	// inject clock
+	adevs::Bag<efscape::impl::IO_Type> xb;
+	efscape::impl::IO_Type e;
+	e.port = "clock_in";
+	e.value = mCp_ClockI;
+	xb.insert(e);
+
+	// inject properties
+	boost::property_tree::ptree lC_properties;
+	lC_properties.put("ResourcePath", mC_ResourcePath);
+	e.port = "properties_in";
+	e.value = lC_properties;
+	xb.insert(e);
+
+	inject_events(-0.1, xb, mCp_model.get());
+      }
+
+      // create a simulator and compute initialize model state
+      boost::scoped_ptr<adevs::Simulator<IO_Type> > lCp_simulator;
+      lCp_simulator.reset( new adevs::Simulator<IO_Type>(mCp_model.get() ) );
+
+      // compute the initial state of the model
+      while ( lCp_simulator->nextEventTime() == 0) {
+	lCp_simulator->execNextEvent();
       }
 
       // save model configuration to xml file
@@ -316,8 +343,8 @@ namespace efscape {
       }
 
       try {
-	if (debug_on())
-	  std::cout << "Saving model state to <" << lC_out_file << ">...\n";
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "Saving model state to <" << lC_out_file << ">...");
 	saveAdevs(mCp_model.get(),lC_out_file.c_str());
       }
       catch (std::exception& excp) {

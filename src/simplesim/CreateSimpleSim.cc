@@ -10,10 +10,11 @@
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
-#include "efscape/impl/AdevsModel.hh"
-#include "simplesim/SimpleGenerator.hh"
-#include "simplesim/SimpleObserver.hh"
-#include "simplesim/BasicModel.hh"
+#include <efscape/impl/AdevsModel.hh>
+#include <efscape/impl/SimRunner.hpp>
+#include <simplesim/SimpleGenerator.hh>
+#include <simplesim/SimpleObserver.hh>
+#include <simplesim/BasicModel.hh>
 
 using namespace boost::gregorian;
 using namespace boost::posix_time;
@@ -134,34 +135,67 @@ namespace simplesim {
   {
     std::string lC_message;
 
-    mCp_model.reset( new efscape::impl::AdevsModel );
+    bool lb_using_AdevsModel = false;
+    if (lb_using_AdevsModel) {
+      mCp_model.reset( new efscape::impl::AdevsModel );
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "Using AdevsModel as root...");
+    }
+    else {
+      mCp_model.reset( new efscape::impl::SimRunner );
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "Using SimRunner as root...");
 
+    }
     efscape::impl::BuildModel::createModel(); // invoke parent method
-
+   
     // create digraph
     efscape::impl::DIGRAPH* lCp_digraph = new efscape::impl::DIGRAPH;
 
-    std::cout << "Creating digraph...\n";
-
+    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		  "Creating digraph...");
+    
     // create generator
+    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		  "Creating a generator and adding it to the digraph...");
     simplesim::SimpleGenerator* lCp_generator =
       new simplesim::SimpleGenerator;
     lCp_digraph->add(lCp_generator);
-
+   
     // create  observer
+    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		  "Creating an observer and adding it to the digraph...");
     simplesim::SimpleObserver* lCp_observer = new simplesim::SimpleObserver;
     lCp_digraph->add(lCp_observer);
 
     // couple models
+    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		  "Coupling the observer to the generator...");
     lCp_digraph->couple(lCp_generator,
-			simplesim::SimpleGenerator_strings::f_out,
-			lCp_observer,
-			simplesim::SimpleObserver_strings::m_input);
-
+    			simplesim::SimpleGenerator_strings::f_out,
+    			lCp_observer,
+    			simplesim::SimpleObserver_strings::m_input);
+    
     // add model
-    mCp_RootModel->setWrappedModel(lCp_digraph);
+    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		  "Adding the digraph to the ModelWrapper...");
 
-    std::cout << "Done creating the model!\n";
+    // attempt to narrow the cast to a root model wrapper
+    efscape::impl::AdevsModel* lCp_AdevsModel =
+      dynamic_cast<efscape::impl::AdevsModel*>( mCp_model.get() );
+    efscape::impl::SimRunner* lCp_SimRunner =
+      dynamic_cast<efscape::impl::SimRunner*>( mCp_model.get() );
+
+    if (lCp_AdevsModel != NULL) 
+      lCp_AdevsModel->setWrappedModel(lCp_digraph);
+    else if (lCp_SimRunner != NULL)
+      lCp_SimRunner->setWrappedModel(lCp_digraph);
+    else
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "Unable to attach SimpleSim model");
+
+    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		  "Done creating the model!");
 
   } // CreateSimpleSim::createModel()
 
