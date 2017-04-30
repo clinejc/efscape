@@ -7,7 +7,7 @@
 #include <efscape/server/ModelTie.hh>
 
 #include <efscape/impl/ModelHomeI.hpp>
-#include <efscape/impl/AdevsModel.hh>
+#include <efscape/impl/AdevsModel.hpp>
 #include <efscape/utils/type.hpp>
 #include <efscape/utils/boost_utils.ipp>
 

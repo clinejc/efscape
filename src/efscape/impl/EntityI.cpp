@@ -1,10 +1,10 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : EntityI.cc
+// File Name : EntityI.cpp
 // Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-#include <efscape/impl/EntityI.hh>
+#include <efscape/impl/EntityI.hpp>
 
 namespace efscape {
 

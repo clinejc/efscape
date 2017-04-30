@@ -7,7 +7,7 @@
 #include "SimpleGenerator.hh"
 #include "BasicModel.hh"
 
-#include <efscape/impl/AdevsModel.hh>
+#include <efscape/impl/AdevsModel.hpp>
 #include <efscape/impl/ModelHomeI.hpp>
 
 #include <boost/lexical_cast.hpp>

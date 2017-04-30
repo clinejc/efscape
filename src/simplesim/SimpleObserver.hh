@@ -6,7 +6,7 @@
 #include <boost/serialization/version.hpp>
 
 // parent class definitions
-#include "efscape/impl/adevs_config.hh"
+#include "efscape/impl/adevs_config.hpp"
 #include "efscape/impl/EntityI.hh"
 #include "efscape/impl/InitObject.hh"
 

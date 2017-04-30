@@ -1,16 +1,16 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : BuildModel.cc
+// File Name : BuildModel.cpp
 // Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-#include <efscape/impl/BuildModel.hh>
+#include <efscape/impl/BuildModel.hpp>
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
-#include <efscape/impl/AdevsModel.hh>
+#include <efscape/impl/AdevsModel.hpp>
 #include <efscape/impl/SimRunner.hpp>
 
 #include <typeinfo>

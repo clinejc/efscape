@@ -1,6 +1,6 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : export.cc
+// File Name : export.hpp
 // Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
@@ -17,8 +17,8 @@
 #include <adevs/adevs_serialization.hpp>
 #include <efscape/impl/adevs_decorator_serialization.hpp>
 
-#include <efscape/impl/EntityI.hh>
-#include <efscape/impl/AdevsModel.hh>
+#include <efscape/impl/EntityI.hpp>
+#include <efscape/impl/AdevsModel.hpp>
 #include <efscape/impl/SimRunner.hpp>
 
 // model factory definitions
@@ -28,8 +28,8 @@
 //--------------------------------------------
 // efscape::utils::CommandOpt-derived classes
 //--------------------------------------------
-#include <efscape/impl/BuildModel.hh>
-#include <efscape/impl/RunSim.hh>
+#include <efscape/impl/BuildModel.hpp>
+#include <efscape/impl/RunSim.hpp>
 
 #include <fstream>
 

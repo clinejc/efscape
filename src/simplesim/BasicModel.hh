@@ -3,7 +3,7 @@
 #ifndef SIMPLESIM_SIMPLEMODEL_HH
 #define SIMPLESIM_SIMPLEMODEL_HH
 
-#include "efscape/impl/adevs_config.hh"
+#include "efscape/impl/adevs_config.hpp"
 
 namespace simplesim {
 

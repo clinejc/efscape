@@ -33,7 +33,7 @@ bin_PROGRAMS = efserver
 bin_PROGRAMS += efclient
 
 # efserver: ICE server for efscape simulator
-efserver_SOURCES = $(top_srcdir)/src/efscape/impl/driver.cc
+efserver_SOURCES = $(top_srcdir)/src/efscape/impl/driver.cpp
 efserver_LDADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 efserver_LDADD += $(top_srcdir)/src/efscape/server/libefscape-ice.la
 efserver_LDADD += $(BOOST_MPI_LIBS)

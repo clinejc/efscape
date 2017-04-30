@@ -10,13 +10,13 @@
 #include <boost/serialization/scoped_ptr.hpp>
 
 // parent class definitions
-#include "efscape/impl/adevs_config.hh"
+#include "efscape/impl/adevs_config.hpp"
 #include "adevs/adevs_serialization.hpp"
 #include "efscape/impl/EntityI.hh"
 #include "efscape/impl/InitObject.hh"
 
 // class data members
-#include "efscape/impl/ClockI.hh"
+#include "efscape/impl/ClockI.hpp"
 #include <boost/scoped_ptr.hpp>
 
 namespace simplesim {

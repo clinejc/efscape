@@ -1,12 +1,12 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : adevs_config.cc
+// File Name : adevs_config.cpp
 // Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-#include <efscape/impl/adevs_config.hh>
+#include <efscape/impl/adevs_config.hpp>
 
-#include <efscape/impl/InitObject.hh>
+#include <efscape/impl/InitObject.hpp>
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>

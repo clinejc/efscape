@@ -7,7 +7,7 @@
 #ifndef EFSCAPE_IMPL_MODELHOME_I_HPP
 #define EFSCAPE_IMPL_MODELHOME_I_HPP
 
-#include <efscape/impl/adevs_config.hh>
+#include <efscape/impl/adevs_config.hpp>
 #include <efscape/utils/CommandOpt.hpp>
 #include <boost/function.hpp>
 #include <boost/scoped_ptr.hpp>

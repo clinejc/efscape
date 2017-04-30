@@ -1,6 +1,6 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : AdevsModel.hh
+// File Name : AdevsModel.hpp
 // Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
@@ -13,13 +13,13 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 // parent class definition
-#include <efscape/impl/EntityI.hh>
-#include <efscape/impl/adevs_config.hh>
-#include <efscape/impl/InitObject.hh>
+#include <efscape/impl/EntityI.hpp>
+#include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/InitObject.hpp>
 
 // data member definitions
 #include <log4cxx/logger.h>
-#include <efscape/impl/ClockI.hh>
+#include <efscape/impl/ClockI.hpp>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>

@@ -7,7 +7,7 @@
 #ifndef __adevs_decorator_serialization_hpp_
 #define __adevs_decorator_serialization_hpp_
 
-#include <efscape/impl/adevs_config.hh>
+#include <efscape/impl/adevs_config.hpp>
 
 #include <adevs/adevs_serialization.hpp>
 

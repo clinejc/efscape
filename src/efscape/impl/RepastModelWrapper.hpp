@@ -11,7 +11,7 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/version.hpp>
 
-#include <efscape/impl/adevs_config.hh>
+#include <efscape/impl/adevs_config.hpp>
 #include <repast_hpc/Properties.h>
 #include <boost/scoped_ptr.hpp>
 

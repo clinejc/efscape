@@ -11,7 +11,7 @@
 #include <Ice/Ice.h>
 #include <efscape/efscape.h>
 
-#include <efscape/impl/adevs_config.hh>
+#include <efscape/impl/adevs_config.hpp>
 #include <efscape/impl/ClockI.hh>
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>

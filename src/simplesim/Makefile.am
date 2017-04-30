@@ -26,7 +26,7 @@ libefsimplesim_la_LIBADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 #libefsimplesim_la_LIBADD = $(DEPS_LIBS)
 
 # eftestdriver: sample driver for running the simple model
-createSimpleSim_SOURCES = $(top_srcdir)/src/efscape/impl/driver.cc
+createSimpleSim_SOURCES = $(top_srcdir)/src/efscape/impl/driver.cpp
 createSimpleSim_LDADD = $(top_srcdir)/src/simplesim/libefsimplesim.la
 createSimpleSim_LDADD += $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 createSimpleSim_LDADD += $(DEPS_LIBS)

@@ -10,7 +10,7 @@
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
-#include <efscape/impl/AdevsModel.hh>
+#include <efscape/impl/AdevsModel.hpp>
 #include <efscape/impl/SimRunner.hpp>
 #include <simplesim/SimpleGenerator.hh>
 #include <simplesim/SimpleObserver.hh>

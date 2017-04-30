@@ -1,6 +1,6 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : BuildModel.hh
+// File Name : BuildModel.hpp
 // Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
@@ -9,9 +9,9 @@
 
 #include <efscape/utils/CommandOpt.hpp>	// parent class definition
 
-#include <efscape/impl/adevs_config.hh>
+#include <efscape/impl/adevs_config.hpp>
 #include <efscape/impl/ModelHomeI.hpp>
-#include <efscape/impl/ClockI.hh>
+#include <efscape/impl/ClockI.hpp>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/scoped_ptr.hpp>

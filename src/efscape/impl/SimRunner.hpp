@@ -12,9 +12,9 @@
 #include <boost/serialization/version.hpp>
 
 // parent class definition
-#include <efscape/impl/adevs_config.hh>
+#include <efscape/impl/adevs_config.hpp>
 
-#include <efscape/impl/ClockI.hh>
+#include <efscape/impl/ClockI.hpp>
 
 namespace efscape {
 

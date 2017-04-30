@@ -1,31 +1,31 @@
 ## source directory for the DEVS simulator implementation classes
 
-hh_sources = adevs_config.hh
+hh_sources = adevs_config.hpp
 hh_sources += adevs_decorator.h
 hh_sources += adevs_decorator_serialization.hpp
-hh_sources += ClockI.hh
-hh_sources += EntityI.hh
-hh_sources += InitObject.hh
+hh_sources += ClockI.hpp
+hh_sources += EntityI.hpp
+hh_sources += InitObject.hpp
 hh_sources += ModelHomeI.hpp
 hh_sources += ModelHomeSingleton.hpp
 hh_sources += singletondll_export.h
-hh_sources += AdevsModel.hh
-hh_sources += BuildModel.hh
-hh_sources += RunSim.hh
+hh_sources += AdevsModel.hpp
+hh_sources += BuildModel.hpp
+hh_sources += RunSim.hpp
 hh_sources += RepastModelWrapper.hpp
 hh_sources += RepastModelWrapper.ipp
 hh_sources += SimRunner.hpp
 
-cc_sources = adevs_config.cc
-cc_sources += ClockI.cc
-cc_sources += EntityI.cc
+cc_sources = adevs_config.cpp
+cc_sources += ClockI.cpp
+cc_sources += EntityI.cpp
 cc_sources += ModelHomeI.cpp
 cc_sources += ModelHomeSingleton.cpp
-cc_sources += AdevsModel.cc
-cc_sources += BuildModel.cc
-cc_sources += RunSim.cc
+cc_sources += AdevsModel.cpp
+cc_sources += BuildModel.cpp
+cc_sources += RunSim.cpp
 cc_sources += SimRunner.cpp
-cc_sources += export.cc
+cc_sources += export.cpp
 
 # library
 lib_LTLIBRARIES = libefscape-impl.la
@@ -50,13 +50,13 @@ libefscape_impl_la_LIBADD += -lltdl
 libefscape_impl_la_SOURCES=  $(hh_sources) $(cc_sources)
 
 library_includedir = $(includedir)/efscape/impl
-library_include_HEADERS = $(hh_sources) driver.cc
+library_include_HEADERS = $(hh_sources) driver.cpp
 
 # programs
 bin_PROGRAMS = efdriver
 
 # efdriver: program for running a model
-efdriver_SOURCES = driver.cc
+efdriver_SOURCES = driver.cpp
 
 efdriver_LDFLAGS = $(BOOST_MPI_LDFLAGS)
 
@@ -69,5 +69,5 @@ copyright:
 	cp $(top_srcdir)/Copyright.doc $(top_srcdir)/Makefile.cr $(top_srcdir)/Sed.cr .
 	make -f Makefile.cr NAME="${PACKAGE}" FILES="${cc_sources}"
 	make -f Makefile.cr NAME="${PACKAGE}" FILES="${hh_sources}"
-	make -f Makefile.cr NAME="${PACKAGE}" FILES="driver.cc"
+	make -f Makefile.cr NAME="${PACKAGE}" FILES="driver.cpp"
 	rm -f Copyright.doc Makefile.cr Sed.cr
