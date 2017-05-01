@@ -4,7 +4,7 @@
 // Copyright (C) 2006-2014 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-#include <efscape/server/ModelTie.hh>
+#include <efscape/server/ModelTie.hpp>
 
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/AdevsModel.hpp>

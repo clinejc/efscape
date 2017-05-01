@@ -12,8 +12,8 @@
 // parent class definitions
 #include "efscape/impl/adevs_config.hpp"
 #include "adevs/adevs_serialization.hpp"
-#include "efscape/impl/EntityI.hh"
-#include "efscape/impl/InitObject.hh"
+#include "efscape/impl/EntityI.hpp"
+#include "efscape/impl/InitObject.hpp"
 
 // class data members
 #include "efscape/impl/ClockI.hpp"

@@ -3,7 +3,7 @@
 #ifndef SIMPLESIM_CREATESIMPLESIM_HH
 #define SIMPLESIM_CREATESIMPLESIM_HH
 
-#include "efscape/impl/BuildModel.hh"	// parent class definition
+#include "efscape/impl/BuildModel.hpp"	// parent class definition
 
 namespace simplesim {
 

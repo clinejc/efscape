@@ -6,7 +6,7 @@
 // __COPYRIGHT_END__
 #include <efscape/server/ModelHomeTie.hpp>
 
-#include <efscape/server/ModelTie.hh>
+#include <efscape/server/ModelTie.hpp>
 #include <efscape/server/SimulatorI.hpp>
 
 // definitions for accessing the model factory

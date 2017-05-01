@@ -149,7 +149,7 @@ namespace efscape {
 	("TimeDelta", po::value<double>(&md_TimeDelta)->default_value(md_TimeDelta),"simulation time step")
 	("TimeMax", po::value<double>(&md_TimeMax)->default_value(md_TimeMax),"maximum simulation time")
 	("StartDate", po::value<ptime>(&mC_StartDate)->default_value(mC_StartDate),"simulation start time")
-	("Time Units", po::value<time_duration>(&mC_TimeUnits)->default_value(mC_TimeUnits),"simulation start time")
+	("TimeUnits", po::value<time_duration>(&mC_TimeUnits)->default_value(mC_TimeUnits),"simulation time units")
 	;
 
       int li_status = CommandOpt::parse_options(argc,argv);	// parent method

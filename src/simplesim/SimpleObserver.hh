@@ -7,8 +7,8 @@
 
 // parent class definitions
 #include "efscape/impl/adevs_config.hpp"
-#include "efscape/impl/EntityI.hh"
-#include "efscape/impl/InitObject.hh"
+#include "efscape/impl/EntityI.hpp"
+#include "efscape/impl/InitObject.hpp"
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/property_tree/ptree.hpp>

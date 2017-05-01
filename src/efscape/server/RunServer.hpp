@@ -7,7 +7,7 @@
 #ifndef EFSCAPE_SERVER_RUNSERVER_HPP
 #define EFSCAPE_SERVER_RUNSERVER_HPP
 
-#include <efscape/utils/CommandOpt.hh>
+#include <efscape/utils/CommandOpt.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <Ice/Application.h>
 
