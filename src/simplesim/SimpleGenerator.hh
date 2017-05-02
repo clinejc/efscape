@@ -79,9 +79,10 @@ namespace simplesim {
    * example.
    *
    * @author Jon C. Cline <clinej@stanfordalumni.org>
-   * @version 0.1.0 created 11 Oct 2006, revised 02 Oct 2014
+   * @version 0.2.0 created 11 Oct 2006, revised 02 May 2017
    *
    * ChangeLog:
+   *   - 2017-05-02 removed InitObject implementation
    *   - 2014-10-02 updated to support major revision of efscape
    *   - 2009-12-06 parent class changed from ModelI (removed) to EntityI
    *   - 2009-03-04 Extensive modifications due to API changes
@@ -105,9 +106,6 @@ namespace simplesim {
 
     SimpleGenerator();
     ~SimpleGenerator();
-
-    void initialize()
-      throw(std::logic_error);
 
     // Model output port
     const SimpleState* out;

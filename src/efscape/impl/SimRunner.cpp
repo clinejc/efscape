@@ -56,7 +56,9 @@ namespace efscape {
 			"Found port=" << clock_in);
 	  try {
 	    // 1) try to extract a smart pointer to the clock
-	    mCp_ClockI = boost::any_cast<ClockIPtr>( (*i).value );
+	    ClockI* lCp_clock =
+	      new ClockI( boost::any_cast<ClockI>( (*i).value ) );
+	    mCp_ClockI.reset( lCp_clock );
 	  }
 	  catch(const boost::bad_any_cast &) {
 	    LOG4CXX_ERROR(ModelHomeI::getLogger(),

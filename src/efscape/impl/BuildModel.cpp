@@ -309,7 +309,7 @@ namespace efscape {
 	adevs::Bag<efscape::impl::IO_Type> xb;
 	efscape::impl::IO_Type e;
 	e.port = "clock_in";
-	e.value = mCp_ClockI;
+	e.value = ClockI(*mCp_ClockI); // copy clock
 	xb.insert(e);
 
 	// inject properties

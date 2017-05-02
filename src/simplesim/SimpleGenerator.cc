@@ -31,29 +31,6 @@ namespace simplesim {
   }
 
   /**
-   * Initializes the model.
-   */
-  void SimpleGenerator::initialize()
-    throw(std::logic_error)
-  {
-    std::string lC_message = "SimpleGenerator::initialize()";
-    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		  "Entering " << lC_message);
-
-    efscape::impl::AdevsModel* lCp_RootModel =
-      dynamic_cast< efscape::impl::AdevsModel* >( efscape::impl::getRootModel(this) );
-    if (lCp_RootModel)
-      mCp_clock = lCp_RootModel->getClockIPtr();
-    else
-      mCp_clock.reset(new efscape::impl::ClockI);
-
-    if (!mCp_state)
-      mCp_state.reset( new SimpleState() );
-
-    mCp_state->setClock(mCp_clock.get());
-  }
-
-  /**
    * Internal transition function.
    */
   void SimpleGenerator::delta_int() {
@@ -87,7 +64,9 @@ namespace simplesim {
 		      "Inspecting input on port=" << "clock_in");
 	try {
 	  // 1) try to extract a smart pointer to the clock
-	  mCp_clock = boost::any_cast<efscape::impl::ClockIPtr>( (*i).value );
+	  efscape::impl::ClockI* lCp_clock =
+	    new efscape::impl::ClockI( boost::any_cast<efscape::impl::ClockI>( (*i).value ));
+	  mCp_clock.reset(lCp_clock);
 
 	  // pass clock pointer to the state data member
 	  if (mCp_state.get() == NULL) // ensure that the state exists
