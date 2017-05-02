@@ -7,6 +7,7 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/version.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/scoped_ptr.hpp>
 
 // parent class definitions
@@ -141,6 +142,7 @@ namespace simplesim {
       ar & boost::serialization::make_nvp("Atomic",
 					  boost::serialization::base_object<efscape::impl::ATOMIC >(*this) );
 
+      ar & boost::serialization::make_nvp("clock",mCp_clock);
       ar & boost::serialization::make_nvp("SimpleState",mCp_state);
       ar & boost::serialization::make_nvp("status",mi_status);
     }

@@ -25,7 +25,7 @@ namespace efscape {
      * model session. It replace the efscape::
      *
      * @author Jon C. Cline <clinej@stanfordalumni.org>
-     * @version 0.0.1 created 27 Apr 2017, revised 27 Apr 2017
+     * @version 0.0.4 created 27 Apr 2017, revised 02 May 2017
      */
     class SimRunner : public ModelWrapperBase
     {
@@ -86,6 +86,13 @@ namespace efscape {
        */
       void delta_conf(const adevs::Bag<IO_Type>& xb);
 
+      /**
+       * Atomic time advance function
+       *
+       * @returns time advance
+       */
+      double ta();
+      
       /// implementing abtract methods
       
       /**

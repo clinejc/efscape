@@ -21,6 +21,7 @@
 
 #include <fstream>
 
+BOOST_CLASS_EXPORT(efscape::impl::ClockI)
 BOOST_CLASS_EXPORT(simplesim::SimpleGenerator)
 BOOST_CLASS_EXPORT(simplesim::SimpleObserver)
 

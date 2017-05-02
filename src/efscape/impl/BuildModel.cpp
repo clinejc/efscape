@@ -293,6 +293,14 @@ namespace efscape {
       LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		    "initializing model...");
 
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		    "Simulator clock set for time interval ["
+		    << mCp_ClockI->time() << ","
+		    << mCp_ClockI->timeMax() << "], time delta = "
+		    << mCp_ClockI->timeDelta() << ", units = "
+		    << mCp_ClockI->units() << ", time units = "
+		    << mCp_ClockI->timeUnits());
+
       // attempt to narrow the cast to a root model wrapper (deja vu?)
       AdevsModel* lCp_AdevsModel =
 	dynamic_cast<AdevsModel*>( mCp_model.get() );
@@ -319,7 +327,7 @@ namespace efscape {
 	e.value = lC_properties;
 	xb.insert(e);
 
-	inject_events(-0.1, xb, mCp_model.get());
+	inject_events(/*-0.1*/0.0, xb, mCp_model.get());
       }
 
       // create a simulator and compute initialize model state
@@ -351,6 +359,11 @@ namespace efscape {
 	std::string lC_message = "Error encountered saving model <"
 	  + mC_ClassName + "> to file <" + lC_out_file + ">: " + excp.what();
 	throw std::logic_error(lC_message.c_str());
+      }
+
+      // complete the model run
+      while ( lCp_simulator->nextEventTime() < adevs_inf<double>() ) {
+	lCp_simulator->execNextEvent();
       }
 
     } // BuildModel::saveConfig()

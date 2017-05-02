@@ -32,13 +32,11 @@ namespace efscape {
       md_TimeDelta = aCr_clock.md_TimeDelta;
       md_TimeMax = aCr_clock.md_TimeMax;
       mC_base_date = aCr_clock.mC_base_date;
+      mC_units = aCr_clock.mC_units;
     }
 
     /** destructor */
     ClockI::~ClockI() {
-      // Log4CL::instance()->get_logger("root").
-      // 	log(DEBUG,
-      // 	    "Deleting ClockI...");
       LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		    "Deleting ClockI...");
     }

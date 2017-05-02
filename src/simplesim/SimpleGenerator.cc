@@ -22,6 +22,10 @@ namespace simplesim {
     mi_status(0)
   {
     name(SimpleGenerator_strings::name);
+
+    mCp_clock.reset( new efscape::impl::ClockI );
+    mCp_state.reset( new SimpleState );
+    mCp_state->setClock( mCp_clock.get() );
   }
 
   /** destructor */
@@ -36,6 +40,23 @@ namespace simplesim {
   void SimpleGenerator::delta_int() {
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		  "delta_int()");
+
+    // advance clock
+    if (ta() < adevs_inf<double>()) {
+      mCp_clock->time() += ta();
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "current time is " << mCp_clock->time());
+ 
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "date is " << mCp_clock->date_time(mCp_clock->time()));
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "a day later is " << mCp_clock->date_time(mCp_clock->time()+1));
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "Base date is " << mCp_clock->timeUnits());
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "time units is " << mCp_clock->units());
+    }
+
     if (!mb_IsActive)		// activate
       mb_IsActive = true;
   }
@@ -49,9 +70,10 @@ namespace simplesim {
   void SimpleGenerator::delta_ext(double e,
 				  const adevs::Bag<efscape::impl::IO_Type>& xb)
   {
-    if (mCp_state.get() == NULL)
-      mCp_state.reset( new SimpleState() );
-      
+    // advance clock
+    if (e >= 0)
+      mCp_clock->time() += e;
+
     // Attempt to "consume" input
     adevs::Bag<efscape::impl::IO_Type>::const_iterator i = xb.begin();
 
@@ -126,24 +148,24 @@ namespace simplesim {
    * @return time advance
    */
   double SimpleGenerator::ta() {
-    // first determine if the generator clock has initialized
-    if (mCp_clock.get() == NULL) {
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "model not yet uninitialized -- clock is null!:");
-     return DBL_MAX;
-    }
+    // // first determine if the generator clock has initialized
+    // if (mCp_clock.get() == NULL) {
+    //   LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+    // 		    "model not yet uninitialized -- clock is null!:");
+    //  return DBL_MAX;
+    // }
     
-    if (!mb_IsActive) {
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "model starting");
-      return 0;
-    }
+    // if (!mb_IsActive) {
+    //   LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+    // 		    "model starting");
+    //   return 0;
+    // }
 
-    if (mCp_state->clock().time() >= mCp_state->clock().timeMax()) {
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "SimpleGenerator::ta(): stopping");
-      return DBL_MAX;
-    }
+    // if (mCp_state->clock().time() >= mCp_state->clock().timeMax()) {
+    //   LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+    // 		    "SimpleGenerator::ta(): stopping");
+    //   return DBL_MAX;
+    // }
 
     double ld_time =
       mCp_state->clock().timeDelta();

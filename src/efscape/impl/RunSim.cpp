@@ -12,6 +12,7 @@
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
 #include <efscape/impl/AdevsModel.hpp>
+#include <efscape/impl/SimRunner.hpp>
 
 #include <boost/filesystem/operations.hpp>
 #include <fstream>
@@ -158,34 +159,47 @@ namespace efscape {
       		      << "...Initializing simulation...");
 
       	if (!initializeModel(lCp_model.get()) ) // initialize model
-      	  throw std::logic_error("Unable to initialize model\n");
+      	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+			"Unable to initialize model using InitObject interface...");
 
       	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
       		      "Running simulation...");
 
 	// initialize the simulation clock
-	double ld_timeMax = DBL_MAX;
+	double ld_timeMax = adevs_inf<double>();
 	ClockIPtr lCp_clock;
 	AdevsModel* lCp_RootModel = // note: root model derived from model
 	  dynamic_cast<AdevsModel*>(lCp_model.get());
+	SimRunner* lCp_SimRunner = // note: alternative root model
+	  dynamic_cast<SimRunner*>(lCp_model.get());
+	
 	if (lCp_RootModel) {
 	  lCp_clock = lCp_RootModel->getClockIPtr();
-	  ld_timeMax = lCp_clock->timeMax();
-	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			"Simulator clock set for time interval ["
-			<< lCp_clock->time() << ","
-			<< lCp_clock->timeMax() << "], time delta = "
-			<< lCp_clock->timeDelta() );
 
-      	  // set-up observers
+	  // set-up observers
       	  std::set< efscape::impl::ObserverPtr > lCCp_observers;
       	  lCp_RootModel->getObservers(lCCp_observers);
       	  std::set< efscape::impl::ObserverPtr >::iterator iObserver;
       	  for (iObserver = lCCp_observers.begin();
 	       iObserver != lCCp_observers.end(); iObserver++)
       	    lCp_simulator->addEventListener( (*iObserver).get() );
-      	}
+	}
+	else if (lCp_SimRunner) {
+	  lCp_clock = lCp_SimRunner->getClockIPtr();
+	}
 
+	if (lCp_clock.get() != NULL) {
+	  ld_timeMax = lCp_clock->timeMax();
+	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+			"Simulator clock set for time interval ["
+			<< lCp_clock->time() << ","
+			<< lCp_clock->timeMax() << "], time delta = "
+			<< lCp_clock->timeDelta() << ", units = "
+			<< lCp_clock->units() << ", time units = "
+			<< lCp_clock->timeUnits());
+
+      	}
+	
       	// simulate model until time max
 	double ld_time = 0.;
       	while ( (ld_time = lCp_simulator->nextEventTime())

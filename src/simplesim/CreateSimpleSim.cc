@@ -206,7 +206,6 @@ namespace simplesim {
 
     efscape::impl::BuildModel::createModel(); // invoke parent method
 
-    
     efscape::impl::DEVS* lCp_model =
       lCp_SimRunner->/*efscape::impl::ModelWrapperBase::*/getWrappedModel();
     if (lCp_model == NULL) {

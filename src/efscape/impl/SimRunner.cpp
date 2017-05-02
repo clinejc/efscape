@@ -77,6 +77,13 @@ namespace efscape {
 
       ModelWrapperBase::delta_conf(xb);
     }
+
+    double SimRunner::ta() {
+      if (getTime() > getClockIPtr()->timeMax())
+	return adevs_inf<double>();
+
+      return ModelWrapperBase::ta();
+    }
     
     void SimRunner::translateInput(const adevs::Bag<IO_Type>&
 				   external_input,
