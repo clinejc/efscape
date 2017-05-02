@@ -42,37 +42,6 @@ namespace simplesim {
   }
 
   /**
-   * Initializes the netCDF dataset for model cell output.
-   *
-   * @throws std::logic_error
-   */
-  void SimpleObserver::initialize()
-    throw(std::logic_error)
-  {
-    std::string lC_message = "SimpleObserver::initialize()";
-
-    // initialize handle to cell inputs
-    efscape::impl::AdevsModel* lCp_RootModel =
-      dynamic_cast<efscape::impl::AdevsModel*>( efscape::impl::getRootModel(this) );
-
-    if (lCp_RootModel == 0) {
-      lC_message +=
-	": Unable to access root model";
-      throw(std::logic_error(lC_message));
-    }
-
-    // get handle to clock
-    const efscape::impl::ClockI* lCp_clock = lCp_RootModel->getClock();
-
-    //--------------------
-    // set time attributes
-    //--------------------
-    ptime lC_base_date =
-      lCp_clock->date_time(lCp_clock->time());
-    
-  } // SimpleObserver::initialize()
-
-  /**
    *Internal transition function.
    */
   void SimpleObserver::delta_int() {

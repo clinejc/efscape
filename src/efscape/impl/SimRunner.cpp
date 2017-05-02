@@ -21,29 +21,41 @@ namespace efscape {
       "properties_in";
 
 
-    SimRunner::SimRunner() : ModelWrapperBase() {
+    SimRunner::SimRunner() :
+      ModelWrapperBase()
+    {
+      // initialize the clock
+      mCp_ClockI.reset(new ClockI);     
     }
 
     SimRunner::~SimRunner() {
     }
 
     void SimRunner::delta_int() {
+      // advance clock
+      if (getTime() < adevs_inf<double>())
+	getClockIPtr()->time()+=ta();
+      
       ModelWrapperBase::delta_int();
     }
 
     void SimRunner::delta_ext(double e, const adevs::Bag<IO_Type>& xb) {
+      // advance clock
+      if (e >= 0)
+	getClockIPtr()->time()+=e;
+      
       // Attempt to "consume" input
       adevs::Bag<efscape::impl::IO_Type>::const_iterator i = xb.begin();
 
       for (; i != xb.end(); i++) {
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "SimRunner input on port <"
 		      << (*i).port << ">");
 	if ( (*i).port == "clock_in") { // event on <clock_in> port
 	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 			"Found port=" << clock_in);
 	  try {
-	    // 1) try to extract the properties file name
+	    // 1) try to extract a smart pointer to the clock
 	    mCp_ClockI = boost::any_cast<ClockIPtr>( (*i).value );
 	  }
 	  catch(const boost::bad_any_cast &) {
@@ -56,11 +68,27 @@ namespace efscape {
       ModelWrapperBase::delta_ext(e, xb);
     }
 
+    void SimRunner::delta_conf(const adevs::Bag<IO_Type>& xb) {
+      // advance clock
+      if (getTime() < adevs_inf<double>())
+	getClockIPtr()->time()+=ta();
+
+      ModelWrapperBase::delta_conf(xb);
+    }
+    
     void SimRunner::translateInput(const adevs::Bag<IO_Type>&
 				   external_input,
 				   adevs::Bag<adevs::Event<IO_Type> >&
 				   internal_input)
     {
+      adevs::Bag<IO_Type>::iterator iter;
+      for (iter = external_input.begin(); iter != external_input.end();
+	   iter++) {
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "passing on port <" << (*iter).port << ">");
+	internal_input.insert(adevs::Event<IO_Type>(getWrappedModel(),
+						    (*iter)));
+      }
     }
 
     void SimRunner::translateOutput(const

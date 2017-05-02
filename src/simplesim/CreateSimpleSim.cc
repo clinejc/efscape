@@ -147,7 +147,6 @@ namespace simplesim {
 		    "Using SimRunner as root...");
 
     }
-    efscape::impl::BuildModel::createModel(); // invoke parent method
    
     // create digraph
     efscape::impl::DIGRAPH* lCp_digraph = new efscape::impl::DIGRAPH;
@@ -171,10 +170,18 @@ namespace simplesim {
     // couple models
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		  "Coupling the observer to the generator...");
+    lCp_digraph->couple(lCp_digraph, "clock_in",
+			lCp_generator, "clock_in");
+    lCp_digraph->couple(lCp_digraph, "properties_in",
+			lCp_generator, "properties_in");
     lCp_digraph->couple(lCp_generator,
     			simplesim::SimpleGenerator_strings::f_out,
     			lCp_observer,
     			simplesim::SimpleObserver_strings::m_input);
+    lCp_digraph->couple(lCp_observer,
+			simplesim::SimpleObserver_strings::f_output,
+			lCp_digraph,
+			simplesim::SimpleObserver_strings::f_output);
     
     // add model
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -189,13 +196,27 @@ namespace simplesim {
     if (lCp_AdevsModel != NULL) 
       lCp_AdevsModel->setWrappedModel(lCp_digraph);
     else if (lCp_SimRunner != NULL)
-      lCp_SimRunner->setWrappedModel(lCp_digraph);
+      lCp_SimRunner->/*efscape::impl::ModelWrapperBase::*/setWrappedModel(lCp_digraph);
     else
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		    "Unable to attach SimpleSim model");
 
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		  "Done creating the model!");
+
+    efscape::impl::BuildModel::createModel(); // invoke parent method
+
+    
+    efscape::impl::DEVS* lCp_model =
+      lCp_SimRunner->/*efscape::impl::ModelWrapperBase::*/getWrappedModel();
+    if (lCp_model == NULL) {
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "Added wrapped model missing!");
+    }
+    else {
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "Added wrapped model found!");
+    }
 
   } // CreateSimpleSim::createModel()
 

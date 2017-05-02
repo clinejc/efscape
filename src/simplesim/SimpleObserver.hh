@@ -6,9 +6,9 @@
 #include <boost/serialization/version.hpp>
 
 // parent class definitions
-#include "efscape/impl/adevs_config.hpp"
-#include "efscape/impl/EntityI.hpp"
-#include "efscape/impl/InitObject.hpp"
+#include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/EntityI.hpp>
+#include <efscape/impl/InitObject.hpp>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -23,9 +23,10 @@ namespace simplesim {
    * objects representing a time series.
    *
    * @author Jon C. Cline <clinej@stanfordalumni.org>
-   * @version 0.1.0 created 11 Oct 2006, revised 02 Oct 2014
+   * @version 0.2.0 created 11 Oct 2006, revised 30 Apr 2017
    *
    * ChangeLog:
+   *   - 2017-04-30 removed InitObject implementation
    *   - 2014-11-01 added property tree for generating JSON
    *   - 2014-10-02 updated to support major revision of efscape
    *   - 2010.05.05 fixed bug (parent class InitObject undeclared)
@@ -45,7 +46,6 @@ namespace simplesim {
    *   - 2006.10.17 created class 'SimpleObserver'
    */
   class SimpleObserver : virtual public efscape::impl::EntityI,
-			 public efscape::impl::InitObject,
 			 public adevs::Atomic<efscape::impl::IO_Type>
   {
     friend class boost::serialization::access;
@@ -54,9 +54,6 @@ namespace simplesim {
 
     SimpleObserver();
     ~SimpleObserver();
-
-    void initialize()
-      throw (std::logic_error);
 
     // Observer input port
     void input(const SimpleState* aCp_value) {}
@@ -107,6 +104,6 @@ namespace simplesim {
 
 } // namespace simplesim
 
-BOOST_CLASS_VERSION(simplesim::SimpleObserver, 9)
+BOOST_CLASS_VERSION(simplesim::SimpleObserver, 10)
 
 #endif	// #ifndef SIMPLESIM_SIMPLEOBSERVER_HH

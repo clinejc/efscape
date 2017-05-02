@@ -67,18 +67,24 @@ namespace efscape {
       /// Overriding parent methods
 
       /**
-       * Internal transition function.
+       * Atomic internal transition function.
        */
       void delta_int();
 
       /**
-       * External transition function.
+       * Atomic external transition function.
        *
-       * @tparameter ModelType wrapped Repast HPC model class
        * @param e time
        * @param xb bag of events
        */
       void delta_ext(double e, const adevs::Bag<IO_Type>& xb);
+
+      /**
+       * Atomic confluence transition function.
+       *
+       * @param xb bag of events
+       */
+      void delta_conf(const adevs::Bag<IO_Type>& xb);
 
       /// implementing abtract methods
       
@@ -169,7 +175,6 @@ namespace efscape {
       BOOST_SERIALIZATION_SPLIT_MEMBER();
 
     };
-
 
   } // namespace impl
 
