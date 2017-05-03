@@ -36,7 +36,7 @@ namespace efscape {
      * Implements an adevs-based ICE ::efscape::model wrapper.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 1.1.0 created 24 Dec 2006, revised 25 Apr 2017
+     * @version 2.0.0 created 24 Dec 2006, revised 03 May 2017
      */
     class AdevsModel : virtual public EntityI,
 		       public ModelDecorator,
@@ -70,12 +70,6 @@ namespace efscape {
       void setClockIPtr(const ClockIPtr& aCp_clock);
       const ClockI* getClock() const;
 
-      //
-      // comment
-      //
-      const char* comment() const;
-      void comment(const char* acp_comment);
-
       log4cxx::LoggerPtr getLogger() const;
 
       std::string getResourcePath() const;
@@ -83,9 +77,6 @@ namespace efscape {
 
       std::string getWorkDir() const;
       void setWorkDir(const char* acp_WorkDir);
-
-      void addObserver(Observer* aCp_observer);
-      void getObservers(std::set< ObserverPtr >& aCCpr_observer);
 
     protected:
 
@@ -104,9 +95,6 @@ namespace efscape {
 	ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EntityI);
 	ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModelDecorator);
 
-	// save comment
-	ar  & boost::serialization::make_nvp("comment",mC_comment);
-
 	// save clock
 	ar  & boost::serialization::make_nvp("Clock",mCp_ClockI);
 
@@ -121,9 +109,6 @@ namespace efscape {
 	ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EntityI);
 	ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModelDecorator);
 
-	// save comment
-	ar  & boost::serialization::make_nvp("comment",mC_comment);
-
 	// load clock
 	ar  & boost::serialization::make_nvp("Clock",mCp_ClockI);
 
@@ -135,9 +120,6 @@ namespace efscape {
 
       /** comment */
       std::string mC_comment;
-
-      /** set of observers */
-      std::set<ObserverPtr> mCCp_observers;
 
       /** path of simulator resources (on server) */
       std::string mC_ResourcePath;

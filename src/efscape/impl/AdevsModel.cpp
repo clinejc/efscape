@@ -138,40 +138,6 @@ namespace efscape {
       mCp_ClockI = aCp_clock;
     }
 
-    /** @returns handle to clock */
-    const ClockI* AdevsModel::getClock() const { return mCp_ClockI.get(); }
-
-    /** @returns comment */
-    const char* AdevsModel::comment() const { return mC_comment.c_str(); }
-
-    /**
-     * Sets comment.
-     *
-     * @param acp_comment comment
-     */
-    void AdevsModel::comment(const char* acp_comment) { mC_comment = acp_comment; }
-
-    /**
-     * Adds an observer.
-     *
-     * @param aCp_observer handle to observer
-     */
-    void AdevsModel::addObserver(Observer* aCp_observer)
-    {
-      ObserverPtr lCp_observer( aCp_observer ); // wrap with smart pointer
-      mCCp_observers.insert( lCp_observer );
-    }
-
-    /**
-     * Returns a reference to the set of observers.
-     *
-     * @param aCCpr_observers reference to the set of observers
-     */
-    void AdevsModel::getObservers(std::set<ObserverPtr>& aCCpr_observers)
-    {
-      aCCpr_observers = mCCp_observers;
-    }
-
     /**
      * Returns smart handle to logger
      *

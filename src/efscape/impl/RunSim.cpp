@@ -175,14 +175,6 @@ namespace efscape {
 	
 	if (lCp_RootModel) {
 	  lCp_clock = lCp_RootModel->getClockIPtr();
-
-	  // set-up observers
-      	  std::set< efscape::impl::ObserverPtr > lCCp_observers;
-      	  lCp_RootModel->getObservers(lCCp_observers);
-      	  std::set< efscape::impl::ObserverPtr >::iterator iObserver;
-      	  for (iObserver = lCCp_observers.begin();
-	       iObserver != lCCp_observers.end(); iObserver++)
-      	    lCp_simulator->addEventListener( (*iObserver).get() );
 	}
 	else if (lCp_SimRunner) {
 	  lCp_clock = lCp_SimRunner->getClockIPtr();
