@@ -105,6 +105,11 @@ namespace efscape {
 				    internal_output,
 				    adevs::Bag<IO_Type>& external_output)
     {
+      adevs::Bag<adevs::Event<IO_Type> >::iterator iter;
+      for (iter = internal_output.begin(); iter != internal_output.end();
+	   iter++) {
+	external_output.insert( IO_Type( (*iter).value ) );
+      }
     }
     
     void SimRunner::gc_input(adevs::Bag<adevs::Event<IO_Type> >& g)

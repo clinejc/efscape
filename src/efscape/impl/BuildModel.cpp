@@ -12,6 +12,7 @@
 
 #include <efscape/impl/AdevsModel.hpp>
 #include <efscape/impl/SimRunner.hpp>
+#include <efscape/utils/boost_utils.hpp>
 
 #include <typeinfo>
 
@@ -364,6 +365,27 @@ namespace efscape {
       // complete the model run
       while ( lCp_simulator->nextEventTime() < adevs_inf<double>() ) {
 	lCp_simulator->execNextEvent();
+
+	// extract output
+	adevs::Bag<IO_Type> yb;
+	get_output(yb, mCp_model.get());
+	adevs::Bag<IO_Type>::iterator
+	  i = yb.begin();
+	for ( ; i != yb.end(); i++) {
+	  try{
+	    // if there is there is a property tree in the output,
+	    // attempt to extract time parameters for the simulation
+	    boost::property_tree::ptree pt =
+	      boost::any_cast<boost::property_tree::ptree>( (*i).value );
+
+	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+			  "Value on port <" << (*i).port << ">="
+			  << efscape::utils::ptree_to_json(pt) );
+	  }
+	  catch (const boost::bad_any_cast &) {
+	    ;
+	  }
+	} // for ( ; i != yb.end(); i++ )
       }
 
     } // BuildModel::saveConfig()

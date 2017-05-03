@@ -9,6 +9,7 @@
 
 #include <efscape/impl/AdevsModel.hpp>
 #include <efscape/impl/ModelHomeI.hpp>
+#include <efscape/utils/boost_utils.hpp>
 
 #include <boost/lexical_cast.hpp>
 
@@ -68,6 +69,9 @@ namespace simplesim {
 	    boost::any_cast<const SimpleState*>( (*i).value );
 
 	  if (lCp_state != 0) {
+	    // reset the ptree
+	    mCp_ptree.reset( new boost::property_tree::ptree );
+	    
 	    // add the observation to the ptree
 	    boost::property_tree::ptree child;
 	    child.put("date_time",
@@ -75,12 +79,11 @@ namespace simplesim {
 	    child.put("count",
 		   boost::lexical_cast<std::string>(lCp_state->count()) );
 
-	    mCp_ptree->push_back(std::make_pair("",child));
+	    mCp_ptree->push_back(std::make_pair("row",child));
 
 	    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-			  lCp_state->clock().date_time(lCp_state->clock().time())
-			  << "\t"
-			  << lCp_state->count());
+			  "property tree = "
+			  << efscape::utils::ptree_to_json(*mCp_ptree) );
 
 	    //---------------------------------------------------
 	    // if this is the last iteration, write final results

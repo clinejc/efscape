@@ -44,17 +44,6 @@ namespace simplesim {
     // advance clock
     if (ta() < adevs_inf<double>()) {
       mCp_clock->time() += ta();
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "current time is " << mCp_clock->time());
- 
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "date is " << mCp_clock->date_time(mCp_clock->time()));
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "a day later is " << mCp_clock->date_time(mCp_clock->time()+1));
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "Base date is " << mCp_clock->timeUnits());
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "time units is " << mCp_clock->units());
     }
 
     if (!mb_IsActive)		// activate
