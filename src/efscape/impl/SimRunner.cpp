@@ -24,6 +24,9 @@ namespace efscape {
     SimRunner::SimRunner() :
       ModelWrapperBase()
     {
+      // initialize properties
+      mCp_ptree.reset( new boost::property_tree::ptree );
+      
       // initialize the clock
       mCp_ClockI.reset(new ClockI);     
     }
@@ -120,9 +123,29 @@ namespace efscape {
     {
     }
 
+    void SimRunner::createModel()
+      throw(adevs::exception)
+    {
+      // to be overridden by derived classes
+    }
+    
     //-------------------------
     // accessor/mutator methods
     //-------------------------
+    ///
+    /// properties
+    ///
+    boost::property_tree::ptree SimRunner::getProperties() const
+    {
+      return *mCp_ptree;
+    }
+    
+    bool SimRunner::setProperties(const boost::property_tree::ptree& aC_ptree)
+    {
+      bool lb_success = false;
+
+      return lb_success;
+    }
 
     ///
     /// clock

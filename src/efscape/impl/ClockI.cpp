@@ -7,7 +7,7 @@
 #include <efscape/impl/ClockI.hpp>
 
 #include <efscape/impl/ModelHomeI.hpp>
-// #include <repast_hpc/RepastProcess.h>
+#include <boost/algorithm/string.hpp>
 
 // using namespace repast;
 using namespace boost::gregorian;
@@ -48,8 +48,11 @@ namespace efscape {
      * @returns simulation date time
      */
     boost::posix_time::ptime ClockI::date_time( double ad_time ) const {
-      if (mC_base_date.is_not_a_date_time() || mC_units.is_not_a_date_time() )
+      if (mC_base_date.is_not_a_date_time() || mC_units.is_not_a_date_time() ) {
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "Not a date time");
 	return mC_base_date;
+      }
 
       time_duration lC_duration = mC_units*((int)ad_time);
 
@@ -79,12 +82,14 @@ namespace efscape {
      *
      * "time unit since reference time"
      *
-     * @param current method invocation
      * @returns time units
      */
     std::string ClockI::timeUnits() const {
-      if (date_time(0).is_not_a_date_time())
+      if (date_time(0).is_not_a_date_time()) {
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "Not a date time");
 	return "";
+      }
 
       double ld_seconds_per_year = 365.242*60*60*24;
       double ld_seconds_per_month = ld_seconds_per_year/12.0;
@@ -104,14 +109,67 @@ namespace efscape {
 	lC_units_string = "months";
       else if (mC_units == seconds((long)ld_seconds_per_year))
 	lC_units_string = "years";
+      else {
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "time units <"
+		      << mC_units << "> not recognized");
+	return "";
+      }
 
-      std::ostringstream lC_buffer;
-      lC_buffer << md_TimeDelta;
+      // std::ostringstream lC_buffer;
+      // lC_buffer << md_TimeDelta;
 
-      lC_units_string = lC_buffer.str() + " " + lC_units_string + " since "
+      lC_units_string = /*lC_buffer.str() + " " +*/ lC_units_string + " since "
 	+ to_iso_extended_string(mC_base_date) + " in standard";
 
       return lC_units_string;
+    }
+
+    /**
+     * Sets the time units from a string.
+     *
+     * "time unit since reference time"
+     *
+     * @param acp_units time units
+     */
+    void ClockI::timeUnits(const char* acp_units)
+    {
+      std::string lC_units = acp_units;
+      std::vector<std::string> lC1_fields;
+
+      // split the units string into fields
+      boost::split(lC1_fields, lC_units, boost::algorithm::is_space());
+      if (lC1_fields.size() >= 3) {
+
+	// first field should be time unit (e.g. days)
+	double ld_seconds_per_year = 365.242*60*60*24;
+	double ld_seconds_per_month = ld_seconds_per_year/12.0;
+
+	if (lC1_fields[0] == "seconds")
+	  mC_units = seconds(1);
+	else if (lC1_fields[0] == "minutes")
+	  mC_units = minutes(1);
+	else if (lC1_fields[0] == "hours")
+	  mC_units = hours(1);
+	else if (lC1_fields[0] == "days")
+	  mC_units = hours(24);
+	else if (lC1_fields[0] == "weeks")
+	  mC_units = hours(24)*7;
+	else if (lC1_fields[0] == "months")
+	  mC_units = seconds((long)ld_seconds_per_month);
+	else if (lC1_fields[0] == "year")
+	  mC_units = seconds((long)ld_seconds_per_year);
+
+	// second field should equal 'since' (ignore)
+	// third field should be the base date (iso extended format)
+	std::string lC_base_date = lC1_fields[2];
+	std::string::size_type i =
+	  lC_base_date.find('T'); // replace 'T' date time separator with ' '
+	if (i != std::string::npos)
+	  lC_base_date.replace(i,1," ");
+
+	mC_base_date = time_from_string(lC_base_date.c_str());
+      }
     }
 
   } // namespace impl

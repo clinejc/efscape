@@ -6,17 +6,13 @@
 // __COPYRIGHT_END__
 #include <efscape/impl/ModelHomeI.hpp>
 
-#include <boost/scoped_ptr.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/optional.hpp>
-#include <boost/foreach.hpp>
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
 
 // Includes for loading dynamic libraries
 #include <efscape/utils/DynamicLibrary.hpp>
+#include <efscape/impl/adevs_json.hpp>
 #include <ltdl.h>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -183,68 +179,8 @@ namespace efscape {
     {
       LOG4CXX_DEBUG(getLogger(),
 		    "Attempting to create model from a JSON configuration...");
-      std::stringstream lC_OutStream;
-      if (!lC_OutStream) {
-	std::string lC_ErrorMsg = "Unable to open string stream";
 
-	throw std::logic_error(lC_ErrorMsg.c_str());
-      }
-
-      // write buffer to the temporary file
-      lC_OutStream << aCr_JSONstring;
-
-      LOG4CXX_DEBUG(getLogger(),
-		    "Received JSON string =>"
-		    << aCr_JSONstring);
-
-      // read in the JSON data via a property tree extracted from the temp file
-      boost::property_tree::ptree pt;
-      boost::property_tree::read_json( lC_OutStream, pt );
-
-      BOOST_FOREACH( boost::property_tree::ptree::value_type const& rowPair,
-		     pt.get_child( "" ) ) {
-	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "=> property "
-		      << "<" << rowPair.first << ">="
-		      << "<" << rowPair.second.get_value<std::string>() << ">");
-	boost::optional<std::string> lC_propOpt =
-	  pt.get_optional<std::string>(rowPair.first);
-	if (!lC_propOpt) {
-	  LOG4CXX_DEBUG(getLogger(),
-			"property access failed!");
-	}
-	else
-	  LOG4CXX_DEBUG(getLogger(),
-			"property access ok!");
-      }
-
-      std::string lC_modelName;
-      boost::optional<std::string> lC_modelNameOpt =
-	pt.get_optional<std::string>("modelName");
-      if (lC_modelNameOpt) {
-	lC_modelName =
-	  ((std::string)lC_modelNameOpt.get());
-	LOG4CXX_DEBUG(getLogger(),
-		      "property <modelName> found");
-      }
-      else
-	LOG4CXX_ERROR(getLogger(),
-		      "property <modelName> not found!");
-
-      adevs::Devs<IO_Type>* lCp_model = NULL;
-      if ( (lCp_model = createModel(lC_modelName.c_str()) ) != NULL ) {
-	// inject input (model properties file)
-	// note: must be done before initializing the simulator
-	adevs::Bag<efscape::impl::IO_Type> xb;
-	efscape::impl::IO_Type e;
-	e.port = "properties_in";
-	e.value = pt;
-	xb.insert(e);
-
-	inject_events(-0.1, xb, lCp_model);
-      }
-
-      return lCp_model;
+      return createModelFromJSON(aCr_JSONstring);
       
     } // ModelHomeI::createModelFromJSON(const char*)
     
@@ -412,35 +348,6 @@ namespace efscape {
     //---------------------------------------
     // end of class ModelHomeI implementation
     //---------------------------------------
-
-    // utility function for loading info from a JSON file
-    boost::property_tree::ptree loadInfoFromJSON(std::string aC_path) {
-      // path is relative
-      std::string lC_FileName =
-	ModelHomeI::getHomeDir() + std::string("/") + aC_path;
-
-      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		    "model info path = <" << lC_FileName << "> ***");
-
-      boost::property_tree::ptree pt;
-      std::string lC_JsonStr = "{}";
-      try {
-	boost::property_tree::read_json( lC_FileName.c_str(), pt );
-
-	std::ostringstream lC_buffer;
-	boost::property_tree::write_json(lC_buffer, pt, false);
-	lC_JsonStr = lC_buffer.str();
-	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "JSON=>" << lC_JsonStr);
-      }
-      catch (...) {
-	LOG4CXX_ERROR(ModelHomeI::getLogger(),
-		      "unknown exception occurred parsing model info JSON file.");
-      }
-
-      return pt;
-    }
-
 
   } // namespace impl
 

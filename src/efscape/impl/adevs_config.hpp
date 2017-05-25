@@ -4,8 +4,8 @@
 // Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-#ifndef EFSCAPE_IMPL_ADEVSMODELS_HH
-#define EFSCAPE_IMPL_ADEVSMODELS_HH
+#ifndef EFSCAPE_IMPL_ADEVS_CONFIG_HPP
+#define EFSCAPE_IMPL_ADEVS_CONFIG_HPP
 
 // adevs model definitions
 #include <adevs.h>
@@ -44,10 +44,8 @@ namespace efscape {
     typedef adevs::CellSpace<boost::any> CELLSPACE;
     typedef adevs::ModelWrapper<IO_Type,CellEvent> CellSpaceWrapperBase;
     typedef adevs::ModelWrapper<CellEvent,IO_Type> CellWrapperBase;
-    typedef adevs::EventListener<IO_Type> Observer;
-    typedef boost::shared_ptr< adevs::EventListener<IO_Type> > ObserverPtr;
-    typedef adevs::EventListener<CellEvent> CellObserver;
-    typedef boost::shared_ptr< adevs::EventListener<CellEvent> > CellObserverPtr;
+    typedef adevs::EventListener<IO_Type> EventListener;
+    typedef adevs::EventListener<CellEvent> CellEventListener;
 
     // injects a bag of events into a model
     void inject_events(double e, const adevs::Bag<IO_Type>& xb,
@@ -270,4 +268,4 @@ namespace efscape {
 
 } // namespace efscape
 
-#endif	// #ifndef EFSCAPE_IMPL_ADEVSMODELS_HH
+#endif	// #ifndef EFSCAPE_IMPL_ADEVS_CONFIG_HPP

@@ -10,11 +10,17 @@
 // boost serialization definitions
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/version.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/scoped_ptr.hpp>
 
 // parent class definition
 #include <efscape/impl/adevs_config.hpp>
 
+// data member definitions
 #include <efscape/impl/ClockI.hpp>
+#include <boost/property_tree/ptree.hpp>
+
+#include <adevs/adevs_exception.h>
 
 namespace efscape {
 
@@ -25,7 +31,7 @@ namespace efscape {
      * model session. It replace the efscape::
      *
      * @author Jon C. Cline <clinej@stanfordalumni.org>
-     * @version 0.0.4 created 27 Apr 2017, revised 02 May 2017
+     * @version 0.1.0 created 27 Apr 2017, revised 04 May 2017
      */
     class SimRunner : public ModelWrapperBase
     {
@@ -43,10 +49,23 @@ namespace efscape {
       // accessor/mutator methods
       //-------------------------
 
+      ///
+      /// properties
+      ///
+      /** @returns properties in a property tree */
+      boost::property_tree::ptree getProperties() const;
+
+      /**
+       * Sets the model properties
+       *
+       * @param aC_ptree property tree
+       * @returns whether setting of properties was successful
+       */
+      virtual bool setProperties(const boost::property_tree::ptree& aC_ptree);
+
       //
       // clock
       //
-
       /** @returns reference to clock */
       ClockIPtr& getClockIPtr();
 
@@ -142,6 +161,17 @@ namespace efscape {
 
     protected:
       
+      /**
+       * Create the wrapped model (to be overridden by derived classes)
+       *
+       * @throws adevs::exception
+       */
+      virtual void createModel()
+	throw(adevs::exception);
+
+      /** properties */
+      boost::scoped_ptr< boost::property_tree::ptree > mCp_ptree;
+      
       /** simulation clock (implementation) */
       ClockIPtr mCp_ClockI;
 
@@ -187,6 +217,6 @@ namespace efscape {
 
 } // namespace efscape
 
-BOOST_CLASS_VERSION(efscape::impl::SimRunner,1)
+BOOST_CLASS_VERSION(efscape::impl::SimRunner,5)
 
 #endif	// #ifndef EFSCAPE_IMPL_SIMRUNNER_HPP
