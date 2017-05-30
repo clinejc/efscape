@@ -49,6 +49,13 @@ namespace efscape {
       // accessor/mutator methods
       //-------------------------
 
+      /**
+       * Class method that returns information about this model class.
+       *
+       * @returns info about this model class
+       */
+      static boost::property_tree::ptree get_info();
+ 
       ///
       /// properties
       ///
@@ -59,9 +66,10 @@ namespace efscape {
        * Sets the model properties
        *
        * @param aC_ptree property tree
-       * @returns whether setting of properties was successful
+       * @returns number of properties found
        */
-      virtual bool setProperties(const boost::property_tree::ptree& aC_ptree);
+      virtual unsigned int
+      setProperties(const boost::property_tree::ptree& aC_ptree);
 
       //
       // clock

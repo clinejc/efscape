@@ -6,19 +6,20 @@
 // __COPYRIGHT_END__
 #include <efscape/impl/ModelHomeI.hpp>
 
-#include <fstream>
-#include <sstream>
-#include <cstdlib>
-
 // Includes for loading dynamic libraries
 #include <efscape/utils/DynamicLibrary.hpp>
+
+// Include for handling JSON
 #include <efscape/impl/adevs_json.hpp>
-#include <ltdl.h>
+#include <efscape/utils/boost_utils.ipp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-#include <efscape/utils/boost_utils.ipp>
-
+#include <sstream>
+#include <cstdlib>
 
 using namespace efscape::utils;
 namespace fs = boost::filesystem;
@@ -179,8 +180,25 @@ namespace efscape {
     {
       LOG4CXX_DEBUG(getLogger(),
 		    "Attempting to create model from a JSON configuration...");
+      std::stringstream lC_OutStream;
+      if (!lC_OutStream) {
+	std::string lC_ErrorMsg = "Unable to open string stream";
 
-      return createModelFromJSON(aCr_JSONstring);
+	throw std::logic_error(lC_ErrorMsg.c_str());
+      }
+
+      // write buffer to the temporary file
+      lC_OutStream << aCr_JSONstring;
+
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		     "Received JSON string =>"
+		     << aCr_JSONstring);
+
+      // read in the JSON data via a property tree extracted from the temp file
+      boost::property_tree::ptree pt;
+      boost::property_tree::read_json( lC_OutStream, pt );
+
+      return efscape::impl::createModelFromJSON(pt);
       
     } // ModelHomeI::createModelFromJSON(const char*)
     
@@ -228,7 +246,6 @@ namespace efscape {
       //------------------------------
       char* lcp_env_variable =	// get EFSCAPE registry path
 	getenv("EFSCAPE_REGISTRY");
-      std::string lC_registry_path;
 
       if ( lcp_env_variable == NULL) {	// if $EFSCAPE_REGISTRY is not set...
 	std::string error_msg = std::string("ModelHomeI::LoadLibrary():")
@@ -236,24 +253,22 @@ namespace efscape {
 	throw std::logic_error(error_msg);
       }
 
-      lC_registry_path = lcp_env_variable;
-
       //---------------------------------
       // set the shared library extension
       //---------------------------------
-      std::string lC_soext = "la";
+      std::string lC_soext = ".la";
 
       //----------------------------------------------------
       // open the efscape simulation model library directory
       //----------------------------------------------------
-      fs::path lC_registry_path2 =
+      fs::path lC_registry_path =
 	fs::path( lcp_env_variable );
 
       // verify that this is a directory
-      if ( !fs::is_directory(lC_registry_path2) ) {
+      if ( !fs::is_directory(lC_registry_path) ) {
 	std::string error_msg = 
 	  "ModelHomeI::LoadLibraries(): can't open <"
-	  + lC_registry_path + std::string(">");
+	  + lC_registry_path.string() + std::string(">");
 
 	throw std::logic_error(error_msg.c_str());
       }
@@ -262,7 +277,7 @@ namespace efscape {
       // process all the files in the library directory
       //-----------------------------------------------
       fs::directory_iterator end_iter;
-      for ( fs::directory_iterator dir_itr( lC_registry_path2 );
+      for ( fs::directory_iterator dir_itr( lC_registry_path );
           dir_itr != end_iter;
       	    ++dir_itr ) {
 
@@ -272,25 +287,15 @@ namespace efscape {
         if ( !fs::is_regular_file( dir_itr->status() ) )
       	  continue;		// skip if not a regular file
 
-      	std::string lC_filename = dir_itr->path().string();//filename().c_str();
-
+      	std::string lC_filename = dir_itr->path().string();
+	
       	//------------------------
       	// find the file extension
       	//------------------------
-      	std::string lC_file_extension;
-      	std::string::size_type pos = 0;
-      	std::string::size_type startpos = 0;
+	std::string lC_file_extension = dir_itr->path().extension().string();
 
-      	while ( (pos=lC_filename.find_first_of(".",pos)) != std::string::npos) {
-      	  ++pos;
-      	  startpos = pos;
-      	}
-
-      	if ( startpos != 0 || startpos != std::string::npos) {
-      	  lC_file_extension = lC_filename.substr(startpos,lC_filename.length());
-      	}
-      	else
-      	  continue;
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "File extensions=<" << lC_file_extension << ">");
 
       	if (lC_file_extension != lC_soext) // skip if not a shared library
       	  continue;
@@ -307,9 +312,21 @@ namespace efscape {
       int li_cnt = 0;
       LOG4CXX_DEBUG(getLogger(),
 		    "*** Available models: ***");
-      for (iter = lC1_ModelNames.begin(); iter != lC1_ModelNames.end(); iter++)
+      for (iter = lC1_ModelNames.begin(); iter != lC1_ModelNames.end();
+	   iter++) {
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "=>" << ++li_cnt << ") " << *iter);
+
+	// get model info
+	boost::property_tree::ptree lC_info =
+	  getModelFactory().getProperties(*iter);
+
+	std::ostringstream lC_buffer_out;
+	boost::property_tree::write_json(lC_buffer_out, lC_info);
+
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      lC_buffer_out.str());
+      }
 
     } // ModelHomeI::LoadLibraries()
 

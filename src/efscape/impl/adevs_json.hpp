@@ -14,6 +14,8 @@
 #include <boost/property_tree/ptree.hpp>
 
 #include <picojson_serializer.h>
+#include <picojson_set_serializer.h>
+#include <picojson_vector_serializer.h>
 
 #include <string>
 
@@ -21,19 +23,7 @@ namespace efscape {
 
   namespace impl {
 
-    /**
-     * Creates a model from a model configuration stored in a JSON
-     * string.
-     *
-     * @param aCr_JSONstring model configuration embedded in a JSON string
-     * @returns handle to model
-     * @throws std::logic_error
-     */
-    adevs::Devs<IO_Type>*
-    createModelFromJSON(const std::string& aCr_JSONstring)
-      throw(std::logic_error);
-
-    /**
+   /**
      * This utility function parses JSON data in a property tree and attempts
      * to build the specified adevs model.
      *
@@ -81,6 +71,80 @@ namespace efscape {
 	ar & picojson::convert::member("stopAt", stopAt);
 	ar & picojson::convert::member("units", units);
       }
+    };
+
+    /**
+     * Digraph coupling node structure
+     */
+    struct DigraphNode {
+      std::string model;
+      std::string port;
+
+      DigraphNode() :
+	model(""),
+	port("") {}
+      
+      DigraphNode(std::string aModel, std::string aPort) :
+	model(aModel),
+	port(aPort) {}
+
+      DigraphNode(const DigraphNode& aDigraphNode) :
+	model(aDigraphNode.model),
+	port(aDigraphNode.port) {}
+
+      friend class picojson::convert::access;
+      template<class Archive>
+      void json(Archive & ar) const
+      {
+	ar & picojson::convert::member("model", model);
+	ar & picojson::convert::member("port", port);
+      }
+      template<class Archive>
+      void json(Archive & ar)
+      {
+	ar & picojson::convert::member("model", model);
+	ar & picojson::convert::member("port", port);
+      }
+    };
+
+    /**
+     * Digraph coupling structure
+     */
+    struct DigraphCoupling {
+      DigraphNode from;
+      DigraphNode to;
+
+      DigraphCoupling() :
+	from("",""),
+	to("","") {}
+      
+      DigraphCoupling(DigraphNode fromNode, DigraphNode toNode) :
+	from(fromNode),
+	to(toNode) {}
+
+      DigraphCoupling(std::string modelFrom, std::string portFrom,
+		      std::string modelTo, std::string portTo) :
+	from(modelFrom, portFrom),
+	to(modelTo, portTo) {}
+
+      DigraphCoupling(const DigraphCoupling& aDigraphCoupling) :
+	from(aDigraphCoupling.from),
+	to(aDigraphCoupling.to) {}
+
+      friend class picojson::convert::access;
+      template<class Archive>
+      void json(Archive & ar) const
+      {
+	ar & picojson::convert::member("from", from);
+	ar & picojson::convert::member("to", to);
+      }
+      template<class Archive>
+      void json(Archive & ar)
+      {
+	ar & picojson::convert::member("from", from);
+	ar & picojson::convert::member("to", to);
+      }
+
     };
     
   } // namespace impl

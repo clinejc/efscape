@@ -17,6 +17,8 @@
 #include <simplesim/SimpleObserver.hh>
 #include <simplesim/BasicModel.hh>
 
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/optional.hpp>
@@ -26,6 +28,7 @@
 
 using namespace boost::gregorian;
 using namespace boost::posix_time;
+namespace fs = boost::filesystem;
 
 namespace simplesim {
 
@@ -143,25 +146,18 @@ namespace simplesim {
   {
     std::string lC_message;
 
-    bool lb_using_AdevsModel = false;
-    if (lb_using_AdevsModel) {
-      mCp_model.reset( new efscape::impl::AdevsModel );
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "Using AdevsModel as root...");
-    }
-    else {
-      mCp_model.reset( new efscape::impl::SimRunner );
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "Using SimRunner as root...");
-
-    }
-
     boost::property_tree::ptree lC_pt;
     boost::property_tree::ptree lC_child;
 
+    // set info
+    lC_pt.put("info",
+	      "Creates a simple simulation with a digraph containing a simple generator connected to a simple observer");
+    
     // set type
+    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		  "Specifying root model type...");
     lC_pt.put("baseType", "efscape::impl::DEVS");
-    lC_pt.put("type", "efscape::impl:SimRunner");
+    lC_pt.put("type", "efscape::impl::SimRunner");
 
     // Specify time
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -172,33 +168,26 @@ namespace simplesim {
       mCp_ClockI->timeUnits()
     };
     std::string lC_time = picojson::convert::to_string(lC_simTime);
+    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		  "time: " << lC_time);    
+
     std::istringstream lC_time_in(lC_time.c_str());
     boost::property_tree::read_json( lC_time_in, lC_child );
 
-    // lC_child.put("units", "days since 1996-02-01T00:00:00");
-    // lC_child.put("delta_t", 1);
-    // lC_child.put("stopAt", 30);
 
     // add time object
     lC_pt.add_child("time", lC_child);
     
     // create digraph
-    efscape::impl::DIGRAPH* lCp_digraph = new efscape::impl::DIGRAPH;
-
     lC_pt.put("wrappedModel.baseType", "efscape::impl::DEVS");
-    lC_pt.put("wrappedModel.type", "efscape::impl:DIGRAPH");
-    lC_pt.put("wrappedModel.name", "digraph");
+    lC_pt.put("wrappedModel.type", "efscape::impl::DIGRAPH");
     
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		  "Creating digraph...");
+		  "Added a digraph...");
     
     // create generator
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		  "Creating a generator and adding it to the digraph...");
-    simplesim::SimpleGenerator* lCp_generator =
-      new simplesim::SimpleGenerator;
-    lCp_digraph->add(lCp_generator);
-
     lC_pt.put("wrappedModel.models.generator.baseType",
 	      "efscape::impl::DEVS");
     lC_pt.put("wrappedModel.models.generator.type",
@@ -207,9 +196,6 @@ namespace simplesim {
     // create  observer
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		  "Creating an observer and adding it to the digraph...");
-    simplesim::SimpleObserver* lCp_observer = new simplesim::SimpleObserver;
-    lCp_digraph->add(lCp_observer);
-
     lC_pt.put("wrappedModel.models.observer.baseType",
 	      "efscape::impl::DEVS");
     lC_pt.put("wrappedModel.models.observer.type",
@@ -219,89 +205,60 @@ namespace simplesim {
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		  "Coupling the observer to the generator...");
 
-    boost::property_tree::ptree lC_couplings;
-    
-    lCp_digraph->couple(lCp_digraph, "clock_in",
-			lCp_generator, "clock_in");
-    lC_child = boost::property_tree::ptree(); // reset  
-    lC_child.put("from.model", "digraph");
-    lC_child.put("from.port", "clock_in");
-    lC_child.put("to.model", "generator");
-    lC_child.put("to.port", "clock_in");
-    lC_couplings.push_back(std::make_pair("", lC_child));
+    // create an array of couplings
+   std::vector<efscape::impl::DigraphCoupling> lC1_couplings;
 
-    lCp_digraph->couple(lCp_digraph, "properties_in",
-			lCp_generator, "properties_in");
-    lC_child = boost::property_tree::ptree(); // reset  
-    lC_child.put("from.model", "digraph");
-    lC_child.put("from.port", "property_in");
-    lC_child.put("to.model", "generator");
-    lC_child.put("to.port", "property_in");
-    lC_couplings.push_back(std::make_pair("", lC_child));
+   lC1_couplings.push_back( efscape::impl::DigraphCoupling("this", "clock_in", "generator", "clock_in") );
+   lC1_couplings.push_back( efscape::impl::DigraphCoupling("this", "property_in", "generator", "property_in") );
+    lC1_couplings.push_back(efscape::impl::DigraphCoupling("generator", "out", "observer", "input"));
+    lC1_couplings.push_back(efscape::impl::DigraphCoupling("observer", "output", "this", "output"));
 
-    lCp_digraph->couple(lCp_generator,
-    			simplesim::SimpleGenerator_strings::f_out,
-    			lCp_observer,
-    			simplesim::SimpleObserver_strings::m_input);
-    lC_child = boost::property_tree::ptree(); // reset  
-    lC_child.put("from.model", "generator");
-    lC_child.put("from.port", "out");
-    lC_child.put("to.model", "observer");
-    lC_child.put("to.port", "input");
-    lC_couplings.push_back(std::make_pair("", lC_child));
+    boost::property_tree::ptree lC_coupling_pt;
+    std::string lC_couplingConfig = picojson::convert::to_string(lC1_couplings);
+    std::istringstream lC_coupling_in(lC_couplingConfig.c_str());
+    boost::property_tree::read_json( lC_coupling_in, lC_coupling_pt );
+    
+    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		  "coupling=" << lC_couplingConfig);
+    
+    lC_pt.add_child("wrappedModel.couplings", lC_coupling_pt);
+    
+    // save model configuration to a JSON file
+    std::string lC_out_file = out_file();
+    if (lC_out_file == "") {
+      if (mC_Name != "")
+	lC_out_file = mC_Name;
+      else
+	lC_out_file = mC_ClassName;
 
-    lCp_digraph->couple(lCp_observer,
-			"output",
-			lCp_digraph,
-			"output");
-    lC_child = boost::property_tree::ptree(); // reset  
-    lC_child.put("from.model", "observer");
-    lC_child.put("from.port", "output");
-    lC_child.put("to.model", "digraph");
-    lC_child.put("to.port", "output");
-    lC_couplings.push_back(std::make_pair("", lC_child));
-    
-    lC_pt.add_child("wrappedModel.couplings", lC_couplings);
-    
-    // write the properties out to JSON
-    boost::property_tree::write_json( "test.json", lC_pt );
+      lC_out_file += ".json";	// add file extension
+    }
+    else {
+      fs::path lC_out_file_path =
+	fs::path(lC_out_file.c_str() );
+      lC_out_file =
+	lC_out_file_path.parent_path().string() +
+	lC_out_file_path.stem().string() + ".json";
+    }
+    boost::property_tree::write_json( lC_out_file, lC_pt );
 
     efscape::impl::DEVS* lCp_devs =
       efscape::impl::createModelFromJSON(lC_pt);
-    
-    // add model
-    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		  "Adding the digraph to the ModelWrapper...");
 
-    // attempt to narrow the cast to a root model wrapper
-    efscape::impl::AdevsModel* lCp_AdevsModel =
-      dynamic_cast<efscape::impl::AdevsModel*>( mCp_model.get() );
-    efscape::impl::SimRunner* lCp_SimRunner =
-      dynamic_cast<efscape::impl::SimRunner*>( mCp_model.get() );
-
-    if (lCp_AdevsModel != NULL) 
-      lCp_AdevsModel->setWrappedModel(lCp_digraph);
-    else if (lCp_SimRunner != NULL)
-      lCp_SimRunner->/*efscape::impl::ModelWrapperBase::*/setWrappedModel(lCp_digraph);
-    else
+    if (lCp_devs) {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "Unable to attach SimpleSim model");
-
-    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		  "Done creating the model!");
-
-    efscape::impl::BuildModel::createModel(); // invoke parent method
-
-    efscape::impl::DEVS* lCp_model =
-      lCp_SimRunner->/*efscape::impl::ModelWrapperBase::*/getWrappedModel();
-    if (lCp_model == NULL) {
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "Added wrapped model missing!");
+		    "Successfully create a DEVS model"
+		    << " from a JSON configuration file!");
     }
     else {
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "Added wrapped model found!");
+       LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+		     "Unable to create a DEVS model"
+		     << " from a JSON configuration file.");
     }
+
+    mCp_model.reset( lCp_devs );
+ 
+    efscape::impl::BuildModel::createModel(); // invoke parent method
 
   } // CreateSimpleSim::createModel()
 
