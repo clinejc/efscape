@@ -11,7 +11,6 @@
 #include <efscape/utils/CommandOpt.hpp>
 #include <boost/function.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <log4cxx/logger.h>
 
 // boost serialization definitions
@@ -93,14 +92,6 @@ namespace efscape {
 
     };				// class ModelHomeI definition
 
-    /**
-     * This utility function loads information from a JSON file.
-     * 
-     * @param aC_path relative path of the JSON file
-     * @return JSON property tree
-     */
-    boost::property_tree::ptree loadInfoFromJSON(std::string aC_path);
-    
   } // namespace impl
 
 } // namespace efscape

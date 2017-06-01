@@ -11,7 +11,6 @@
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
 #include <efscape/impl/AdevsModel.hpp>
-#include <efscape/impl/SimRunner.hpp>
 #include <efscape/utils/boost_utils.hpp>
 
 #include <typeinfo>
@@ -96,25 +95,20 @@ namespace efscape {
 
       setClock();		// set time parameters
 
-      if (mC_ClassName != "")	{// non-interactive mode
-	try {
-	  createModel();
-	  saveConfig();
-	}
-	catch(std::logic_error lC_excp) {
-	  std::cerr << "Exception encounted during attempt to create model <"
-		    << "<" << mC_ClassName << ">: <"
-		    << lC_excp.what() << ">\n";
-	  return EXIT_FAILURE;
-	}
-	catch (...) {
-	  std::cerr << "Exception encounted during attempt to create model <"
-		    << "<" << mC_ClassName << ">\n";
-	  return EXIT_FAILURE;
-	}
+      try {
+	createModel();
+	saveConfig();
       }
-      else {			// interactive mode
-	// prompt for input
+      catch(std::logic_error lC_excp) {
+	std::cerr << "Exception encounted during attempt to create model <"
+		  << "<" << mC_ClassName << ">: <"
+		  << lC_excp.what() << ">\n";
+	return EXIT_FAILURE;
+      }
+      catch (...) {
+	std::cerr << "Exception encounted during attempt to create model <"
+		  << "<" << mC_ClassName << ">\n";
+	return EXIT_FAILURE;
       }
 
       return EXIT_SUCCESS;
@@ -250,18 +244,11 @@ namespace efscape {
       // attempt to narrow the cast to a root model wrapper
       AdevsModel* lCp_AdevsModel =
 	dynamic_cast<AdevsModel*>( mCp_model.get() );
-      SimRunner* lCp_SimRunner =
-	dynamic_cast<SimRunner*>( mCp_model.get() );
 
       if (lCp_AdevsModel == NULL) {
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "Root model <" << mC_ClassName
 		      << "> is not derived from <efscape::impl::AdevsModel>...");
-      }
-      else if (lCp_SimRunner == NULL) {
-	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Root model <" << mC_ClassName
-		      << "> is not derived from <efscape::impl::SimRunner>...");
       }
       
       // set clock and resource path if this is the root model
@@ -284,7 +271,7 @@ namespace efscape {
     {
       std::string lC_message = "BuildModel::saveConfig()";
 
-      if (mCp_model == 0) {
+      if (mCp_model.get() == 0) {
 	lC_message += ": Unable to save null model <" + mC_ClassName
 	  + ">";
 	throw std::logic_error(lC_message.c_str());
@@ -312,23 +299,6 @@ namespace efscape {
 	  LOG4CXX_ERROR(ModelHomeI::getLogger(),
 			"model initialization failed");
 	}
-      }
-      else {
-	// inject clock
-	adevs::Bag<efscape::impl::IO_Type> xb;
-	efscape::impl::IO_Type e;
-	e.port = "clock_in";
-	e.value = ClockI(*mCp_ClockI); // copy clock
-	xb.insert(e);
-
-	// inject properties
-	boost::property_tree::ptree lC_properties;
-	lC_properties.put("ResourcePath", mC_ResourcePath);
-	e.port = "properties_in";
-	e.value = lC_properties;
-	xb.insert(e);
-
-	inject_events(/*-0.1*/0.0, xb, mCp_model.get());
       }
 
       // create a simulator and compute initialize model state
@@ -360,32 +330,6 @@ namespace efscape {
 	std::string lC_message = "Error encountered saving model <"
 	  + mC_ClassName + "> to file <" + lC_out_file + ">: " + excp.what();
 	throw std::logic_error(lC_message.c_str());
-      }
-
-      // complete the model run
-      while ( lCp_simulator->nextEventTime() < adevs_inf<double>() ) {
-	lCp_simulator->execNextEvent();
-
-	// extract output
-	adevs::Bag<IO_Type> yb;
-	get_output(yb, mCp_model.get());
-	adevs::Bag<IO_Type>::iterator
-	  i = yb.begin();
-	for ( ; i != yb.end(); i++) {
-	  try{
-	    // if there is there is a property tree in the output,
-	    // attempt to extract time parameters for the simulation
-	    boost::property_tree::ptree pt =
-	      boost::any_cast<boost::property_tree::ptree>( (*i).value );
-
-	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "Value on port <" << (*i).port << ">="
-			  << efscape::utils::ptree_to_json(pt) );
-	  }
-	  catch (const boost::bad_any_cast &) {
-	    ;
-	  }
-	} // for ( ; i != yb.end(); i++ )
       }
 
     } // BuildModel::saveConfig()

@@ -72,6 +72,7 @@ namespace efscape {
       void units(const boost::posix_time::time_duration& aCr_units);
 
       std::string timeUnits() const;
+      void timeUnits(const char* acp_units);
 
     private:
 
