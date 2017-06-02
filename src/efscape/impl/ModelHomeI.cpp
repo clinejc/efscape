@@ -211,22 +211,11 @@ namespace efscape {
     void ModelHomeI::LoadLibrary(const char* acp_libname)
       throw(std::logic_error)
     {
-      DynamicLibrary* lCp_lib = NULL;
-      try {
-      	lCp_lib = new DynamicLibrary(acp_libname);
-      }
-      catch(const std::string& aCr_ErrorMsg) {
-      	std::cerr << aCr_ErrorMsg << std::endl;
-      }
-
-      if (lCp_lib->handle() != 0) {
-      	std::string lC_msg = "ModelHomeI::LoadLibrary(";
-      	lC_msg += std::string(acp_libname);
-      	lC_msg += "): opened library";
-      	LOG4CXX_DEBUG(getLogger(),
-      		      lC_msg);
-      }
-
+      boost::shared_ptr< boost::dll::shared_library >
+	lCp_library(new boost::dll::shared_library(acp_libname) );
+ 
+      mCCp_libraries[std::string(acp_libname)] = lCp_library;
+ 
     } // ModelHomeI::LoadLibrary(const char*)
     
     /**
@@ -256,7 +245,10 @@ namespace efscape {
       //---------------------------------
       // set the shared library extension
       //---------------------------------
-      std::string lC_soext = ".la";
+      // std::string lC_soext = ".la";
+      std::string lC_soext = boost::dll::shared_library::suffix().string();
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		    "detected extension=" << lC_soext);
 
       //----------------------------------------------------
       // open the efscape simulation model library directory

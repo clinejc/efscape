@@ -36,16 +36,19 @@ void fnExit(void) {
  * Catches exceptions to handle known on the exit.
  */
 void singleton_terminate(void) {
-  static bool tried_throw = false;
+  // static bool tried_throw = false;
+  static int tried_throw = 0;
 
   try {
-    if (!tried_throw++) throw;
+    // if (!tried_throw++) throw;
+    if ( (tried_throw++) > 0) throw;
+
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		  "no active exception");
   }
-  catch (const std::logic_error& err) {
+  catch (const std::runtime_error& err) {
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		  "Caught logic error: " << err.what() );
+		  "Caught runtime error: " << err.what() );
   }
   catch (...) {
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),

@@ -1,7 +1,6 @@
 ## source directory for the efscape utils library classes
 
 hh_sources = CommandOpt.hpp
-hh_sources += DynamicLibrary.hpp
 hh_sources += Factory.hpp
 hh_sources += Singleton.hpp
 hh_sources += type.hpp
@@ -9,7 +8,6 @@ hh_sources += boost_utils.hpp
 hh_sources += boost_utils.ipp
 
 cc_sources = CommandOpt.cpp
-cc_sources += DynamicLibrary.cpp
 cc_sources += type.cp
 cc_sources += boost_utils.cpp
 

@@ -11,11 +11,14 @@
 #include <efscape/utils/CommandOpt.hpp>
 #include <boost/function.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include <log4cxx/logger.h>
 
 // boost serialization definitions
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/type_info_implementation.hpp>
+
+#include <boost/dll.hpp>	// boost dynamic library
 
 #include <efscape/utils/Factory.hpp>
 #include <efscape/utils/type.hpp>
@@ -71,10 +74,10 @@ namespace efscape {
        */
       void setHomeDir(const char* acp_path) { mSC_HomeDir = acp_path;}
 
-      /*static*/ void LoadLibrary(const char* acp_libname)
+      void LoadLibrary(const char* acp_libname)
 	throw(std::logic_error);
 
-      /*static*/ void LoadLibraries()
+      void LoadLibraries()
 	throw(std::logic_error);
 
       static log4cxx::LoggerPtr& getLogger();
@@ -89,6 +92,7 @@ namespace efscape {
 
       boost::scoped_ptr<model_factory> mCp_ModelFactory;
       boost::scoped_ptr< command_factory > mCp_CommandFactory;
+      std::map< std::string, boost::shared_ptr<boost::dll::shared_library> > mCCp_libraries;
 
     };				// class ModelHomeI definition
 
