@@ -28,10 +28,10 @@ namespace efscape {
 
     /**
      * Implements an adevs-based model wrapper that encapsulates a simulation
-     * model session. It replace the efscape::
+     * model session. It replace the efscape::impl::AdevsModel
      *
      * @author Jon C. Cline <clinej@stanfordalumni.org>
-     * @version 0.1.0 created 27 Apr 2017, revised 04 May 2017
+     * @version 0.1.1 created 27 Apr 2017, revised 09 June 2017
      */
     class SimRunner : public ModelWrapperBase
     {
@@ -57,19 +57,20 @@ namespace efscape {
       static boost::property_tree::ptree get_info();
  
       ///
-      /// properties
+      /// model configuration/properties
       ///
-      /** @returns properties in a property tree */
-      boost::property_tree::ptree getProperties() const;
+
+      /** @returns model configuration in JSON */
+      std::string convert_to_json() const;
 
       /**
        * Sets the model properties
        *
-       * @param aC_ptree property tree
+       * @param aC_modelJson model JSON configuration string
        * @returns number of properties found
        */
       virtual unsigned int
-      setProperties(const boost::property_tree::ptree& aC_ptree);
+      convert_from_json(const std::string& aC_modelJson);
 
       //
       // clock
@@ -177,8 +178,8 @@ namespace efscape {
       virtual void createModel()
 	throw(adevs::exception);
 
-      /** properties */
-      boost::scoped_ptr< boost::property_tree::ptree > mCp_ptree;
+      /** model configuration as a JSON string */
+      std::string mC_modelJson;
       
       /** simulation clock (implementation) */
       ClockIPtr mCp_ClockI;
@@ -192,6 +193,9 @@ namespace efscape {
 	ar & boost::serialization::make_nvp("ModelWrapper",
 					    boost::serialization::base_object<ModelWrapperBase>(*this) );
 
+	// save model configuration
+	ar  & boost::serialization::make_nvp("modelJson",mC_modelJson);
+	
 	// save clock
 	ar  & boost::serialization::make_nvp("Clock",mCp_ClockI);
 
@@ -207,6 +211,9 @@ namespace efscape {
 	// load parent class data
 	ar & boost::serialization::make_nvp("ModelWrapper",
 					    boost::serialization::base_object<ModelWrapperBase>(*this) );
+
+	// save model configuration
+	ar  & boost::serialization::make_nvp("modelJson",mC_modelJson);
 
 	// load clock
 	ar  & boost::serialization::make_nvp("Clock",mCp_ClockI);

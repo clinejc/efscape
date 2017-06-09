@@ -11,7 +11,10 @@
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/adevs_json.hpp>
 
+#include <json/json.h>
 #include <boost/property_tree/json_parser.hpp>
+
+#include <sstream>
 
 namespace efscape {
   
@@ -26,10 +29,7 @@ namespace efscape {
 
     SimRunner::SimRunner() :
       ModelWrapperBase()
-    {
-      // initialize properties
-      mCp_ptree.reset( new boost::property_tree::ptree );
-      
+    {      
       // initialize the clock
       mCp_ClockI.reset(new ClockI);     
     }
@@ -62,11 +62,15 @@ namespace efscape {
 			"Found port=" << properties_in);
 	  try {
 	    // 1) try to extract a property tree
-	    setProperties( boost::any_cast<boost::property_tree::ptree>( (*i).value ) );
+	    std::string lC_properties = boost::any_cast<std::string>( (*i).value );
+	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+			  "properties="
+			  << lC_properties);
+	    convert_from_json(lC_properties);
 	  }
 	  catch(const boost::bad_any_cast &) {
 	    LOG4CXX_ERROR(ModelHomeI::getLogger(),
-			  "Unable to cast input as <boost::property_tree::ptree>");
+			  "Unable to cast input as <std::string>");
 	  }
 	}
 	else if ( (*i).port == "clock_in") { // event on <clock_in> port
@@ -159,148 +163,61 @@ namespace efscape {
     }
 
     ///
-    /// properties
+    /// model configuraiton/properties
     ///
-    boost::property_tree::ptree SimRunner::getProperties() const
+    std::string SimRunner::convert_to_json() const
     {
-      return *mCp_ptree;
+      return mC_modelJson;
     }
-    
-    unsigned int
-    SimRunner::setProperties(const boost::property_tree::ptree& aC_pt)
-    {
-      // set ptree
-      mCp_ptree.reset( new boost::property_tree::ptree(aC_pt) );
 
+    unsigned int
+    SimRunner::convert_from_json(const std::string& aC_modelJson)
+    {
       // and parse properies
       unsigned int li_property_cnt = 0;
 
-      // iterate through the child nodes
-      BOOST_FOREACH( boost::property_tree::ptree::value_type const& rowPair,
-		     aC_pt.get_child( "" ) ) {
+      Json::Value lC_config;
+      Json::Value lC_attribute;
+      
+      std::istringstream lC_buffer_in(aC_modelJson.c_str());
+      lC_buffer_in >> lC_config;
+
+      if ( (lC_attribute = lC_config["baseClassName"]).isString() ) {
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "=> property "
-		      << "<" << rowPair.first << ">="
-		      << "<" << rowPair.second.get_value<std::string>() << ">");
-	boost::optional<std::string> lC_propOpt =
-	  aC_pt.get_optional<std::string>(rowPair.first);
-	if (!lC_propOpt) {
-	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			"property access failed!");
-	  continue;
-	}
+		      "Found <baseClassName>: already processed");
+	++li_property_cnt;
+      }
 
-	// parse info from this node
+      if ( (lC_attribute = lC_config["className"]).isString() ) {
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "property access ok!");
-	
-	// if this is a leaf (an attribute)
-	if (rowPair.second.empty() && !rowPair.second.data().empty() ) {
-	  if (rowPair.first == std::string("baseType") ) { // 1) base type
-	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "Found <baseType>: already processed");
-	    ++li_property_cnt;
-	  }
-	  else if (rowPair.first == std::string("type") ) { // 2) type (class of model)
-	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "Found <type>: already processed");
-	    ++li_property_cnt;
-	  }
-	  else {
-	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "Attribute ignored");
-	  }
-	}
-	// if this is a child node (object)
-	else if (!rowPair.second.empty() && rowPair.second.data().empty()) {
-	  if (rowPair.first == std::string("wrappedModel") ) { // 3) "wrappedModel"
-	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "Found wrapped model:"
-			  << " should already have been created");
-	    ++li_property_cnt;
-	  }
-	  else if (rowPair.first == std::string("time") ) { // 4) time
-	    // 2) time
-	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "Found time info: setting clock");
+		      "Found <className>: already processed");
+	++li_property_cnt;
+      }
 
-	    // extract sim "time" object info
-	    std::ostringstream lC_buffer_out;
-	    boost::property_tree::write_json( lC_buffer_out,
-					      rowPair.second );
+      if ( (lC_attribute = lC_config["wrappedModel"]).isString() ) {
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "Found <wrappedModel>: already processed");
+	++li_property_cnt;
+      }
 
-	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "time: " << lC_buffer_out.str());
+      if ( (lC_attribute = lC_config["time"]).isObject() ) {
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "Found time info: setting clock");
 
-	    // first attempt to extract the "time" object via picojson
-	    std::istringstream lC_buffer_in(lC_buffer_out.str().c_str());
-	    SimTime lC_time;
-	    picojson::convert::from_string(lC_buffer_in.str(),
-					   lC_time);
-	      
-	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "time = {"
-			  << "stopAt: " << lC_time.stopAt << ", "
-			  << "delta_t: " << lC_time.delta_t << ","
-			  << "units: " << lC_time.units << "}");
-
-	    mCp_ClockI->timeDelta() = lC_time.delta_t;
-	    mCp_ClockI->timeMax() = lC_time.stopAt;
-	    mCp_ClockI->timeUnits(lC_time.units.c_str());
-	    
-	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "Simulator clock set for time interval ["
-			  << mCp_ClockI->time() << ","
-			  << mCp_ClockI->timeMax() << "], time delta = "
-			  << mCp_ClockI->timeDelta() << ", units = "
-			  << mCp_ClockI->units() << ", time units = "
-			  << mCp_ClockI->timeUnits());
-
-	    // second attempt to parse the "time" object
-	    BOOST_FOREACH( boost::property_tree::ptree::value_type const& timePair, rowPair.second.get_child("") ) {
-	      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			    "=> time attribute "
-			    << "<" << timePair.first << ">="
-			    << "<" << timePair.second.get_value<std::string>() << ">");
-	      if (timePair.first == "delta_t") {
-		lC_time.delta_t = timePair.second.get_value<double>();
-	      }
-	      else if (timePair.first == "stopAt") {
-		lC_time.stopAt = timePair.second.get_value<double>();
-	      }
-	      else if (timePair.first == "units") {
-		lC_time.units = timePair.second.get_value<std::string>();
-	      }
-	    }
-
-	    mCp_ClockI->timeDelta() = lC_time.delta_t;
-	    mCp_ClockI->timeMax() = lC_time.stopAt;
-	    mCp_ClockI->timeUnits(lC_time.units.c_str());
-	    
-	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "Simulator clock set (2nd time) for time interval ["
-			  << mCp_ClockI->time() << ","
-			  << mCp_ClockI->timeMax() << "], time delta = "
-			  << mCp_ClockI->timeDelta() << ", units = "
-			  << mCp_ClockI->units() << ", time units = "
-			  << mCp_ClockI->timeUnits());
-	    
-	    ++li_property_cnt;
-	  }
-	  else {
-	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "Object ignored");
-	  }
-	}
-	else {
-	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			"Neither a proper leaf or proper node");
-	}
-      }	//  BOOST_FOREACH(...
+	efscape::impl::convert_from_json(lC_attribute, *mCp_ClockI);
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "Simulation time units = " << mCp_ClockI->timeUnits() );
+	++li_property_cnt;
+      }
+      else {
+	LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		      "Attribute <time> is not an object and cannot be parsed!");
+      }	// if ( (lC_attribute = lC_config["time"]).isObject() )
 
       return li_property_cnt;
-    }
 
+    } // unsigned int SimRunner::convert_from_json()
+    
     ///
     /// clock
     ///

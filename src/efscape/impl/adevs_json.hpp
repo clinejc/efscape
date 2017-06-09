@@ -12,6 +12,7 @@
 #include <efscape/impl/ClockI.hpp>
 
 #include <boost/property_tree/ptree.hpp>
+#include <json/json.h>
 
 #include <picojson_serializer.h>
 #include <picojson_set_serializer.h>
@@ -23,15 +24,18 @@ namespace efscape {
 
   namespace impl {
 
-   /**
-     * This utility function parses JSON data in a property tree and attempts
+    // forward declarations
+    class ClockI;
+
+    /**
+     * This utility function parses JSON data in a JSON value and attempts
      * to build the specified adevs model.
      *
-     * @param aC_pt property tree containing the model configuration
+     * @param aC_config JSON value containing model configuration
      * @returns handle to model 
-     */
-    DEVS* createModelFromJSON(const boost::property_tree::ptree& aC_pt);
-
+     */   
+    DEVS* createModelFromJSON(const Json::Value& lC_config);
+    
     /**
      * This utility function loads information from a JSON file.
      * 
@@ -41,146 +45,219 @@ namespace efscape {
     boost::property_tree::ptree loadInfoFromJSON(std::string aC_path);
 
     //
-    // Some utility classes
+    // Some utility functions and classes for working with model JSON data
     //
-    /**
-     * Contains information about the simulation time dimension
-     */
-    struct SimTime {
-      /** time step */
-      double delta_t;
-
-      /** stopping time */
-      double stopAt;
-
-      /** time units */
-      std::string units;
-
-      friend class picojson::convert::access;
-      template<class Archive>
-      void json(Archive & ar) const
-      {
-	ar & picojson::convert::member("delta_t", delta_t);
-	ar & picojson::convert::member("stopAt", stopAt);
-	ar & picojson::convert::member("units", units);
-      }
-      template<class Archive>
-      void json(Archive & ar)
-      {
-	ar & picojson::convert::member("delta_t", delta_t);
-	ar & picojson::convert::member("stopAt", stopAt);
-	ar & picojson::convert::member("units", units);
-      }
-    };
 
     /**
-     * Digraph coupling node structure
+     * Parses clock parameters from a JSON object.
+     *
+     * @param aCr_value json value
+     * @param aCr_clock reference to clock
      */
-    struct DigraphNode {
-      std::string model;
-      std::string port;
+    void convert_from_json(const Json::Value& aCr_value, ClockI& aCr_clock);
 
-      DigraphNode() :
-	model(""),
-	port("") {}
+    /**
+     * Copies clock parameters to a JSON object
+     *
+     * @param aCr_clock reference to clock
+     * @returns JSON object with time info
+     */
+    Json::Value convert_to_json(const ClockI& aCr_clock);
+
+    /**
+     * A simple class that provides scaffolding for building a Digraph
+     * from a JSON configuration data.
+     */
+    class DigraphBuilder {
+    public:
+      /** digraph node */
+      struct node {
+	/** default constructor */
+	node() :
+	  model(""),
+	  port("") {}
+
+	/**
+	 * constructor
+	 *
+	 * @param aModel name of model
+	 * @param aPort name of port
+	 */
+	node(std::string aModel, std::string aPort) :
+	  model(aModel),
+	  port(aPort) {}
+
+	/**
+	 * constructor
+	 *
+	 * @param aNode node to be copied
+	 */
+	node(const node& aNode) :
+	  model(aNode.model),
+	  port(aNode.port) {}
+
+	/** model name */
+	std::string model;
+
+	/** port name */
+	std::string port;
+
+	/**
+	 * Converts the node from JSON format
+	 *
+	 * @param aCr_value JSON object containing node parameters
+	 */
+	void convert_from_json(const Json::Value& aCr_value) {
+	  this->model = aCr_value["model"].asString();
+	  this->port = aCr_value["port"].asString();
+	}
+
+	/**
+	 * Returns parameters for this node in JSON format.
+	 *
+	 * @returns JSON object containing node parameters
+	 */
+	Json::Value convert_to_json() const {
+	  Json::Value lC_value;
+
+	  lC_value["model"] = this->model;
+	  lC_value["port"] = this->port;
+
+	  return lC_value;
+	}
+      };
+
+      /** digraph node coupling */
+      struct coupling {
+	/** source node */
+	node from;
+
+	/** destination node */
+	node to;
+
+	/** default constructor */
+	coupling() :
+	  from("",""),
+	  to("","") {}
+
+	/**
+	 * constructor
+	 *
+	 * @param source node
+	 * @param destination node
+	 */
+	coupling(node fromNode, node toNode) :
+	  from(fromNode),
+	  to(toNode) {}
+
+	/*
+	 * constructor
+	 *
+	 * @param modelFrom name of source model
+	 * @param portFrom source port
+	 * @param modelTo name of destination model
+	 * @param portTo destination port
+	 */
+	coupling(std::string modelFrom, std::string portFrom,
+		 std::string modelTo, std::string portTo) :
+	  from(modelFrom, portFrom),
+	  to(modelTo, portTo) {}
+
+	/**
+	 * copy constructor
+	 *
+	 * @param aCoupling coupling to be copied
+	 */
+	coupling(const coupling& aCoupling) :
+	  from(aCoupling.from),
+	  to(aCoupling.to) {}
+
+	/**
+	 * Loads the coupling parameters from a JSON object.
+	 *
+	 * @param aCr_value JSON object containing coupling parameters
+	 */
+	void convert_from_json(const Json::Value& aCr_value) {
+	  if (aCr_value["from"].isObject())
+	    this->from.convert_from_json(aCr_value["from"]);
+	  if (aCr_value["to"].isObject())
+	    this->to.convert_from_json(aCr_value["to"]);
+	}
+
+	/**
+	 * Returns the coupling parameters in a JSON object
+	 *
+	 * @returns JSON object containing coupling parameters
+	 */
+	Json::Value convert_to_json() const {
+	  Json::Value lC_value;
+
+	  lC_value["from"] = this->from.convert_to_json();
+	  lC_value["to"] = this->to.convert_to_json();
+
+	  return lC_value;
+	}
+      };
+
+      /** constructor */
+      DigraphBuilder() {}
+
+      /**
+       * Adds a model to the DigraphBuilder.
+       *
+       * @param name name of the model
+       * @param modelValue JSON object containing the model configuration
+       */
+      void add(std::string name, Json::Value modelValue)
+      {
+	mCC_models[name] = modelValue;
+      }
       
-      DigraphNode(std::string aModel, std::string aPort) :
-	model(aModel),
-	port(aPort) {}
-
-      DigraphNode(const DigraphNode& aDigraphNode) :
-	model(aDigraphNode.model),
-	port(aDigraphNode.port) {}
-
-      friend class picojson::convert::access;
-      template<class Archive>
-      void json(Archive & ar) const
+      /**
+       * Add a coupling between two models.
+       *
+       * @param modelFrom name of source model
+       * @param portFrom source port
+       * @param modelTo name of destination model
+       * @param portTo destination port
+       */     
+      void coupling(std::string modelFrom, std::string portFrom,
+		    std::string modelTo, std::string portTo)
       {
-	ar & picojson::convert::member("model", model);
-	ar & picojson::convert::member("port", port);
-      }
-      template<class Archive>
-      void json(Archive & ar)
-      {
-	ar & picojson::convert::member("model", model);
-	ar & picojson::convert::member("port", port);
-      }
-    };
-
-    /**
-     * Digraph coupling structure
-     */
-    struct DigraphCoupling {
-      DigraphNode from;
-      DigraphNode to;
-
-      DigraphCoupling() :
-	from("",""),
-	to("","") {}
-      
-      DigraphCoupling(DigraphNode fromNode, DigraphNode toNode) :
-	from(fromNode),
-	to(toNode) {}
-
-      DigraphCoupling(std::string modelFrom, std::string portFrom,
-		      std::string modelTo, std::string portTo) :
-	from(modelFrom, portFrom),
-	to(modelTo, portTo) {}
-
-      DigraphCoupling(const DigraphCoupling& aDigraphCoupling) :
-	from(aDigraphCoupling.from),
-	to(aDigraphCoupling.to) {}
-
-      friend class picojson::convert::access;
-      template<class Archive>
-      void json(Archive & ar) const
-      {
-	ar & picojson::convert::member("from", from);
-	ar & picojson::convert::member("to", to);
-      }
-      template<class Archive>
-      void json(Archive & ar)
-      {
-	ar & picojson::convert::member("from", from);
-	ar & picojson::convert::member("to", to);
+	struct coupling lC_coupling(modelFrom, portFrom,
+				    modelTo, portTo);
+	mC1_couplings.push_back(lC_coupling);
       }
 
-    };
+      /**
+       * Converts the DigraphBuilder to JSON.
+       *
+       * @returns JSON value containing Digraph configuration
+       */
+      Json::Value convert_to_json() const;
+
+      /**
+       * Builds a digraph from a JSON object
+       *
+       * @param aCr_value JSON value
+       * @param aCp_digraph pointer to digraph
+       * @returns pointer to DEVS model if successfull
+       */
+      static DEVS* build_digraph_from_json(const Json::Value& aCr_value,
+					   DIGRAPH* aCp_digraph);
+
+    private:
+      /** map of models */
+      std::map<std::string, Json::Value> mCC_models;
+
+      /** array of digraph couplings */
+      std::vector<coupling> mC1_couplings;
+	
+    };				// DigraphBuilder
     
   } // namespace impl
 
 } // namespace efscape
-
-namespace picojson {
-  namespace convert {
-
-    template <class Archive>
-    void json(Archive &ar, efscape::impl::ClockI const &clock) {
-
-      double delta_t = clock.timeDelta();
-      ar &picojson::convert::member("delta_t", delta_t);
-
-      double stopAt = clock.timeMax();
-      ar &picojson::convert::member("stopAt", stopAt);
-
-      std::string units = clock.timeUnits();
-      ar &picojson::convert::member("units", units);
-    }
-
-    template <class Archive>
-    void json(Archive &ar, efscape::impl::ClockI &clock) {
-
-      ar &picojson::convert::member("delta_t", clock.timeDelta());
-
-      ar &picojson::convert::member("stopAt", clock.timeMax());
-
-      std::string units;
-      ar &picojson::convert::member("units", units);
-      clock.timeUnits(units.c_str());
-    }
-
-  }
-}
 
 #endif	// #ifndef EFSCAPE_IMPL_ADEVS_JSON_HPP
 

@@ -31,7 +31,8 @@ dnl Checks for libraries
 dnl -----------------------------------------------
 
 PKG_CHECK_MODULES(DEPS,
-	adevs >= 2.0
+	adevs >= 3.0
+	jsoncpp >= 1.8.0
 	liblog4cxx > 0.1
 	zeroc-ice >= 3.5
 	repast >= 2.0)

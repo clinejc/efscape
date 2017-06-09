@@ -14,6 +14,7 @@
 #include <efscape/utils/boost_utils.ipp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <json/json.h>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -194,11 +195,15 @@ namespace efscape {
 		     "Received JSON string =>"
 		     << aCr_JSONstring);
 
-      // read in the JSON data via a property tree extracted from the temp file
-      boost::property_tree::ptree pt;
-      boost::property_tree::read_json( lC_OutStream, pt );
+      // read in the JSON data
+      istringstream lC_buffer_in(aCr_JSONstring.c_str());
+      // boost::property_tree::ptree pt;
+      // boost::property_tree::read_json( lC_OutStream, pt );
 
-      return efscape::impl::createModelFromJSON(pt);
+      Json::Value lC_config;
+      lC_buffer_in >> lC_config;
+
+      return efscape::impl::createModelFromJSON(lC_config);
       
     } // ModelHomeI::createModelFromJSON(const char*)
     
