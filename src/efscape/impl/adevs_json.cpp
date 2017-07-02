@@ -7,7 +7,6 @@
 #include <efscape/impl/adevs_json.hpp>
 
 #include <efscape/impl/ModelHomeI.hpp>
-#include <efscape/impl/ClockI.hpp>
 
 // boost definitions
 #include <boost/property_tree/json_parser.hpp>
@@ -15,6 +14,26 @@
 #include <boost/foreach.hpp>
 
 #include <sstream>
+
+//----------------------------------
+// adevs cereal serialzation exports
+//----------------------------------
+#include <adevs/adevs_cereal.hpp>
+
+namespace cereal {
+  template <class Archive> 
+  struct specialize<Archive, efscape::impl::ClockI, cereal::specialization::non_member_load_save> {};
+  
+  template <class Archive> 
+  struct specialize<Archive, efscape::impl::ATOMIC, cereal::specialization::non_member_serialize> {};
+}
+
+#include <cereal/archives/json.hpp>
+CEREAL_REGISTER_TYPE(efscape::impl::ClockI)
+CEREAL_REGISTER_TYPE(efscape::impl::DEVS);
+CEREAL_REGISTER_TYPE(efscape::impl::ATOMIC);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(efscape::impl::DEVS,
+				     efscape::impl::ATOMIC );
 
 namespace efscape {
 
@@ -57,25 +76,22 @@ namespace efscape {
 	return lCp_model;
       }
 
-      // check <baseClassName>
-      Json::Value lC_attribute = aC_config["baseClassName"];
-      if (!lC_attribute) {
+      // check <class>
+      Json::Value lC_classValue = aC_config["class"];
+      if (!lC_classValue.isObject()) {
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Missing <baseClassName>");
+		      "Missing <class>");
 	return lCp_model;
       }
 
-      // check <className>
-      if (!(lC_attribute = aC_config["className"]) ) {
+      // check <class.name>
+      Json::Value lC_attribute = lC_classValue["name"];
+      if ( !lC_attribute.isString() ) {
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Missing <className>");
+		      "Unable to determine class name");
 	return lCp_model;
       }
-
-      if (!lC_attribute.isString()) { // <className> should be a string
-	return lCp_model;
-      }
-
+      
       std::string lC_className = lC_attribute.asString();
       
       // attempt to create the model from the factory
@@ -140,19 +156,7 @@ namespace efscape {
 	      return NULL;
 	    }
 
-	    if (!lC_wrappedModel["className"].isString()) {
-	      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			    "Missing wrapped model <className>");
-	      return lCp_model;
-	    }
-
-	    lC_className = lC_wrappedModel["className"].asString();
-
-	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "Attempting to create wrapped model of type <"
-			  << lC_className << ">");
-	    DEVS* lCp_wrappedModel =
-	      createModelFromJSON(lC_wrappedModel);
+	    DEVSPtr lCp_wrappedModel( createModelFromJSON(lC_wrappedModel ) );
 	    
 	    if (lCp_wrappedModel) { // if the wrappedModel exists
 	      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
@@ -219,8 +223,8 @@ namespace efscape {
     //
     Json::Value DigraphBuilder::convert_to_json() const {
       Json::Value lC_config;
-      lC_config["baseClassName"] = "efscape::impl::DEVS";
-      lC_config["className"] = "efscape::impl::DIGRAPH";
+      
+      lC_config["class"]["name"] = "efscape::impl::DIGRAPH";
       
       Json::Value lC_models;
       Json::Value lC1_couplings;
@@ -231,12 +235,11 @@ namespace efscape {
       }
       lC_config["models"] = lC_models;
 
-      std::istringstream lC_buffer_in("[]");
-      lC_buffer_in >> lC1_couplings;
+      lC1_couplings = Json::Value(Json::arrayValue);
 
       for (int i = 0; i < mC1_couplings.size(); i++) {
-	Json::Value lC_coupling = mC1_couplings[i].convert_to_json();
-	lC1_couplings.append(lC_coupling);
+	Json::Value lC_edge = mC1_couplings[i].convert_to_json();
+	lC1_couplings.append(lC_edge);
       }
       lC_config["couplings"] = lC1_couplings;
 
@@ -294,12 +297,12 @@ namespace efscape {
 
       // add couplings
       for (int i = 0; i < lC1_couplings.size(); i++) {
-	Json::Value lC_couplingValue = lC1_couplings[i];
-	struct coupling dgc;
-	dgc.convert_from_json(lC_couplingValue);
+	Json::Value lC_edgeValue = lC1_couplings[i];
+	struct edge dgc;
+	dgc.convert_from_json(lC_edgeValue);
 
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Adding model coupling ("
+		      "Adding model edge ("
 		      << dgc.from.model << "," << dgc.from.port << ")"
 		      << "=>("
 		      << dgc.to.model << "," << dgc.to.port << ")");

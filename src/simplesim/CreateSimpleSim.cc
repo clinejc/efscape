@@ -10,9 +10,9 @@
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
-#include <efscape/impl/AdevsModel.hpp>
 #include <efscape/impl/SimRunner.hpp>
 #include <efscape/impl/adevs_json.hpp>
+#include <efscape/utils/type.hpp>
 #include <simplesim/SimpleGenerator.hh>
 #include <simplesim/SimpleObserver.hh>
 #include <simplesim/BasicModel.hh>
@@ -149,15 +149,22 @@ namespace simplesim {
     std::string lC_message;
 
     Json::Value lC_config;
+
+    //
+    lC_config["sim"]["name"] = "simplesim";
+    lC_config["sim"]["type"] = "simplesim";
+
+    lC_config["ports"]["inputs"] = Json::Value(Json::objectValue);
+    lC_config["ports"]["outputs"] = Json::Value(Json::objectValue);
     
     // set info
     lC_config["info"] = "Creates a simple simulation with a digraph containing a simple generator connected to a simple observer";
 
-    // set type
+    // set root model type
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		  "Specifying root model type...");
-    lC_config["baseClassName"] = "efscape::impl::DEVS";
-    lC_config["className"] = "efscape::impl::SimRunner";
+
+    lC_config["class"]["name"] = efscape::utils::type<efscape::impl::SimRunner>();
 
     // Specify time and add time object
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -175,15 +182,19 @@ namespace simplesim {
     // create generator
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		  "Creating a generator and adding it to the digraph...");
-    lC_modelConfig["baseClassName"] = "efscape::impl::DEVS";
-    lC_modelConfig["className"] = "simplesim::SimpleGenerator";
+    
+    lC_modelConfig["class"]["name"] =
+      efscape::utils::type<simplesim::SimpleGenerator>();
+
     lC_digraphBuilder.add("generator", lC_modelConfig);
     
     // create  observer
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		  "Creating an observer and adding it to the digraph...");
-    lC_modelConfig["baseClassName"] = "efscape::impl::DEVS";
-    lC_modelConfig["className"] = "simplesim::SimpleObserver";
+
+    lC_modelConfig["class"]["name"] =
+      efscape::utils::type<simplesim::SimpleObserver>();
+
     lC_digraphBuilder.add("observer", lC_modelConfig);
 
     // couple models
@@ -212,7 +223,7 @@ namespace simplesim {
       else
 	lC_out_file = mC_ClassName;
 
-      lC_out_file += ".json";	// add file extension
+    lC_out_file += ".json";	// add file extension
     }
     else {
       fs::path lC_out_file_path =
@@ -224,8 +235,6 @@ namespace simplesim {
 
     std::ofstream lC_outfile(lC_out_file);
     lC_outfile << lC_config;
-    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		  "jsoncpp test=>" << lC_config);
 
     efscape::impl::DEVS* lCp_devs =
       efscape::impl::createModelFromJSON(/*lC_pt*/lC_config);

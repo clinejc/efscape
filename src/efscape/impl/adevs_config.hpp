@@ -30,12 +30,13 @@ namespace efscape {
     typedef std::string PortType;
     typedef adevs::PortValue<boost::any,PortType> IO_Type;
     typedef adevs::Devs<IO_Type> DEVS;
+    typedef std::shared_ptr<DEVS> DEVSPtr;
     typedef adevs::Atomic<IO_Type> ATOMIC;
     typedef adevs::ModelWrapper<IO_Type,IO_Type> ModelWrapperBase;
     typedef adevs::Network<IO_Type> NETWORK;
     typedef adevs::Network<IO_Type> NetworkModel;
     typedef adevs::ModelDecorator<IO_Type> ModelDecorator;
-    typedef adevs::SimpleDigraph<IO_Type> SIMPLEDIGRAPH;
+    typedef adevs::SimpleDigraph<boost::any> SIMPLEDIGRAPH;
     typedef adevs::Digraph<boost::any,PortType> DIGRAPH;
     typedef adevs::CellEvent<boost::any> CellEvent;
     typedef adevs::Devs<CellEvent> CellDevs;
@@ -61,9 +62,13 @@ namespace efscape {
     DEVS* loadAdevs(const char* acp_filename);
     DEVS* loadAdevs(std::istream& aCr_istream);
 
+    void saveAdevsToJSON(const DEVSPtr& aCp_model,
+			 std::ostream& aCr_ostream);
+    DEVSPtr loadAdevsFromJSON(std::istream& aCr_istream);
+
     // Helper functions for creating, cloning, and initializing an adevs model
     DEVS* createModel(const char* acp_classname);
-    DEVS* cloneModel( const DEVS* aCp_model );
+    DEVSPtr cloneModel( const DEVSPtr& aCp_model );
  
     bool initializeModel( DEVS* aCp_model );
 
@@ -127,7 +132,7 @@ namespace efscape {
 	  lCp_target = getTargetModel<T>(aCp_model);
 	}
 	else if ( ( lCp_digraph = dynamic_cast<const DIGRAPH*>(aCp_model) ) ) {
-	  typedef adevs::Set<const DEVS* > ComponentSet;
+	  typedef adevs::Set<DEVS* > ComponentSet;
 
 	  ComponentSet lC_models;
 	  lCp_digraph->getComponents(lC_models);

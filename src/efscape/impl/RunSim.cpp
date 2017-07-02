@@ -126,7 +126,7 @@ namespace efscape {
 	      char ch;
 	      while (buf && parmFile.get( ch ))
 		buf.put( ch );
-	      std::cout << buf << std::endl;
+	      std::cout << buf.str() << std::endl;
 
 	      lCp_model.reset( Singleton<ModelHomeI>::Instance().
 			       createModelFromJSON(buf.str()) );

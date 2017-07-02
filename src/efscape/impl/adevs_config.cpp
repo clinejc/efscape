@@ -93,13 +93,13 @@ namespace efscape {
      * @param aCp_model handle to model
      * @returns handle to model clone (null if cloning fails)
      */
-    DEVS* cloneModel( const DEVS* aCp_model ) {
+    DEVSPtr cloneModel( const DEVSPtr& aCp_model ) {
 
       // serialize the model out to a buffer and then back in as a clone 
       std::ostringstream lC_buffer_out;
-      saveAdevs(aCp_model, lC_buffer_out);
+      saveAdevsToJSON(aCp_model, lC_buffer_out);
       std::istringstream lC_buffer_in(lC_buffer_out.str().c_str());
-      DEVS* lCp_clone = loadAdevs(lC_buffer_in);
+      DEVSPtr lCp_clone = loadAdevsFromJSON(lC_buffer_in);
 
       return lCp_clone;
     }

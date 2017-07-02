@@ -14,18 +14,53 @@
 #include <boost/property_tree/ptree.hpp>
 #include <json/json.h>
 
-#include <picojson_serializer.h>
-#include <picojson_set_serializer.h>
-#include <picojson_vector_serializer.h>
+#include <cereal/cereal.hpp>
 
 #include <string>
+
+// cereal serialization
+namespace cereal {
+  //
+  // cereal serialization for ClockI
+  //
+  template<class Archive>
+  void load(Archive & ar, efscape::impl::ClockI& aCr_clock)
+  {
+    double ld_time;
+    double ld_timeDelta;
+    double ld_timeMax;
+    std::string lC_timeUnits;
+    
+    ar( cereal::make_nvp("time", ld_time),
+	cereal::make_nvp("time_delta", ld_timeDelta),
+	cereal::make_nvp("time_max", ld_timeMax),
+	cereal::make_nvp("time_units", lC_timeUnits) );
+    
+    aCr_clock.time() = ld_time;
+    aCr_clock.timeDelta() = ld_timeDelta;
+    aCr_clock.timeMax() = ld_timeMax;
+    aCr_clock.timeUnits(lC_timeUnits.c_str() );
+  }
+
+  template<class Archive>
+  void save(Archive & ar, const efscape::impl::ClockI& aCr_clock)
+  {
+    double ld_time = aCr_clock.time();
+    double ld_timeDelta = aCr_clock.timeDelta();
+    double ld_timeMax = aCr_clock.timeMax();
+    std::string lC_timeUnits = aCr_clock.timeUnits();
+    
+    ar( cereal::make_nvp("time", ld_time),
+	cereal::make_nvp("time_delta", ld_timeDelta),
+	cereal::make_nvp("time_max", ld_timeMax),
+	cereal::make_nvp("time_units", lC_timeUnits) );
+  }
+  
+} // namespace cereal
 
 namespace efscape {
 
   namespace impl {
-
-    // forward declarations
-    class ClockI;
 
     /**
      * This utility function parses JSON data in a JSON value and attempts
@@ -128,7 +163,7 @@ namespace efscape {
       };
 
       /** digraph node coupling */
-      struct coupling {
+      struct edge {
 	/** source node */
 	node from;
 
@@ -136,7 +171,7 @@ namespace efscape {
 	node to;
 
 	/** default constructor */
-	coupling() :
+	edge() :
 	  from("",""),
 	  to("","") {}
 
@@ -146,7 +181,7 @@ namespace efscape {
 	 * @param source node
 	 * @param destination node
 	 */
-	coupling(node fromNode, node toNode) :
+	edge(node fromNode, node toNode) :
 	  from(fromNode),
 	  to(toNode) {}
 
@@ -158,7 +193,7 @@ namespace efscape {
 	 * @param modelTo name of destination model
 	 * @param portTo destination port
 	 */
-	coupling(std::string modelFrom, std::string portFrom,
+	edge(std::string modelFrom, std::string portFrom,
 		 std::string modelTo, std::string portTo) :
 	  from(modelFrom, portFrom),
 	  to(modelTo, portTo) {}
@@ -166,11 +201,11 @@ namespace efscape {
 	/**
 	 * copy constructor
 	 *
-	 * @param aCoupling coupling to be copied
+	 * @param aEdge edge to be copied
 	 */
-	coupling(const coupling& aCoupling) :
-	  from(aCoupling.from),
-	  to(aCoupling.to) {}
+	edge(const edge& aEdge) :
+	  from(aEdge.from),
+	  to(aEdge.to) {}
 
 	/**
 	 * Loads the coupling parameters from a JSON object.
@@ -224,9 +259,9 @@ namespace efscape {
       void coupling(std::string modelFrom, std::string portFrom,
 		    std::string modelTo, std::string portTo)
       {
-	struct coupling lC_coupling(modelFrom, portFrom,
-				    modelTo, portTo);
-	mC1_couplings.push_back(lC_coupling);
+	struct edge lC_edge(modelFrom, portFrom,
+			    modelTo, portTo);
+	mC1_couplings.push_back(lC_edge);
       }
 
       /**
@@ -251,7 +286,7 @@ namespace efscape {
       std::map<std::string, Json::Value> mCC_models;
 
       /** array of digraph couplings */
-      std::vector<coupling> mC1_couplings;
+      std::vector<edge> mC1_couplings;
 	
     };				// DigraphBuilder
     

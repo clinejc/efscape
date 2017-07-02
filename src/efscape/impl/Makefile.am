@@ -20,6 +20,7 @@ hh_sources += SimRunner.hpp
 cc_sources = adevs_config.cpp
 cc_sources += adevs_json.cpp
 cc_sources += ClockI.cpp
+cc_sources += efscape_cereal.cpp
 cc_sources += EntityI.cpp
 cc_sources += ModelHomeI.cpp
 cc_sources += ModelHomeSingleton.cpp

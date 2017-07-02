@@ -75,7 +75,7 @@ BOOST_CLASS_EXPORT(efscape::impl::ModelDecorator)
 namespace boost {
  namespace serialization {
    template<class Archive>
-   void serialize(Archive & ar, efscape::impl::DIGRAPH::node& node,
+   void serialize(Archive & ar, efscape::impl::DIGRAPH::nodeplus& node,
 		   const unsigned int version)
    {
      ar & BOOST_SERIALIZATION_NVP(node.model); // serialize model

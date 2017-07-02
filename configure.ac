@@ -20,8 +20,13 @@ dnl Adds configure options
 dnl -----------------------------------------------
 
 # Checks for programs.
+
+# Set lang c++
+AC_LANG(C++)
 AC_PROG_CC([mpicc mpixlc])
 AC_PROG_CXX([mpic++ mpixlcxx])
+CXXFLAGS="-std=c++11 -fPIC"
+
 AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
 AM_SANITY_CHECK
@@ -35,7 +40,8 @@ PKG_CHECK_MODULES(DEPS,
 	jsoncpp >= 1.8.0
 	liblog4cxx > 0.1
 	zeroc-ice >= 3.5
-	repast >= 2.0)
+	repast >= 2.0
+	libmongocxx >= 3.1)
 
 
 BOOST_REQUIRE([1.60])
@@ -76,5 +82,7 @@ AC_CONFIG_FILES([Makefile
 		 src/efscape/utils/Makefile
 		 src/efscape/impl/Makefile
 		 src/efscape/server/Makefile
-		 src/simplesim/Makefile])
+		 src/simplesim/Makefile
+		 examples/Makefile
+		 examples/gpt/Makefile])
 AC_OUTPUT

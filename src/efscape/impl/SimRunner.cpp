@@ -118,7 +118,7 @@ namespace efscape {
 	   iter++) {
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "passing on port <" << (*iter).port << ">");
-	internal_input.insert(adevs::Event<IO_Type>(getWrappedModel(),
+	internal_input.insert(adevs::Event<IO_Type>(getWrappedModel().get(),
 						    (*iter)));
       }
     }

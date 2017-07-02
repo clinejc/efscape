@@ -200,7 +200,7 @@ namespace efscape {
 	ar  & boost::serialization::make_nvp("Clock",mCp_ClockI);
 
 	// save the wrapped model
-	const DEVS* lCp_wrappedModel =
+	const DEVSPtr lCp_wrappedModel =
 	  this->ModelWrapperBase::getWrappedModel();
 	ar & boost::serialization::make_nvp("WrappedModel", lCp_wrappedModel );
       }
@@ -219,7 +219,7 @@ namespace efscape {
 	ar  & boost::serialization::make_nvp("Clock",mCp_ClockI);
 
 	// save the wrapped model
-	DEVS* lCp_wrappedModel = NULL;
+	DEVSPtr lCp_wrappedModel;
 	ar & boost::serialization::make_nvp("WrappedModel", lCp_wrappedModel );
 	this->ModelWrapperBase::setWrappedModel( lCp_wrappedModel );
       }
