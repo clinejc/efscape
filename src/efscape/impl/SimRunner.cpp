@@ -153,13 +153,13 @@ namespace efscape {
     // accessor/mutator methods
     //-------------------------
 
-    boost::property_tree::ptree SimRunner::get_info() {
-      boost::property_tree::ptree lC_ptree;
-      lC_ptree.put("info",
-    		   "Implements an adevs-based model wrapper that encapsulates a simulation model session");
-      lC_ptree.put("library", "efscape-impl" );
+    Json::Value SimRunner::get_info() {
+      Json::Value lC_jsonObj;
+      lC_jsonObj["info"] =
+	"Implements an adevs-based model wrapper that encapsulates a simulation model session";
+      lC_jsonObj["library"] = "efscape-impl";
 
-      return lC_ptree;
+      return lC_jsonObj;
     }
 
     ///

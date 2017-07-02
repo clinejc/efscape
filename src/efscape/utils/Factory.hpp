@@ -10,8 +10,8 @@
 
 #include <boost/function.hpp>
 #include <boost/functional/factory.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <boost/foreach.hpp>
+#include <json/json.h>
 #include <map>
 #include <set>
 
@@ -22,7 +22,7 @@ namespace efscape {
      * Defines an object factory with a metadata store.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 1.0.0 created 25 Nov 2015, revised 08 Dec 2015
+     * @version 2.0.0 created 25 Nov 2015, revised 02 Jul 2017
      *
      * @tparam IdentifierType factory key type
      * @tparam BaseType target object class
@@ -41,13 +41,13 @@ namespace efscape {
        * @tparam BaseType target object class
        * @tparm DerivedType
        * @param id factory key
-       * @param properties type properties
+       * @param properties type properties in JSON
        * @param creator factory creator
        * @returns whether registration was successful
        */
       template <typename DerivedType>
       bool registerType(const IdentifierType& id,
-			boost::property_tree::ptree properties=boost::property_tree::ptree()) {
+			Json::Value properties=Json::Value()) {
 
 	bool lb_registered =
 	  (mCF_factory_map.
@@ -83,16 +83,16 @@ namespace efscape {
        * @tparam IdentifierType factory key type
        * @tparam BaseType target object class
        * @param aC_classname model class name
-       * @returns properties for type <aC_classname> in a property tree
+       * @returns properties for type <aC_classname> in a JSON object
        */
-      boost::property_tree::ptree
+      Json::Value
       getProperties(IdentifierType aC_typename) {
-	typename std::map<IdentifierType, boost::property_tree::ptree>::iterator iter;
+	typename std::map<IdentifierType, Json::Value>::iterator iter;
 	if ( (iter = mCC_properties_map.find(aC_typename) ) !=
 	   mCC_properties_map.end() )
 	  return iter->second;
 
-	return boost::property_tree::ptree();
+	return Json::Value();
       }
       
       /**
@@ -118,7 +118,7 @@ namespace efscape {
       std::map< IdentifierType, boost::function<BaseType*()> > mCF_factory_map;
 
       /** properties map */
-      std::map<IdentifierType, boost::property_tree::ptree> mCC_properties_map;
+      std::map<IdentifierType, Json::Value> mCC_properties_map;
     };
 
   } // namespace utils

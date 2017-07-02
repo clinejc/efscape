@@ -14,6 +14,7 @@
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
 #include <boost/property_tree/json_parser.hpp>
+#include <json/json.h>
 
 #include <sstream>
 
@@ -192,16 +193,14 @@ namespace efscape {
     ::std::string ModelHomeTie::getModelInfo(const ::std::string& aC_name,
 					     const Ice::Current& current)
     {
-      boost::property_tree::ptree lC_ModelInfo =
+      Json::Value lC_ModelInfo =
 	impl::Singleton<impl::ModelHomeI>::Instance().
 	getModelFactory().getProperties(aC_name.c_str());
 
       std::string lC_JsonStr = "{}";
       try {
 	std::ostringstream lC_buffer;
-	boost::property_tree::write_json(lC_buffer,
-					 lC_ModelInfo,
-					 false);
+	lC_buffer << lC_ModelInfo;
 	lC_JsonStr = lC_buffer.str();
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		      "JSON=>" << lC_JsonStr);

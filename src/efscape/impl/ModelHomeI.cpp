@@ -12,7 +12,6 @@
 // Include for handling JSON
 #include <efscape/impl/adevs_json.hpp>
 #include <efscape/utils/boost_utils.ipp>
-#include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <json/json.h>
 
@@ -197,8 +196,6 @@ namespace efscape {
 
       // read in the JSON data
       istringstream lC_buffer_in(aCr_JSONstring.c_str());
-      // boost::property_tree::ptree pt;
-      // boost::property_tree::read_json( lC_OutStream, pt );
 
       Json::Value lC_config;
       lC_buffer_in >> lC_config;
@@ -315,11 +312,11 @@ namespace efscape {
 		      "=>" << ++li_cnt << ") " << *iter);
 
 	// get model info
-	boost::property_tree::ptree lC_info =
+	Json::Value lC_info =
 	  getModelFactory().getProperties(*iter);
 
 	std::ostringstream lC_buffer_out;
-	boost::property_tree::write_json(lC_buffer_out, lC_info);
+	lC_buffer_out << lC_info;
 
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      lC_buffer_out.str());

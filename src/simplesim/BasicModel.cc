@@ -22,6 +22,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
+#include <json/json.h>
+
 #include <fstream>
 
 BOOST_CLASS_EXPORT(efscape::impl::ClockI)
@@ -37,13 +39,12 @@ namespace simplesim {
    *
    * @returns metadata in a JSON property tree
    */
-  boost::property_tree::ptree create_SimpleGenerator_info() {
-    boost::property_tree::ptree lC_ptree;
-    lC_ptree.put("info",
-                 "A simple generator");
-    lC_ptree.put("library", std::string(gcp_libname) );
+  Json::Value create_SimpleGenerator_info() {
+    Json::Value lC_jsonObj;
+    lC_jsonObj["info"] = "A simple generator";
+    lC_jsonObj["library"] = std::string(gcp_libname);
 
-    return lC_ptree;
+    return lC_jsonObj;
   }
   
   const bool lb_generator_registered =
@@ -57,13 +58,12 @@ namespace simplesim {
    *
    * @returns metadata in a JSON property tree
    */
-  boost::property_tree::ptree create_SimpleObserver_info() {
-    boost::property_tree::ptree lC_ptree;
-    lC_ptree.put("info",
-                 "A simple observer");
-    lC_ptree.put("library", std::string(gcp_libname) );
+  Json::Value create_SimpleObserver_info() {
+    Json::Value lC_jsonObj;
+    lC_jsonObj["info"] = "A simple observer";
+    lC_jsonObj["library"] = std::string(gcp_libname);
 
-    return lC_ptree;
+    return lC_jsonObj;
   }
   
   const bool lb_observer_registered =

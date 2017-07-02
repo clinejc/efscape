@@ -17,6 +17,8 @@
 #include <efscape/impl/BuildModel.hpp>
 #include <efscape/impl/RunSim.hpp>
 
+#include <json/json.h>
+
 #include <fstream>
 
 namespace efscape {
@@ -30,13 +32,13 @@ namespace efscape {
      *
      * @returns metadata in a JSON property tree
      */
-    boost::property_tree::ptree create_Digraph_info() {
-      boost::property_tree::ptree lC_ptree;
-      lC_ptree.put("info",
-    		   "The components of a digraph model must use PortValue objects as their basic I/O type: the port and value types are template arguments.");
-      lC_ptree.put("library", "efscape-impl" );
+    Json::Value create_Digraph_info() {
+      Json::Value lC_jsonObj;
+      lC_jsonObj["info"] =
+	"The components of a digraph model must use PortValue objects as their basic I/O type: the port and value types are template arguments.";
+      lC_jsonObj["library"] =  "efscape-impl";
 
-      return lC_ptree;
+      return lC_jsonObj;
     }
 
     const bool

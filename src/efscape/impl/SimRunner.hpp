@@ -19,6 +19,7 @@
 // data member definitions
 #include <efscape/impl/ClockI.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <json/json.h>
 
 #include <adevs/adevs_exception.h>
 
@@ -54,7 +55,7 @@ namespace efscape {
        *
        * @returns info about this model class
        */
-      static boost::property_tree::ptree get_info();
+      static Json::Value get_info();
  
       ///
       /// model configuration/properties
