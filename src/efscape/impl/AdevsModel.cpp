@@ -98,30 +98,6 @@ namespace efscape {
 
     } // AdevsModel::initialize()
 
-    /**
-     * Runs the model simulation locally.
-     *
-     * @throws std::logic_error
-     */
-    void AdevsModel::run()
-      throw(std::logic_error)
-    {
-      if (getWrappedModel() == 0) {
-	std::string lC_error_msg =
-	  "AdevsModel::run(): wrapped model is missing\n";
-	throw std::logic_error(lC_error_msg);
-      }
-
-      boost::scoped_ptr< adevs::Simulator<IO_Type> > lCp_simulator;
-      lCp_simulator.reset( new adevs::Simulator<IO_Type>(this) );
-      
-      // simulate model until infinity (DBL_MAX)
-      while ( (mCp_ClockI->time() = lCp_simulator->nextEventTime()) < DBL_MAX) {
-	lCp_simulator->execNextEvent();
-      }
-
-    } // AdevsModel::run(...)
-
     //-------------------------
     // accessor/mutator methods
     //-------------------------

@@ -13,8 +13,6 @@
 
 #include <efscape/impl/adevs_config.hpp>
 #include <efscape/impl/ClockI.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/scoped_ptr.hpp>
 
 namespace efscape {
 
@@ -103,11 +101,11 @@ namespace efscape {
 			  aCr_internal_input);
 
       /** handle to simulator */
-      boost::scoped_ptr< adevs::Simulator<efscape::impl::IO_Type> >
+      std::unique_ptr< adevs::Simulator<efscape::impl::IO_Type> >
       mCp_simulator;
 
       /** handle to model */
-      boost::scoped_ptr< adevs::Devs<efscape::impl::IO_Type> >
+      std::unique_ptr< adevs::Devs<efscape::impl::IO_Type> >
       mCp_WrappedModel;
 
       /** output buffer */

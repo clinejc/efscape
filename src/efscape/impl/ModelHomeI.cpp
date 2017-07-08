@@ -6,8 +6,7 @@
 // __COPYRIGHT_END__
 #include <efscape/impl/ModelHomeI.hpp>
 
-// Includes for loading dynamic libraries
-#include <efscape/utils/DynamicLibrary.hpp>
+#include <log4cxx/propertyconfigurator.h>
 
 // Include for handling JSON
 #include <efscape/impl/adevs_json.hpp>
@@ -36,8 +35,6 @@ namespace efscape {
     /** constructor */
     ModelHomeI::ModelHomeI()
     {
-      LOG4CXX_INFO(mSCp_logger, "Entering application.");
-
       //------------------------------------------
       // set the home directory for Efscape models
       //------------------------------------------
@@ -48,6 +45,13 @@ namespace efscape {
       if ( lcp_env_variable != 0 )
 	lC_EfscapeHome = lcp_env_variable;
 
+      std::string lC_logger_config = lC_EfscapeHome
+	+ "/log4j.properties";
+
+      log4cxx::PropertyConfigurator::configure(lC_logger_config.c_str());
+
+      LOG4CXX_INFO(getLogger(), "Entering application.");
+
       // set resource path to model resources
       setHomeDir(lC_EfscapeHome.c_str());
 
@@ -55,7 +59,7 @@ namespace efscape {
       mCp_ModelFactory.reset( new model_factory );
       mCp_CommandFactory.reset( new command_factory );
 
-      LOG4CXX_INFO(mSCp_logger, "Created EFSCAPE model respository...");
+      LOG4CXX_INFO(getLogger(), "Created EFSCAPE model respository...");
       
     } // ModelHomeI::ModelHomeI()
 
@@ -213,7 +217,7 @@ namespace efscape {
     void ModelHomeI::LoadLibrary(const char* acp_libname)
       throw(std::logic_error)
     {
-      boost::shared_ptr< boost::dll::shared_library >
+      std::shared_ptr< boost::dll::shared_library >
 	lCp_library(new boost::dll::shared_library(acp_libname) );
  
       mCCp_libraries[std::string(acp_libname)] = lCp_library;
@@ -350,7 +354,7 @@ namespace efscape {
     /**
      * Returns smart handle to logger.
      *
-     * @returns reference to logger
+     * @returns smart handle to logger
      */
     log4cxx::LoggerPtr& ModelHomeI::getLogger() {
       return mSCp_logger;

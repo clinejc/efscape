@@ -251,7 +251,10 @@ namespace simplesim {
     }
 
     mCp_model.reset( lCp_devs );
- 
+    
+    // simulate model until infinity
+    efscape::impl::runSim(lCp_devs);
+    
     efscape::impl::BuildModel::createModel(); // invoke parent method
 
   } // CreateSimpleSim::createModel()

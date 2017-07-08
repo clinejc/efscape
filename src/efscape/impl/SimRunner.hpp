@@ -9,9 +9,6 @@
 
 // boost serialization definitions
 #include <boost/serialization/base_object.hpp>
-#include <boost/serialization/version.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#include <boost/serialization/scoped_ptr.hpp>
 
 // parent class definition
 #include <efscape/impl/adevs_config.hpp>
@@ -76,9 +73,13 @@ namespace efscape {
       //
       // clock
       //
+      
       /** @returns reference to clock */
       ClockIPtr& getClockIPtr();
-
+      
+      /** @returns reference to clock */
+      const ClockIPtr& getClockIPtr() const;
+      
       /**
        * Sets the handle to a clock.
        *
@@ -234,5 +235,44 @@ namespace efscape {
 } // namespace efscape
 
 BOOST_CLASS_VERSION(efscape::impl::SimRunner,5)
+
+namespace cereal {
+
+  template<class Archive>
+  void save(Archive & ar, const efscape::impl::SimRunner& simRunner)
+  {
+    // first retrieve the wrapped model
+    const efscape::impl::DEVSPtr lCp_wrappedModel =
+      simRunner.getWrappedModel();
+
+    efscape::impl::ClockIPtr lCp_clock =
+      simRunner.getClockIPtr();
+
+    // cereal seralization
+    ar( cereal::make_nvp("adevs::ModelWrapper",
+			 cereal::base_class<efscape::impl::ModelWrapperBase>(&simRunner) ),
+	//cereal::make_nvp("info",mC_modelInfo),
+	cereal::make_nvp("Clock",lCp_clock),
+	cereal::make_nvp("WrappedModel",lCp_wrappedModel) );
+  }
+
+  template<class Archive>
+  void load(Archive & ar, efscape::impl::SimRunner& simRunner)
+  {
+    efscape::impl::DEVSPtr lCp_wrappedModel;
+    efscape::impl::ClockIPtr lCp_clock;
+	
+    // cereal seralization
+    ar( cereal::make_nvp("adevs::ModelWrapper",
+			 cereal::base_class<efscape::impl::ModelWrapperBase>(&simRunner) ),
+	//cereal::make_nvp("info",mC_modelInfo),
+	cereal::make_nvp("Clock",lCp_clock),
+	cereal::make_nvp("WrappedModel",lCp_wrappedModel) );
+	
+    simRunner.setWrappedModel( lCp_wrappedModel );
+    simRunner.setClockIPtr(lCp_clock);
+  }
+
+} // namespace cereal
 
 #endif	// #ifndef EFSCAPE_IMPL_SIMRUNNER_HPP

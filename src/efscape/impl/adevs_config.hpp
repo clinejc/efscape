@@ -69,6 +69,8 @@ namespace efscape {
     // Helper functions for creating, cloning, and initializing an adevs model
     DEVS* createModel(const char* acp_classname);
     DEVSPtr cloneModel( const DEVSPtr& aCp_model );
+
+    void runSim( DEVS* aCp_model, double ad_timeMax = DBL_MAX );
  
     bool initializeModel( DEVS* aCp_model );
 

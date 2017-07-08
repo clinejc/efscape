@@ -302,12 +302,11 @@ namespace efscape {
       }
 
       // create a simulator and compute initialize model state
-      boost::scoped_ptr<adevs::Simulator<IO_Type> > lCp_simulator;
-      lCp_simulator.reset( new adevs::Simulator<IO_Type>(mCp_model.get() ) );
+      adevs::Simulator<IO_Type> lCp_simulator(mCp_model.get() );
 
       // compute the initial state of the model
-      while ( lCp_simulator->nextEventTime() == 0) {
-	lCp_simulator->execNextEvent();
+      while ( lCp_simulator.nextEventTime() == 0) {
+	lCp_simulator.execNextEvent();
       }
 
       // save model configuration to xml file

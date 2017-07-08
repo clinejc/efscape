@@ -14,7 +14,6 @@
 #include <efscape/impl/ClockI.hpp>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <functional>
 #include <sstream>
 
@@ -59,7 +58,7 @@ namespace efscape {
       ClockIPtr mCp_ClockI;
 
       /** handle to model */
-      boost::scoped_ptr<DEVS> mCp_model;
+      std::unique_ptr<DEVS> mCp_model;
 
       /** model class name */
       std::string mC_ClassName;

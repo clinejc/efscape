@@ -222,6 +222,7 @@ namespace efscape {
     /// clock
     ///
     ClockIPtr& SimRunner::getClockIPtr() { return mCp_ClockI; }
+    const ClockIPtr& SimRunner::getClockIPtr() const { return mCp_ClockI; }
 
     void SimRunner::setClockIPtr(const ClockIPtr& aCp_clock) {
       mCp_ClockI = aCp_clock;

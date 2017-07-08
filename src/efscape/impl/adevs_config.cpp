@@ -105,6 +105,21 @@ namespace efscape {
     }
 
     /**
+     * Helper function for running a simulation
+     *
+     * @param aCp_model pointer to model
+     * @param ad_timeMax time max 
+     */
+    void runSim( DEVS* aCp_model, double ad_timeMax ) {
+      adevs::Simulator<IO_Type> lC_sim( aCp_model );
+
+      // simulate model until infinity
+      while (lC_sim.nextEventTime() < ad_timeMax) {
+	lC_sim.execNextEvent();
+      }
+    }
+    
+    /**
      * Helper function for initializing an adevs model
      *
      * @param aCp_model handle to model

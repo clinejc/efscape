@@ -21,7 +21,6 @@
 #include <log4cxx/logger.h>
 #include <efscape/impl/ClockI.hpp>
 
-#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <typeinfo>
 
@@ -36,7 +35,7 @@ namespace efscape {
      * Implements an adevs-based ICE ::efscape::model wrapper.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 2.0.0 created 24 Dec 2006, revised 03 May 2017
+     * @version 2.0.1 created 24 Dec 2006, revised 07 July 2017
      */
     class AdevsModel : virtual public EntityI,
 		       public ModelDecorator,
@@ -50,8 +49,6 @@ namespace efscape {
       ~AdevsModel();
 
       void initialize()
-	throw(std::logic_error);
-      void run()
 	throw(std::logic_error);
 
       //------------------

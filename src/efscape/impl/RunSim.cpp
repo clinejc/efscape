@@ -99,7 +99,7 @@ namespace efscape {
 	Singleton<ModelHomeI>::Instance().LoadLibraries();	
 
 	// processing argument
-	boost::scoped_ptr<DEVS> lCp_model;
+	std::unique_ptr<DEVS> lCp_model;
 	if (files() == 1) {
 	  std::string lC_ParmName = (*this)[0];
 	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
@@ -151,9 +151,8 @@ namespace efscape {
       	// create simulator
       	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
       		      "Creating simulator...");
-      	boost::scoped_ptr<adevs::Simulator<IO_Type> > lCp_simulator;
-      	lCp_simulator.reset( new adevs::Simulator<IO_Type>(lCp_model.get()) );
-
+      	adevs::Simulator<IO_Type> lCp_simulator(lCp_model.get() );
+ 
       	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
       		      "Attempt to create simulation model successful!"
       		      << "...Initializing simulation...");
@@ -194,9 +193,9 @@ namespace efscape {
 	
       	// simulate model until time max
 	double ld_time = 0.;
-      	while ( (ld_time = lCp_simulator->nextEventTime())
+      	while ( (ld_time = lCp_simulator.nextEventTime())
       		<= ld_timeMax ) {
-      	  lCp_simulator->execNextEvent();
+      	  lCp_simulator.execNextEvent();
       	}
       }
       catch(std::logic_error lC_excp) {

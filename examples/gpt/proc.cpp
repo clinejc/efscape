@@ -75,5 +75,16 @@ namespace gpt {
     y.insert(pv);
   }
 
-  
+  double proc::ta() { return sigma; }
+
+  void proc::gc_output(adevs::Bag<efscape::impl::IO_Type>& g){}
+
+  proc::~proc()
+  {
+    // if (val != NULL) 
+    //   {
+    // 	delete val;
+    //   }
+  }
+ 
 } // namespace gpt

@@ -10,8 +10,6 @@
 #include <efscape/impl/adevs_config.hpp>
 #include <efscape/utils/CommandOpt.hpp>
 #include <boost/function.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <log4cxx/logger.h>
 
 // boost serialization definitions
@@ -90,9 +88,9 @@ namespace efscape {
       /** smart handle to program log */
       static log4cxx::LoggerPtr mSCp_logger;
 
-      boost::scoped_ptr<model_factory> mCp_ModelFactory;
-      boost::scoped_ptr< command_factory > mCp_CommandFactory;
-      std::map< std::string, boost::shared_ptr<boost::dll::shared_library> > mCCp_libraries;
+      std::unique_ptr<model_factory> mCp_ModelFactory;
+      std::unique_ptr< command_factory > mCp_CommandFactory;
+      std::map< std::string, std::shared_ptr<boost::dll::shared_library> > mCCp_libraries;
 
     };				// class ModelHomeI definition
 

@@ -20,7 +20,7 @@ namespace efscape {
     class ClockI;
 
     // typedefs
-    typedef boost::shared_ptr<ClockI> ClockIPtr;
+    typedef std::shared_ptr<ClockI> ClockIPtr;
 
     /**
      * Defines the Clock class, which holds time-related information for
@@ -106,6 +106,48 @@ namespace efscape {
   } // namespace impl
 
 } // namespace efscape
+
+#include <cereal/cereal.hpp>
+
+// cereal serialization
+namespace cereal {
+  //
+  // cereal serialization for ClockI
+  //
+  template<class Archive>
+  void load(Archive & ar, efscape::impl::ClockI& aCr_clock)
+  {
+    double ld_time;
+    double ld_timeDelta;
+    double ld_timeMax;
+    std::string lC_timeUnits;
+    
+    ar( cereal::make_nvp("time", ld_time),
+	cereal::make_nvp("time_delta", ld_timeDelta),
+	cereal::make_nvp("time_max", ld_timeMax),
+	cereal::make_nvp("time_units", lC_timeUnits) );
+    
+    aCr_clock.time() = ld_time;
+    aCr_clock.timeDelta() = ld_timeDelta;
+    aCr_clock.timeMax() = ld_timeMax;
+    aCr_clock.timeUnits(lC_timeUnits.c_str() );
+  }
+
+  template<class Archive>
+  void save(Archive & ar, const efscape::impl::ClockI& aCr_clock)
+  {
+    double ld_time = aCr_clock.time();
+    double ld_timeDelta = aCr_clock.timeDelta();
+    double ld_timeMax = aCr_clock.timeMax();
+    std::string lC_timeUnits = aCr_clock.timeUnits();
+    
+    ar( cereal::make_nvp("time", ld_time),
+	cereal::make_nvp("time_delta", ld_timeDelta),
+	cereal::make_nvp("time_max", ld_timeMax),
+	cereal::make_nvp("time_units", lC_timeUnits) );
+  }
+  
+} // namespace cereal
 
 #endif	// #ifndef EFSCAPE_IMPL_CLOCK_I_HH
 

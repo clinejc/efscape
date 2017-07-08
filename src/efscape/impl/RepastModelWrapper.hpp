@@ -13,7 +13,6 @@
 
 #include <efscape/impl/adevs_config.hpp>
 #include <repast_hpc/Properties.h>
-#include <boost/scoped_ptr.hpp>
 
 namespace efscape {
   namespace impl {
@@ -84,7 +83,7 @@ namespace efscape {
       }
 
       /** handle to Repast model */
-      boost::scoped_ptr<ModelType> mCp_model;
+      std::unique_ptr<ModelType> mCp_model;
 
     };				// template class<> RepastModelWrapper
 

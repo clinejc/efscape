@@ -22,7 +22,7 @@ namespace efscape {
      * Defines an object factory with a metadata store.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 2.0.0 created 25 Nov 2015, revised 02 Jul 2017
+     * @version 2.0.0 created 25 Nov 2015, revised 06 Jul 2017
      *
      * @tparam IdentifierType factory key type
      * @tparam BaseType target object class
@@ -33,7 +33,30 @@ namespace efscape {
 	
       Factory() {}
       ~Factory() {}
+      /**
+       * Registers an object creator.
+       *
+       * @tparam IdentifierType factory key type
+       * @tparam BaseType target object class
+       * @param id factory key
+       * @param aF_createObj object creator
+       * @param properties type properties in JSON
+       * @returns whether registration was successful
+       */
+      bool registerType(const IdentifierType& id,
+			boost::function<BaseType* ()> aF_createObj,
+			Json::Value properties=Json::Value()) {
+	
+	bool lb_registered =
+	  (mCF_factory_map.
+	   insert( std::make_pair(id,
+				  aF_createObj) ) ).second;
+	if (lb_registered)
+	  mCC_properties_map[id] = properties;
 
+	return lb_registered;
+      }
+      
       /**
        * Registers an object creator.
        *

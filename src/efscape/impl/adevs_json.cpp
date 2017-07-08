@@ -15,25 +15,25 @@
 
 #include <sstream>
 
-//----------------------------------
-// adevs cereal serialzation exports
-//----------------------------------
-#include <adevs/adevs_cereal.hpp>
+// //----------------------------------
+// // adevs cereal serialzation exports
+// //----------------------------------
+// #include <adevs/adevs_cereal.hpp>
 
-namespace cereal {
-  template <class Archive> 
-  struct specialize<Archive, efscape::impl::ClockI, cereal::specialization::non_member_load_save> {};
+// namespace cereal {
+//   template <class Archive> 
+//   struct specialize<Archive, efscape::impl::ClockI, cereal::specialization::non_member_load_save> {};
   
-  template <class Archive> 
-  struct specialize<Archive, efscape::impl::ATOMIC, cereal::specialization::non_member_serialize> {};
-}
+//   template <class Archive> 
+//   struct specialize<Archive, efscape::impl::ATOMIC, cereal::specialization::non_member_serialize> {};
+// }
 
-#include <cereal/archives/json.hpp>
-CEREAL_REGISTER_TYPE(efscape::impl::ClockI)
-CEREAL_REGISTER_TYPE(efscape::impl::DEVS);
-CEREAL_REGISTER_TYPE(efscape::impl::ATOMIC);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(efscape::impl::DEVS,
-				     efscape::impl::ATOMIC );
+// #include <cereal/archives/json.hpp>
+// CEREAL_REGISTER_TYPE(efscape::impl::ClockI)
+// CEREAL_REGISTER_TYPE(efscape::impl::DEVS);
+// CEREAL_REGISTER_TYPE(efscape::impl::ATOMIC);
+// CEREAL_REGISTER_POLYMORPHIC_RELATION(efscape::impl::DEVS,
+// 				     efscape::impl::ATOMIC );
 
 namespace efscape {
 

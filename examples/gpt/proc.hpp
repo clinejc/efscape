@@ -35,22 +35,16 @@ namespace gpt {
     void output_func(adevs::Bag<efscape::impl::IO_Type>& y);
     
     /// Time advance function.
-    double ta() { return sigma; }
+    double ta();
     
     /**
        Garbage collection. No heap allocation in output_func, so
        do nothing.
     */
-    void gc_output(adevs::Bag<efscape::impl::IO_Type>& g){}
+    void gc_output(adevs::Bag<efscape::impl::IO_Type>& g);
 
     /// Destructor
-    ~proc()
-    {
-      // if (val != NULL) 
-      //   {
-      // 	delete val;
-      //   }
-    }
+    ~proc();
 
     /// Model input port
     static const efscape::impl::PortType in;

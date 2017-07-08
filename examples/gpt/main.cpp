@@ -23,6 +23,7 @@ using namespace std;
 #include <cereal/access.hpp>
 
 #include <map>
+#include <sstream>
 
 namespace cereal
 {
@@ -129,7 +130,6 @@ int main()
   /// Create a simulator for the model and run it until
   /// the model passivates.
   adevs::Simulator<PortValue> sim(model.get());
-  // adevs::Simulator<efscape::impl::IO_Type> lCp_sim( lCp_digraph.get() );
 
   while (sim.nextEventTime() < DBL_MAX) {
     ar(cereal::make_nvp("proc", *prc) );
@@ -138,10 +138,6 @@ int main()
     sim.execNextEvent();
   }
   /// Done!
-
-  // while (lCp_sim.nextEventTime() < DBL_MAX) {
-  //   lCp_sim.execNextEvent();
-  // }
 
   ///
   /// testing cereal serialization
@@ -152,31 +148,17 @@ int main()
   ///
   /// now with the "efscape" version of the model
   ///
-  typedef efscape::impl::DEVS COMPONENT;
-  typedef std::shared_ptr<efscape::impl::DEVS> ComponentSPtr;
-  typedef std::set<COMPONENT*> ComponentPtrSet;
-  typedef std::set<ComponentSPtr> ComponentSPtrSet;
 
-  ///
-  /// Test #1: serializing a single atomic model
-  ///
-  // ComponentSPtr lCp_gnr2 = lCp_digraph->getComponent(lCp_gnr);
-  // std::cout << "\nTest #1:\n";
-  // ar( cereal::make_nvp("gpt_genr", lCp_gnr2) );
+  stringstream ss;
+  {
+    efscape::impl::saveAdevsToJSON(lCp_rootmodel,ss);
+  }
 
-  ///
-  /// Test #2: serializing a set of models
-  ///
-  // ComponentPtrSet lCCp_models;
-  // ComponentSPtrSet lCCsp_models;
-  // lCp_digraph->getComponents( lCCp_models );
-
-  // for (auto iter = lCCp_models.begin();
-  //      iter != lCCp_models.end();
-  //      iter++) {
-  //   ComponentSPtr lCp_devs = digraph.getComponent(*iter);
-  //   lCCsp_models.insert(lCp_devs);
-  efscape::impl::saveAdevsToJSON(lCp_rootmodel,std::cout);
+  efscape::impl::DEVSPtr lCp_modelclone;
+  {
+    lCp_modelclone = efscape::impl::loadAdevsFromJSON(ss);
+    efscape::impl::saveAdevsToJSON(lCp_modelclone, std::cout);
+  }
 
   return 0;
 }

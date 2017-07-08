@@ -38,8 +38,8 @@ namespace cereal
   template <class Archive> 
   struct specialize<Archive, efscape::impl::ModelWrapperBase, cereal::specialization::non_member_load_save> {};
 
-  // template <class Archive> 
-  // struct specialize<Archive, efscape::impl::SimRunner, cereal::specialization::member_load_save> {};
+  template <class Archive> 
+  struct specialize<Archive, efscape::impl::SimRunner, cereal::specialization::non_member_load_save> {};
   
 }
 
@@ -51,7 +51,7 @@ CEREAL_REGISTER_TYPE(efscape::impl::ATOMIC);
 CEREAL_REGISTER_TYPE(efscape::impl::NETWORK);
 CEREAL_REGISTER_TYPE(efscape::impl::DIGRAPH);
 CEREAL_REGISTER_TYPE(efscape::impl::ModelWrapperBase);
-// CEREAL_REGISTER_TYPE(efscape::impl::SimRunner);
+CEREAL_REGISTER_TYPE(efscape::impl::SimRunner);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(efscape::impl::DEVS,
 				     efscape::impl::ATOMIC );
 CEREAL_REGISTER_POLYMORPHIC_RELATION(efscape::impl::DEVS,
@@ -60,8 +60,8 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(efscape::impl::NETWORK,
 				     efscape::impl::DIGRAPH );
 CEREAL_REGISTER_POLYMORPHIC_RELATION(efscape::impl::ATOMIC,
 				     efscape::impl::ModelWrapperBase );
-// CEREAL_REGISTER_POLYMORPHIC_RELATION(efscape::impl::ModelWrapperBase,
-// 				     efscape::impl::SimRunner );
+CEREAL_REGISTER_POLYMORPHIC_RELATION(efscape::impl::ModelWrapperBase,
+				     efscape::impl::SimRunner );
 
 // model factory definitions
 #include <efscape/impl/ModelHomeI.hpp>
