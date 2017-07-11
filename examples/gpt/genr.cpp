@@ -1,5 +1,7 @@
 #include "genr.hpp"
 
+#include <efscape/impl/ModelHomeI.hpp>
+
 namespace gpt {
 
   /// Create the static ports and assign them unique 'names'
@@ -8,7 +10,7 @@ namespace gpt {
   const efscape::impl::PortType genr::out("out");
   
   genr::genr():
-    efscape::impl::DEVS(),
+    adevs::Atomic<efscape::impl::IO_Type>(),
     period(1.0),
     sigma(1.0),
     count(0)
@@ -16,7 +18,7 @@ namespace gpt {
   }
 
   genr::genr(double period):
-    efscape::impl::DEVS(),
+    adevs::Atomic<efscape::impl::IO_Type>(),
     period(period),
     sigma(period),
     count(0)
@@ -44,6 +46,8 @@ namespace gpt {
     adevs::Bag<efscape::impl::IO_Type>::const_iterator iter;
     for (iter = x.begin(); iter != x.end(); iter++) {
       if ((*iter).port == start) {
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "Starting genr...");
 	sigma = period;
       }
     }
@@ -51,6 +55,8 @@ namespace gpt {
     // stop the generator by setting our time of next event to infinity.
     for (iter = x.begin(); iter != x.end(); iter++) {
       if ((*iter).port == stop) {
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "Stopping genr...");
 	sigma = DBL_MAX;
       }
     }
@@ -67,9 +73,13 @@ namespace gpt {
   void genr::output_func(adevs::Bag<efscape::impl::IO_Type>& y)
   {
     // Place a new job on the output port
+    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		  "genr placing job on the output port...");
     job j(count);
     efscape::impl::IO_Type pv(out,j);
     y.insert(pv);
   }
+
+  double genr::ta() { return sigma; }
   
 } // namespace gpt

@@ -1,11 +1,15 @@
 #ifndef __proc_hpp_
 #define __proc_hpp_
-#include <cstdlib>
 
+// parent class and data member definitions
 #include <efscape/impl/adevs_config.hpp>
-#include "job.h"
+#include "job.hpp"
 
+// serialization definitions
+// #include <adevs/adevs_serialization.hpp>
 #include <adevs/adevs_cereal.hpp>
+
+#include <cstdlib>
 
 namespace gpt {
   /*
@@ -13,7 +17,7 @@ namespace gpt {
     The processor can serve only one job at a time.  It the processor
     is busy, it simply discards incoming jobs.
   */
-  class proc: public efscape::impl::DEVS
+  class proc: public adevs::Atomic<efscape::impl::IO_Type>
   {
   public:
     /// Default Constructor
@@ -58,7 +62,7 @@ namespace gpt {
     void serialize(Archive & ar)
     {
       ar( cereal::make_nvp("adevs::Atomic",
-			   cereal::base_class<efscape::impl::DEVS >(this) ),
+			   cereal::base_class< adevs::Atomic<efscape::impl::IO_Type> >(this) ),
 	  CEREAL_NVP(processing_time),
 	  CEREAL_NVP(sigma),
 	  CEREAL_NVP(val),
@@ -71,7 +75,19 @@ namespace gpt {
     double t;
   };
 
-}
-// namespace gpt
+} // namespace gpt
+
+// namespace boost {
+//   namespace serialization {
+//     template<class Archive>
+//     void serialize(Archive & ar, gpt::proc& prc, const unsigned int version)
+//     {
+//       ar & boost::serialization::make_nvp("Atomic",
+// 					  boost::serialization::base_object<efscape::impl::ATOMIC >(prc) );
+//     }
+//   }
+// }
+
+// BOOST_CLASS_VERSION(gpt::proc, 1)
 
 #endif

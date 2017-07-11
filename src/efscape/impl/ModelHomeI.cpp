@@ -50,7 +50,7 @@ namespace efscape {
 
       log4cxx::PropertyConfigurator::configure(lC_logger_config.c_str());
 
-      LOG4CXX_INFO(getLogger(), "Entering application.");
+      LOG4CXX_DEBUG(getLogger(), "Entering application.");
 
       // set resource path to model resources
       setHomeDir(lC_EfscapeHome.c_str());
@@ -59,7 +59,7 @@ namespace efscape {
       mCp_ModelFactory.reset( new model_factory );
       mCp_CommandFactory.reset( new command_factory );
 
-      LOG4CXX_INFO(getLogger(), "Created EFSCAPE model respository...");
+      LOG4CXX_DEBUG(getLogger(), "Created EFSCAPE model respository...");
       
     } // ModelHomeI::ModelHomeI()
 

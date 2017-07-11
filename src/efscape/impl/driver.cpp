@@ -70,8 +70,6 @@ namespace {
  */
 int main(int argc, char** argv) {
 
-  std::cout << "Start...\n";
-
   // initialize MPI environment (use of MPI option)
   boost::mpi::environment env(argc, argv);
 
@@ -86,17 +84,6 @@ int main(int argc, char** argv) {
   int li_option_status = 0;
   int li_cmd_status = 0;
   std::unique_ptr<efscape::utils::CommandOpt> lCp_command;
-
-  // attempt to retrieve the root directory of efscape ICE configuration
-  std::string lC_EfscapeIcePath = "."; // default location
-  char* lcp_env_variable =	// get EFSCAPE_HOME
-    getenv("EFSCAPE_HOME");
-
-  if ( lcp_env_variable != 0 )
-    lC_EfscapeIcePath = lcp_env_variable;
-
-  std::string lC_logger_config = lC_EfscapeIcePath
-    + "/log4j.properties";
 
   try {
     lCp_command.reset( efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().getCommandFactory().

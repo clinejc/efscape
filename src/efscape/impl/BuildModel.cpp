@@ -74,11 +74,9 @@ namespace efscape {
     {
       try {
 	if (debug_on()) {
-	  std::cout << "Setting logger level to Debug...\n";
 	  ModelHomeI::getLogger()->setLevel(log4cxx::Level::getDebug());
 	}
 	else {
-	  std::cout << "Setting logger level to Error...\n";
 	  ModelHomeI::getLogger()->setLevel(log4cxx::Level::getError());
 	}
 

@@ -67,21 +67,13 @@ namespace efscape {
       // create a root model from the model repository
       //----------------------------------------------
       try {
-	if (mC_variable_map.count("debug")) {
-	  std::cout << "debug is set\n";
-	}
-	else
-	  std::cout << "debug is not set\n";
 
 	if (debug_on()) {
-	  std::cout << "Setting logger to Debug...\n";
-
 	  // note (2008.06.05):
 	  // The default debug setting is not working.
 	  impl::ModelHomeI::getLogger()->setLevel(log4cxx::Level::getDebug());
 	}
 	else {
-	  std::cout << "Setting logger to error...\n";
 	  impl::ModelHomeI::getLogger()->setLevel(log4cxx::Level::getError());
 	}
 

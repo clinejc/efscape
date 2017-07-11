@@ -17,7 +17,7 @@ namespace gpt {
     and generates and output on its out port when the observation
     interval has elapsed.
   */
-  class transd: public efscape::impl::DEVS
+  class transd: public adevs::Atomic<efscape::impl::IO_Type>
   {
   public:
     /// default Constructor
@@ -39,10 +39,10 @@ namespace gpt {
     void output_func(adevs::Bag<efscape::impl::IO_Type>& y);
     
     /// Time advance function
-    double ta() { return sigma; }
+    double ta();
     
     /// Garbage collection. No heap allocation in output, so do nothing
-    void gc_output(adevs::Bag<efscape::impl::IO_Type>& g){}
+    void gc_output(adevs::Bag<efscape::impl::IO_Type>& g);
     
     /// Destructor
     ~transd()

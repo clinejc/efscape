@@ -1,5 +1,7 @@
 #include "transd.hpp"
 
+#include <efscape/impl/ModelHomeI.hpp>
+
 namespace gpt {
 
   /// Assign unique 'names' to ports
@@ -8,7 +10,7 @@ namespace gpt {
   const efscape::impl::PortType transd::out("out");
   
   transd::transd():
-    efscape::impl::DEVS(),
+    adevs::Atomic<efscape::impl::IO_Type>(),
     observation_time(1.0),
     sigma(observation_time),
     total_ta(0.0),
@@ -17,7 +19,7 @@ namespace gpt {
   }
   
   transd::transd(double observ_time):
-    efscape::impl::DEVS(),
+    adevs::Atomic<efscape::impl::IO_Type>(),
     observation_time(observ_time),
     sigma(observation_time),
     total_ta(0.0),
@@ -72,34 +74,36 @@ namespace gpt {
 	  jobs_arrived.push_back(j);
 	}
 	catch(const boost::bad_any_cast &) {
-	  std::cerr << "Unable to cast input as <job>\n";
+	  LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+			"Unable to cast input as <job>");
 	}
       }
-      // Compute time required to process completed jobs
-      for (iter = x.begin(); iter != x.end(); iter++) {
-	if ((*iter).port == solved) {
-	  try {
-	    job j(boost::any_cast<job>( (*iter).value ));
-	    std::vector<job>::iterator i = jobs_arrived.begin();
-	    for (; i != jobs_arrived.end(); i++) {
-	      if ((*i).id == j.id) {
-		total_ta += t-(*i).t;
-		std::cout << "Finish job " << j.id << " @ t = " << t << std::endl;
-		break;
-	      }
+    }
+    // Compute time required to process completed jobs
+    for (iter = x.begin(); iter != x.end(); iter++) {
+      if ((*iter).port == solved) {
+	try {
+	  job j(boost::any_cast<job>( (*iter).value ));
+	  std::vector<job>::iterator i = jobs_arrived.begin();
+	  for (; i != jobs_arrived.end(); i++) {
+	    if ((*i).id == j.id) {
+	      total_ta += t-(*i).t;
+	      std::cout << "Finish job " << j.id << " @ t = " << t << std::endl;
+	      break;
 	    }
-	    j.t = t;
-	    jobs_solved.push_back(j);
 	  }
-	  catch(const boost::bad_any_cast &) {
-	    std::cerr << "Unable to cast input as <job>\n";
-	  }
+	  j.t = t;
+	  jobs_solved.push_back(j);
+	}
+	catch(const boost::bad_any_cast &) {
+	  LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+			"Unable to cast input as <job>");
 	}
       }
-      // Continue with next event time unchanged
-      sigma -= e;
     }
     
+    // Continue with next event time unchanged
+    sigma -= e;
   }
 
   void transd::delta_conf(const adevs::Bag<efscape::impl::IO_Type>& x)
@@ -115,5 +119,9 @@ namespace gpt {
     efscape::impl::IO_Type pv(out,j);
     y.insert(pv);
   }
+
+  double transd::ta() { return sigma; }
+
+  void transd::gc_output(adevs::Bag<efscape::impl::IO_Type>& g){}
  
 }

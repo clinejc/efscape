@@ -1,5 +1,7 @@
 #include "proc.hpp"
 
+#include <efscape/impl/ModelHomeI.hpp>
+
 namespace gpt {
 
   /// Create unique 'names' for the model ports.
@@ -7,7 +9,7 @@ namespace gpt {
   const efscape::impl::PortType proc::out("out");
 
   proc::proc():
-    efscape::impl::DEVS(),
+    adevs::Atomic<efscape::impl::IO_Type>(),
     processing_time(1.0),
     sigma(DBL_MAX),
     val(nullptr)
@@ -16,7 +18,7 @@ namespace gpt {
   }
 
   proc::proc(double proc_time):
-    efscape::impl::DEVS(),
+    adevs::Atomic<efscape::impl::IO_Type>(),
     processing_time(proc_time),
     sigma(DBL_MAX),
     val(nullptr)
@@ -45,13 +47,21 @@ namespace gpt {
       // Make a copy of the job (original will be destroyed by the
       // generator at the end of this simulation cycle).
       try {
-	val.reset(new job(boost::any_cast<job>( (*x.begin() ).value ) ) );
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "Receiving input on port <"
+		      << (*(x.begin())).port << ">...");
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "Extracted job...");
+	val.reset(new job(boost::any_cast<job>( (*(x.begin())).value ) ) );
+	LOG4CXX_INFO(efscape::impl::ModelHomeI::getLogger(),
+		     "Received a new job");
 	// Wait for the required processing time before outputting the
 	// completed job
 	sigma = processing_time;
       }
       catch(const boost::bad_any_cast &) {
-	std::cerr << "Unable to cast input as <job>\n";
+	  LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+			"Unable to cast input as <job>");
       }
     }
     // Otherwise, model just continues with time of next event unchanged

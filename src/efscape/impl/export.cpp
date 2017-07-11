@@ -15,6 +15,7 @@
 // efscape::utils::CommandOpt-derived classes
 //--------------------------------------------
 #include <efscape/impl/BuildModel.hpp>
+#include <efscape/impl/BuildSim.hpp>
 #include <efscape/impl/RunSim.hpp>
 
 #include <json/json.h>
@@ -53,15 +54,19 @@ namespace efscape {
       registerType<SimRunner>(efscape::utils::type<SimRunner>(),
     			      SimRunner::get_info() );
     
-    const bool
-    lb_BuildModel_registered =
-      Singleton<ModelHomeI>::Instance().getCommandFactory().
-      registerType<BuildModel>( BuildModel::ProgramName() );
+    // const bool
+    // lb_BuildModel_registered =
+    //   Singleton<ModelHomeI>::Instance().getCommandFactory().
+    //   registerType<BuildModel>( BuildModel::ProgramName() );
 
     const bool
     lb_RunSim_registered =
       Singleton<ModelHomeI>::Instance().getCommandFactory().
       registerType<RunSim>( RunSim::ProgramName() );
-   
+
+    const bool lb_BuildSim_registered =
+      Singleton<ModelHomeI>::Instance().getCommandFactory().
+      registerType<BuildSim>( BuildSim::ProgramName() );
+    
   } // namespace impl
 }   // namespace efscape

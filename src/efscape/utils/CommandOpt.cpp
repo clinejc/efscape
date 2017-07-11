@@ -55,6 +55,9 @@ namespace efscape {
 	("input-file,i", po::value< std::vector<std::string> >(), "input files")
 	;
 
+      // add extended options
+      mC_description.add(mC_extended_description);
+
       po::positional_options_description p;
       p.add("input-file", -1);
 

@@ -262,15 +262,6 @@ namespace simplesim {
   //---------------
   // register class
   //---------------
-  /**
-   * Creates a new CreateSimpleSim.
-   *
-   * @returns a handle to a new CreateSimpleSim object
-   */
-  efscape::utils::CommandOpt* create_CreateSimpleSim() {
-    return (efscape::utils::CommandOpt*)new CreateSimpleSim;
-  }
-
   const bool registered =
 		 efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().getCommandFactory().
 		 registerType<CreateSimpleSim>( CreateSimpleSim::ProgramName() );

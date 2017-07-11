@@ -13,7 +13,7 @@ namespace gpt {
     It stops producing jobs when it receives an input on its
     stop port.  Jobs appear on the out port.
   */
-  class genr: public efscape::impl::DEVS
+  class genr: public adevs::Atomic<efscape::impl::IO_Type>
   {
   public:
     /// Constructor.  The generator period is provided here.
@@ -33,7 +33,7 @@ namespace gpt {
     void output_func(adevs::Bag<efscape::impl::IO_Type>& y);
     
     /// Time advance function.
-    double ta() { return sigma; }
+    double ta();
     
     /// Output doesn't require heap allocation, so don't do anything
     void gc_output(adevs::Bag<efscape::impl::IO_Type>& g){}

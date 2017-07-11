@@ -72,80 +72,59 @@ namespace efscape {
       // create a root model from the model repository
       //----------------------------------------------
       try {
-	ModelHomeI::getLogger()->setLevel(log4cxx::Level::getDebug());
-	if (mC_variable_map.count("debug")) {
-	  LOG4CXX_INFO(ModelHomeI::getLogger(),
-		       "debug is set");
-	}
-	else
-	  LOG4CXX_INFO(ModelHomeI::getLogger(),
-			"debug is not set");
-
+	// set logging level
 	if (debug_on()) {
-	  LOG4CXX_INFO(ModelHomeI::getLogger(),
-		       "Setting logger to Debug...");
-
-	  // note (2008.06.05):
-	  // The default debug setting is not working.
 	  ModelHomeI::getLogger()->setLevel(log4cxx::Level::getDebug());
 	}
 	else {
-	  LOG4CXX_INFO(ModelHomeI::getLogger(),
-		       "logger level = INFO");
+	  ModelHomeI::getLogger()->setLevel(log4cxx::Level::getError());
 	}
 
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "Loading libraries");
 	Singleton<ModelHomeI>::Instance().LoadLibraries();	
 
-	// processing argument
+	// processing argument (should be only 1 input file)
 	std::unique_ptr<DEVS> lCp_model;
-	if (files() == 1) {
-	  std::string lC_ParmName = (*this)[0];
-	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			"Running with a single parameter <"
-			<< lC_ParmName << ">");
 
-	  // attempt to create model from parameter file
-	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			"Loading file <" << lC_ParmName << ">");
+	std::string lC_ParmName = (*this)[0];
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "Running with a single parameter <"
+		      << lC_ParmName << ">");
 
-	  boost::filesystem::path p =
-	    boost::filesystem::path(lC_ParmName.c_str());
-	  if (p.extension().string() == ".xml") {
-	    lCp_model.reset( Singleton<ModelHomeI>::Instance().
-			     createModelFromXML(lC_ParmName.c_str()) );
-	  }
-	  else if (p.extension().string() == ".json") {
-	    // try to load the parameter file
-	    std::ifstream parmFile(lC_ParmName.c_str());
+	// attempt to create model from parameter file
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "Loading file <" << lC_ParmName << ">");
 
-	    // if file can be opened
-	    if ( parmFile ) {
-	      std::ostringstream buf;
-	      char ch;
-	      while (buf && parmFile.get( ch ))
-		buf.put( ch );
-	      std::cout << buf.str() << std::endl;
+	boost::filesystem::path p =
+	  boost::filesystem::path(lC_ParmName.c_str());
+	if (p.extension().string() == ".xml") {
+	  lCp_model.reset( Singleton<ModelHomeI>::Instance().
+			   createModelFromXML(lC_ParmName.c_str()) );
+	}
+	else if (p.extension().string() == ".json") {
+	  // try to load the parameter file
+	  std::ifstream parmFile(lC_ParmName.c_str());
 
-	      lCp_model.reset( Singleton<ModelHomeI>::Instance().
-			       createModelFromJSON(buf.str()) );
-	    }
-	  }
-	  else {
+	  // if file can be opened
+	  if ( parmFile ) {
+	    std::ostringstream buf;
+	    char ch;
+	    while (buf && parmFile.get( ch ))
+	      buf.put( ch );
 	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "Missing parameters: exiting now ...");
-	    return EXIT_FAILURE;
-	  }
+			  buf.str() );
 
-	  if (lCp_model.get() == 0) {
-	    LOG4CXX_ERROR(ModelHomeI::getLogger(),
-			  "Unable to create model from parameter file <"
-			  << lC_ParmName << ">");
-	    return EXIT_FAILURE;
+	    lCp_model.reset( Singleton<ModelHomeI>::Instance().
+			     createModelFromJSON(buf.str()) );
 	  }
-	} // if (files() == 1)
-	else {
+	}
+
+	if (lCp_model.get() == 0) {
+	  LOG4CXX_ERROR(ModelHomeI::getLogger(),
+			"Unable to create model from parameter file <"
+			<< lC_ParmName << ">");
+	  return EXIT_FAILURE;
 	}
 
       	// create simulator
@@ -232,7 +211,7 @@ namespace efscape {
       if (li_status != 0)
 	return li_status;
 
-      if (files() < 1 && files() > 2) {
+      if (files() < 1 || files() > 2) {
 	usage();
 	return 1;
       }

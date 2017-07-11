@@ -1,11 +1,13 @@
-// definitions for accessing the model factory
-#include <efscape/impl/ModelHomeI.hpp>
-#include <efscape/impl/ModelHomeSingleton.hpp>
-
 #include "job.hpp"
 #include "genr.hpp"
 #include "proc.hpp"
 #include "transd.hpp"
+
+// definitions for accessing the model factory
+#include <efscape/impl/ModelHomeI.hpp>
+#include <efscape/impl/ModelHomeSingleton.hpp>
+
+#include <efscape/utils/type.hpp>
 
 #include <adevs/adevs_cereal.hpp>
 #include <cereal/types/base_class.hpp>
@@ -15,6 +17,7 @@
 
 namespace cereal
 {
+
   template <class Archive> 
   struct specialize<Archive, gpt::genr, cereal::specialization::member_serialize> {};
 
