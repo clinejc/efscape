@@ -3,6 +3,8 @@
 #include "proc.hpp"
 #include "transd.hpp"
 
+#include <json/json.h>
+
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
@@ -50,14 +52,41 @@ namespace gpt {
   /**
    * Creates a gpt coupled model.
    *
+   * @param aC_args arguments embedded in JSON
    * @returns handle to a gpt model
    */
-  efscape::impl::DEVS* createGptCoupledModel() {
+  efscape::impl::DEVS* createGptCoupledModel(Json::Value aC_args) {
 
     // (default) parameters
     double g = 1;
     double p = 2;
     double t = 10;
+
+    if (aC_args.isObject()) {
+      Json::Value lC_attribute = aC_args["genr_period"];
+      if (lC_attribute.isDouble()) {
+	g = lC_attribute.asDouble();
+      } else {
+	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+		      "Unable to parse attribute  <genr_period>")
+      }
+      
+      lC_attribute = aC_args["proc_period"];
+      if (lC_attribute.isDouble()) {
+	p = lC_attribute.asDouble();
+      } else {
+	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+		      "Unable to parse attribute  <proc_period>")
+      }
+      
+      lC_attribute = aC_args["observation_time"];
+      if (lC_attribute.isDouble()) {
+	t = lC_attribute.asDouble();
+      } else {
+	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+		      "Unable to parse attribute  <observation_time>")
+      }
+    }
     
     /// Create and connect the atomic components using a digraph model.
     efscape::impl::DIGRAPH* lCp_digraph = new efscape::impl::DIGRAPH();
@@ -102,6 +131,6 @@ namespace gpt {
   const bool lb_gpt_registered =
     efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
     getModelFactory().
-    registerType(std::string("gpt::gpt_coupled_model"),
-		 createGptCoupledModel);
+    registerTypeWithArgs(std::string("gpt::gpt_coupled_model"),
+			 createGptCoupledModel);
 }

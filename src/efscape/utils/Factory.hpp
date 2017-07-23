@@ -22,7 +22,7 @@ namespace efscape {
      * Defines an object factory with a metadata store.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 2.0.0 created 25 Nov 2015, revised 06 Jul 2017
+     * @version 2.0.1 created 25 Nov 2015, revised 22 Jul 2017
      *
      * @tparam IdentifierType factory key type
      * @tparam BaseType target object class
@@ -33,6 +33,32 @@ namespace efscape {
 	
       Factory() {}
       ~Factory() {}
+
+      /**
+       * Registers an object creator.
+       *
+       * @tparam IdentifierType factory key type
+       * @tparam BaseType target object class
+       * @tparm DerivedType
+       * @param id factory key
+       * @param properties type properties in JSON
+       * @param creator factory creator
+       * @returns whether registration was successful
+       */
+      template <typename DerivedType>
+      bool registerType(const IdentifierType& id,
+			Json::Value properties=Json::Value()) {
+
+	bool lb_registered =
+	  (mCF_factory_map.
+	   insert( std::make_pair(id,
+				  boost::factory<DerivedType*>()) ) ).second;
+	if (lb_registered)
+	  mCC_properties_map[id] = properties;
+
+	return lb_registered;
+      }
+      
       /**
        * Registers an object creator.
        *
@@ -58,30 +84,45 @@ namespace efscape {
       }
       
       /**
-       * Registers an object creator.
+       * Registers an object creator with arguments embedded in JSON
        *
        * @tparam IdentifierType factory key type
        * @tparam BaseType target object class
-       * @tparm DerivedType
        * @param id factory key
-       * @param properties type properties in JSON
-       * @param creator factory creator
+       * @param aF_createObj object creator
        * @returns whether registration was successful
        */
-      template <typename DerivedType>
-      bool registerType(const IdentifierType& id,
-			Json::Value properties=Json::Value()) {
-
+      bool
+      registerTypeWithArgs(IdentifierType id,
+			   boost::function<BaseType* (Json::Value)>
+			   aF_createObj )
+      {	
 	bool lb_registered =
-	  (mCF_factory_map.
+	  (mCF_factory_with_args_map.
 	   insert( std::make_pair(id,
-				  boost::factory<DerivedType*>()) ) ).second;
-	if (lb_registered)
-	  mCC_properties_map[id] = properties;
-
+				  aF_createObj) ) ).second;
 	return lb_registered;
       }
+      
+     /**
+       * Creates an object of the specified type with arguments embedded in JSON
+       *
+       * @tparam IdentifierType factory key type
+       * @tparam BaseType target object class
+       * @param id type key
+       * @param args JSON object containing arguments
+       * @returns handle to new objec of type BaseType if successful
+       */
+      BaseType* createObject(const IdentifierType& id, Json::Value args) {
+	BaseType* lCp_object = NULL;
+	typename std::map< IdentifierType, boost::function<BaseType*(Json::Value)> >::iterator iter;
+	if ( (iter = mCF_factory_with_args_map.find(id) ) !=
+	     mCF_factory_with_args_map.end() )
+	lCp_object = (iter->second)(args);
 
+	return lCp_object;
+      }
+      
       /**
        * Creates an object of the specified type.
        *
@@ -128,10 +169,15 @@ namespace efscape {
       std::set<IdentifierType> getTypeIDs() {
 	std::set<IdentifierType> lCC_TypeIDs;
 	std::pair< IdentifierType, boost::function< BaseType*() > > factory_pair;
+	std::pair< IdentifierType, boost::function< BaseType*(Json::Value) > > factory_with_args_pair;
+	
 	BOOST_FOREACH(factory_pair, mCF_factory_map) {
 	  lCC_TypeIDs.insert(factory_pair.first);
 	}
-
+	BOOST_FOREACH(factory_with_args_pair, mCF_factory_with_args_map) {
+	  lCC_TypeIDs.insert(factory_with_args_pair.first);
+	}
+	
 	return lCC_TypeIDs;
       }
       
@@ -139,6 +185,9 @@ namespace efscape {
 
       /** factory map */
       std::map< IdentifierType, boost::function<BaseType*()> > mCF_factory_map;
+
+      /** factory with args map */
+      std::map< IdentifierType, boost::function<BaseType*(Json::Value)> > mCF_factory_with_args_map;
 
       /** properties map */
       std::map<IdentifierType, Json::Value> mCC_properties_map;

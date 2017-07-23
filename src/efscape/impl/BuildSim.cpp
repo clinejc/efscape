@@ -11,6 +11,8 @@
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
+#include <cereal/archives/json.hpp>
+
 #include <iostream>
 
 namespace po = boost::program_options;
@@ -52,6 +54,9 @@ namespace efscape {
       	  ModelHomeI::getLogger()->setLevel(log4cxx::Level::getError());
       	}
 
+	// check attributes
+	//for (const auto& it : mC_variable_
+	
       	// load libraries
       	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
       		      "Loading libraries");
@@ -77,20 +82,18 @@ namespace efscape {
       	  throw std::logic_error(lC_message.c_str());
       	}
 
-      	// run model
+	// run model
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		      "Running simulation of model...\n");
-      	efscape::impl::runSim(lCp_model.get());
- 
+      	// efscape::impl::runSim(lCp_model.get());
+
       }
       catch(std::logic_error lC_excp) {
-      	std::cerr
-      	  << "Exception encounted during attempt to load model libraries: <"
-      	  << lC_excp.what() << ">\n";
+	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+		      "Exception encounted during attempt to load model libraries: <"
+		      << lC_excp.what() << ">");
       	return EXIT_FAILURE;
       }
-
-      std::cout << "Hello World!\n";
 
       return li_status;
     }
@@ -103,7 +106,8 @@ namespace efscape {
       int li_status =
 	efscape::utils::CommandOpt::parse_options(argc,argv);	// parent method
       if (li_status != 0) {
-	std::cout << "Illegal options!\n";
+	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+		      "Illegal options!");
 	return li_status;
       }
 

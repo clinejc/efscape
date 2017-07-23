@@ -9,6 +9,7 @@
 #include <efscape/impl/SimRunner.hpp>
 
 #include <efscape/impl/ModelHomeI.hpp>
+#include <efscape/impl/ModelType.hpp>
 #include <efscape/impl/adevs_json.hpp>
 
 #include <json/json.h>
@@ -154,12 +155,18 @@ namespace efscape {
     //-------------------------
 
     Json::Value SimRunner::get_info() {
-      Json::Value lC_jsonObj;
-      lC_jsonObj["info"] =
-	"Implements an adevs-based model wrapper that encapsulates a simulation model session";
-      lC_jsonObj["library"] = "efscape-impl";
+      // Json::Value lC_jsonObj;
+      // lC_jsonObj["info"] =
+      // 	"Implements an adevs-based model wrapper that encapsulates a simulation model session";
+      // lC_jsonObj["library"] = "efscape-impl";
 
-      return lC_jsonObj;
+      // return lC_jsonObj;
+      ModelType lC_model_type(utils::type<SimRunner>(),
+			      "Implements an adevs-based model wrapper that encapsulates a simulation model session.",
+			      gcp_libname,
+			      1);
+
+      return lC_model_type.toJSON();
     }
 
     ///

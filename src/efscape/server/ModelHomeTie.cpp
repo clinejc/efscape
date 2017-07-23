@@ -13,7 +13,6 @@
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
-#include <boost/property_tree/json_parser.hpp>
 #include <json/json.h>
 
 #include <sstream>

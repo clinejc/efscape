@@ -8,7 +8,7 @@ hh_sources += boost_utils.hpp
 hh_sources += boost_utils.ipp
 
 cc_sources = CommandOpt.cpp
-cc_sources += type.cp
+cc_sources += type.cpp
 cc_sources += boost_utils.cpp
 
 library_includedir = $(includedir)/$(PACKAGE)/utils
