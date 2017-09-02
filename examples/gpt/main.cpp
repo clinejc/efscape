@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/SimRunner.hpp>
 
 #include "job.h"
 #include "job.hpp"
@@ -24,6 +25,7 @@ using namespace std;
 
 #include <map>
 #include <sstream>
+#include <fstream>
 
 namespace cereal
 {
@@ -79,11 +81,6 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(adevs::Atomic<PortValue>,
 
 int main() 
 {
-  //
-  // 2017-06-20: testing cereal serialization
-  //
-  cereal::JSONOutputArchive ar( std::cout );
-
   /// Get experiment parameters
   double g, p, t;
   cout << "Genr period: ";
@@ -92,73 +89,140 @@ int main()
   cin >> p;
   cout << "Observation time: ";
   cin >> t;
-  
-  /// Create and connect the atomic components using a digraph model.
-  std::shared_ptr<adevs::Digraph<job> > model(new adevs::Digraph<job>());
-  efscape::impl::DIGRAPH* lCp_digraph = new efscape::impl::DIGRAPH();
-  std::shared_ptr<efscape::impl::DEVS> lCp_rootmodel( lCp_digraph );
+
+  /// "non-efscape" version of the gpt coupled model
+  {
+    /// Create and connect the atomic components using a digraph model.
+    genr* gnr = new genr(g); 
+    transd* trnsd = new transd(t);
+    proc* prc = new proc(p);
+
+    std::shared_ptr<adevs::Digraph<job> > model(new adevs::Digraph<job>());
+
+    /// Add the components to the digraph
+    model->add(gnr);
+    model->add(trnsd);
+    model->add(prc);
+
+    /// Establish component coupling
+    model->couple(gnr, gnr->out, trnsd, trnsd->ariv);
+    model->couple(gnr, gnr->out, prc, prc->in);
+    model->couple(prc, prc->out, trnsd, trnsd->solved);
+    model->couple(trnsd, trnsd->out, gnr, gnr->stop);
+
+    /// Create a simulator for the model and run it until
+    /// the model passivates.
+    adevs::Simulator<PortValue> sim(model.get());
+
+    std::cout << "Running the \"non-efscape\" version of the gpt model..\n";
+    while (sim.nextEventTime() < DBL_MAX) {
+      sim.execNextEvent();
+    }
+    /// Done!
+
+    ///
+    /// testing cereal serialization with the "non-efscape" version
+    ///
+    std::cout << "Testing cereal serialization with \"non=efscape\" version...\n";
+    std::ofstream os00("gpt.json");
+    cereal::JSONOutputArchive ar00( os00 );
+
+    ar00( cereal::make_nvp("model", model) );
+  }
+
+  /// "efscape" version of gpt coupled model
+  {
+    /// Create and connect the atomic components using a digraph model.
+    gpt::genr* lCp_gnr = new gpt::genr(g);
+    gpt::transd* lCp_trnsd = new gpt::transd(t);
+    gpt::proc* lCp_prc = new gpt::proc(p);
+
+    efscape::impl::DIGRAPH* lCp_digraph = new efscape::impl::DIGRAPH();
+
+    /// Add the components to the digraph
+    lCp_digraph->add(lCp_gnr);
+    lCp_digraph->add(lCp_trnsd);
+    lCp_digraph->add(lCp_prc);
+
+    /// Establish component coupling
+    lCp_digraph->couple(lCp_gnr, lCp_gnr->out, lCp_trnsd, lCp_trnsd->ariv);
+    lCp_digraph->couple(lCp_gnr, lCp_gnr->out, lCp_prc, lCp_prc->in);
+    lCp_digraph->couple(lCp_prc, lCp_prc->out, lCp_trnsd, lCp_trnsd->solved);
+    lCp_digraph->couple(lCp_trnsd, lCp_trnsd->out, lCp_gnr, lCp_gnr->stop);
+
+    /// Add additional component coupling to root model output
+    lCp_digraph->couple(lCp_trnsd, lCp_trnsd->log,
+    			lCp_digraph, "gpt_log");
+ 
+    /// Create a simulator for the model and run it until
+    /// the model passivates.
+    efscape::impl::DEVSPtr lCp_rootmodel(lCp_digraph);
       
-  genr* gnr = new genr(g);
-  gpt::genr* lCp_gnr = new gpt::genr(g);
-  
-  transd* trnsd = new transd(t);
-  gpt::transd* lCp_trnsd = new gpt::transd(t);
-  
-  proc* prc = new proc(p);
-  gpt::proc* lCp_prc = new gpt::proc(p);
+    efscape::impl::SimRunner* lCp_simRunner =
+      new efscape::impl::SimRunner();
+    lCp_simRunner->setWrappedModel(lCp_rootmodel);
 
-  /// Add the components to the digraph
-  model->add(gnr);
-  model->add(trnsd);
-  model->add(prc);
-
-  lCp_digraph->add(lCp_gnr);
-  lCp_digraph->add(lCp_trnsd);
-  lCp_digraph->add(lCp_prc);
-
-  /// Establish component coupling
-  model->couple(gnr, gnr->out, trnsd, trnsd->ariv);
-  model->couple(gnr, gnr->out, prc, prc->in);
-  model->couple(prc, prc->out, trnsd, trnsd->solved);
-  model->couple(trnsd, trnsd->out, gnr, gnr->stop);
-  
-  lCp_digraph->couple(lCp_gnr, lCp_gnr->out, lCp_trnsd, lCp_trnsd->ariv);
-  lCp_digraph->couple(lCp_gnr, lCp_gnr->out, lCp_prc, lCp_prc->in);
-  lCp_digraph->couple(lCp_prc, lCp_prc->out, lCp_trnsd, lCp_trnsd->solved);
-  lCp_digraph->couple(lCp_trnsd, lCp_trnsd->out, lCp_gnr, lCp_gnr->stop);
-
-  /// Create a simulator for the model and run it until
-  /// the model passivates.
-  adevs::Simulator<PortValue> sim(model.get());
-
-  while (sim.nextEventTime() < DBL_MAX) {
-    ar(cereal::make_nvp("proc", *prc) );
-    std::cout << std::endl;
+    lCp_rootmodel.reset(lCp_simRunner);   
+    adevs::Simulator<efscape::impl::IO_Type> lCp_sim(lCp_rootmodel.get());
     
-    sim.execNextEvent();
+    std::cout << "Running the \"efscape\" version of the gpt model...\n";
+    while (lCp_sim.nextEventTime() < DBL_MAX) {
+      lCp_sim.execNextEvent();
+
+      adevs::Bag< efscape::impl::IO_Type > lCC_output;
+      efscape::impl::get_output(lCC_output, lCp_rootmodel.get());
+      adevs::Bag< efscape::impl::IO_Type>::iterator
+      	i = lCC_output.begin();
+      for ( ; i != lCC_output.end(); i++) {
+	std::cout << "Processing event on port<"
+		  << (*i).port << ">...\n";
+
+	if ((*i).port == "gpt_log") {
+	  try {
+	    Json::Value lC_messages =
+	      boost::any_cast<Json::Value>( (*i).value );
+	    std::cout << "rootmodel output=>"
+		      << lC_messages << std::endl;
+	  }
+	  catch(const boost::bad_any_cast &) {
+	    std::cout << "Unable to cast input as <Json::Value>\n";
+	  }
+	}
+      }	// if ((*i).model ==...
+    }
+    /// Done!
+
+    ///
+    /// testing cereal serialization with the "efscape" version
+    ///
+    std::cout << "Testing cereal serialization with \"efscape\" version...\n";
+
+    /// save the model data to a string stream
+    stringstream ss;
+    {
+      efscape::impl::saveAdevsToJSON(lCp_rootmodel,ss);
+      
+      /// And save the data from the original model to a file
+      std::ofstream os01("gpt_efscape01.json");
+      os01 << ss.str() << std::endl;
+    }
+
+    /// clone the original model by loading the model data from the string stream
+    efscape::impl::DEVSPtr lCp_modelclone;
+
+    {
+      lCp_modelclone = efscape::impl::loadAdevsFromJSON(ss);
+
+      /// save the data from the "cloned" model to another file
+      std::ofstream os02("gpt_efscape02.json");
+      efscape::impl::saveAdevsToJSON(lCp_modelclone, os02);
+      os02 << std::endl;
+    }
   }
-  /// Done!
+  
+ 
 
-  ///
-  /// testing cereal serialization
-  ///
-  /// first with the "non-efscape" version of the model
-  ar( cereal::make_nvp("model", model) );
 
-  ///
-  /// now with the "efscape" version of the model
-  ///
-
-  stringstream ss;
-  {
-    efscape::impl::saveAdevsToJSON(lCp_rootmodel,ss);
-  }
-
-  efscape::impl::DEVSPtr lCp_modelclone;
-  {
-    lCp_modelclone = efscape::impl::loadAdevsFromJSON(ss);
-    efscape::impl::saveAdevsToJSON(lCp_modelclone, std::cout);
-  }
 
   return 0;
 }

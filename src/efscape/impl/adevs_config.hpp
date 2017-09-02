@@ -71,8 +71,6 @@ namespace efscape {
     DEVSPtr cloneModel( const DEVSPtr& aCp_model );
 
     void runSim( DEVS* aCp_model, double ad_timeMax = DBL_MAX );
- 
-    bool initializeModel( DEVS* aCp_model );
 
     // Returns the root model of the adevs hierarchy.containing this model.
     adevs::Devs<IO_Type>*
@@ -158,7 +156,7 @@ namespace efscape {
      * @version 0.01 created 11 Oct 2007, revised 11 Oct 2007
      */
     template <class InputType, class OutputType>
-    class InputConsumer 
+    class InputConsumer
     {
     public:
 
@@ -205,12 +203,12 @@ namespace efscape {
     typedef OutputProducer<CellEvent,IO_Type> CellPortProducer;
     typedef OutputProducer<IO_Type,CellEvent> PortCellProducer;
 
-    typedef boost::shared_ptr< PortPortConsumer > PortPortConsumerPtr;
-    typedef boost::shared_ptr< PortCellConsumer > PortCellConsumerPtr;
-    typedef boost::shared_ptr< CellPortConsumer > CellPortConsumerPtr;
-    typedef boost::shared_ptr< PortPortProducer > PortPortProducerPtr;
-    typedef boost::shared_ptr< PortCellProducer > PortCellProducerPtr;
-    typedef boost::shared_ptr< CellPortProducer > CellPortProducerPtr;
+    typedef std::shared_ptr< PortPortConsumer > PortPortConsumerPtr;
+    typedef std::shared_ptr< PortCellConsumer > PortCellConsumerPtr;
+    typedef std::shared_ptr< CellPortConsumer > CellPortConsumerPtr;
+    typedef std::shared_ptr< PortPortProducer > PortPortProducerPtr;
+    typedef std::shared_ptr< PortCellProducer > PortCellProducerPtr;
+    typedef std::shared_ptr< CellPortProducer > CellPortProducerPtr;
 
     typedef std::vector<PortPortConsumerPtr> PortPortConsumerVector;
     typedef std::vector<PortCellConsumerPtr> PortCellConsumerVector;

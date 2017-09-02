@@ -4,7 +4,6 @@
 // Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-
 #ifndef EFSCAPE_IMPL_MODELTYPE_HPP
 #define EFSCAPE_IMPL_MODELTYPE_HPP
 
@@ -15,27 +14,26 @@ namespace efscape {
   namespace impl {
 
     // forward declarations
-    struct ModelType;
+    class ModelType;
 
     // typedefs
     typedef std::shared_ptr<ModelType> ModelTypePtr;
 
     /**
-     * Helper function that wraps a ModelType object in a smart pointer.
+     * Helper function that exports a data type to JSON format
      *
-     * @param aC_model_name type name
-     * @param aC_description description
-     * @param aC_library_name library name
+     * @tparam DataType data type
+     * @param value data value
+     * @returns JSON value
      */
-    ModelTypePtr createModelTypePtr(std::string aC_model_name,
-				    std::string aC_description,
-				    std::string aC_library_name);
+    template <class DataType>
+    Json::Value exportDataTypeToJSON(DataType value);
 
     /**
      * A simple struction for hold information about an object class
      *
      * @author Jon Cline <clinej@alumni.stanford.edu>
-     * @version 0.0.2 created 13 Jul 2017, updated 15 Jul 2017
+     * @version 0.0.3 created 13 Jul 2017, updated 14 Aug 2017
      */
     class ModelType
     {
@@ -47,14 +45,14 @@ namespace efscape {
       /**
        * constructor
        *
-       * @param aC_model_name type name
+       * @param aC_typeName type name
        * @param aC_description description
-       * @param aC_library_name library name
+       * @param aC_libraryName library name
        * @param ai_version type version
        */
-      ModelType(std::string aC_model_name,
+      ModelType(std::string aC_typeName,
 		std::string aC_description,
-		std::string aC_library_name,
+		std::string aC_libraryName,
 		int ai_version);
 
       virtual ~ModelType();
@@ -62,24 +60,49 @@ namespace efscape {
       //
       // accessor/mutator methods
       //
-      std::string model_name() const;
-	
+      std::string typeName() const;
+
+      std::string description() const;
+
+      std::string libraryName() const;
+
+      int version() const;
+
+      Json::Value addInputPort(std::string aC_portName,
+			       Json::Value aC_portValue);
+
+      Json::Value addOutputPort(std::string aC_portName,
+			 Json::Value aC_portValue);
+
+      Json::Value setProperties(Json::Value aC_properties);
+      Json::Value getProperties() const;
+
       Json::Value toJSON() const;
 
     protected:
 
-      void addInputPort(std::string aC_port_name,
-			Json::Value aC_port_value);
+      /** model type name */
+      std::string mC_typeName;
 
-      void addOutputPort(std::string aC_port_name,
-			 Json::Value aC_port_value);
+      /** description */
+      std::string mC_description;
 
-      void setProperties(Json::Value aC_properties);
+      /** library name */
+      std::string mC_libraryName;
 
-      /** model type attributes*/
-      Json::Value mC_attributes;
+      /** model type version */
+      int mi_version;
 
-    };
+      /** input ports */
+      Json::Value mC_inputPorts;
+
+      /** output ports */
+      Json::Value mC_outputPorts;
+
+      /** model properties */
+      Json::Value mC_properties;
+      
+    };				// class ModelType
     
   } // namespace impl
 } // namespace efscape

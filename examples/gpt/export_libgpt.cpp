@@ -2,20 +2,24 @@
 #include "genr.hpp"
 #include "proc.hpp"
 #include "transd.hpp"
+#include "gpt_config.hpp"
 
 #include <json/json.h>
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
+#include <efscape/impl/ModelType.ipp> // for specifying model metadata
 
 #include <efscape/utils/type.hpp>
 
-#include <adevs/adevs_cereal.hpp>
+// #include <adevs/adevs_cereal.hpp>
 #include <cereal/types/base_class.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/vector.hpp>
 #include <cereal/access.hpp>
+
+#include <sstream>
 
 namespace cereal
 {
@@ -44,18 +48,50 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(efscape::impl::ATOMIC,
 
 #include <boost/function.hpp>
 
+namespace efscape {
+  namespace impl {
+    template Json::Value exportDataTypeToJSON<::gpt::job>(gpt::job value);
+  }
+}
+
 namespace gpt {
 
   // library name: gpt
-  char const gcp_libname[] = "gpt";
+  char const gcp_libname[] = "libgpt";
 
+  // register genr model
+  const bool lb_genr_registered =
+    efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
+    getModelFactory().
+    registerType<genr>(genr::getModelType().typeName(),
+    		       genr::getModelType().toJSON());
+
+  // register proc model
+  const bool lb_proc_registered =
+    efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
+    getModelFactory().
+    registerType<proc>(proc::getModelType().typeName(),
+		       proc::getModelType().toJSON());
+    // registerType<proc>(efscape::utils::type<proc>());
+  
+  // register transd model
+  const bool lb_transd_registered =
+    efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
+    getModelFactory().
+    registerType<transd>(transd::getModelType().typeName(),
+			 transd::getModelType().toJSON());
+
+  //
+  // export "gpt coupled model"
+  //
+  
   /**
    * Creates a gpt coupled model.
    *
    * @param aC_args arguments embedded in JSON
    * @returns handle to a gpt model
    */
-  efscape::impl::DEVS* createGptCoupledModel(Json::Value aC_args) {
+  efscape::impl::DEVS* createGptModel(Json::Value aC_args) {
 
     // (default) parameters
     double g = 1;
@@ -107,30 +143,41 @@ namespace gpt {
     lCp_digraph->couple(lCp_trnsd, lCp_trnsd->out, lCp_gnr, lCp_gnr->stop);
 
     return lCp_digraph;
-  }
+  } // createGptModel(...)
 
-  // register genr model
-  const bool lb_genr_registered =
-    efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
-    getModelFactory().
-    registerType<genr>(efscape::utils::type<genr>());
+  // Metadata for a GPT coupled model
+  class GptModelType : public efscape::impl::ModelType
+  {
+  public:
+    GptModelType() :
+      efscape::impl::ModelType("gpt::GPT",
+			       "This is a implementation of the classic GPT coupled model that couples a generator model (gpt::genr) that generates jobs at a fixed rate to a processor model (gpt::proc) that serves one job at a time at a fixed rate. Both models are coupled to a transducer (gpt::transd) model that computes various statistics about the performance of the queuing system",
+			       gcp_libname,
+			       1)
+    {
+      //========================================================================
+      // output ports:
+      // * "log": Json::Value
+      //========================================================================
+      addOutputPort(transd::log, efscape::utils::type<Json::Value>());
 
-  // register proc model
-  const bool lb_proc_registered =
-    efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
-    getModelFactory().
-    registerType<proc>(efscape::utils::type<proc>());
+      //========================================================================
+      // properties
+      //========================================================================
+      Json::Value lC_properties;
+      lC_properties["period"] = 1.0;
+      lC_properties["processing_time"] = 2.0;
+      lC_properties["observ_time"] = 10.0;
+      
+      setProperties(lC_properties);
+    }
+  };
   
-  // register transd model
-  const bool lb_transd_registered =
-    efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
-    getModelFactory().
-    registerType<transd>(efscape::utils::type<transd>());
-
   // register gpt coupled model
   const bool lb_gpt_registered =
     efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
     getModelFactory().
-    registerTypeWithArgs(std::string("gpt::gpt_coupled_model"),
-			 createGptCoupledModel);
+    registerTypeWithArgs(GptModelType().typeName(),
+			 createGptModel,
+			 GptModelType().toJSON());
 }

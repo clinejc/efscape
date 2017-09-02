@@ -1,4 +1,4 @@
 ## root source directory
 
 # Build in these directories:
-SUBDIRS= efscape simplesim
+SUBDIRS= efscape

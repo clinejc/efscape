@@ -21,7 +21,7 @@ noinst_LTLIBRARIES = libefscape-idl.la
 libefscape_idl_la_SOURCES= $(hh_idl_sources) $(cc_idl_sources)
 
 %.h %.cpp: %.ice
-	slice2cpp -I$(top_srcdir)/src --impl --include-dir efscape $<
+	slice2cpp -I$(top_srcdir)/src --impl-c++98 --include-dir efscape $<
 
 clean-source:
 	rm -f $(impl_sources)

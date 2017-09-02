@@ -27,12 +27,12 @@ namespace efscape {
 
     BuildSim::BuildSim() :
       efscape::utils::CommandOpt(),
-      mC_ModelName("") {}
+      mC_modelName("") {}
 
     const char* BuildSim::program_name() {
       return BuildSim::mScp_program_name;
     }
-  
+
     const char* BuildSim::ProgramName() {
       return BuildSim::mScp_program_name;
     }
@@ -54,33 +54,38 @@ namespace efscape {
       	  ModelHomeI::getLogger()->setLevel(log4cxx::Level::getError());
       	}
 
-	// check attributes
-	//for (const auto& it : mC_variable_
-	
       	// load libraries
-      	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+      	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
       		      "Loading libraries");
-      	efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().LoadLibraries();
+      	Singleton<ModelHomeI>::Instance().LoadLibraries();
 
-      	// check model name
-      	if (mC_ModelName == "") {
-      	  std::cout << "Missing model name!\n";
-	  mC_ModelName = "gpt::gpt_coupled_model";
-      	  // return EXIT_FAILURE;
+      	// check model type name
+      	if (mC_modelTypeName == "") {
+	  std::cerr << "*** Error: modelTypeName not specified! ***"
+		    << std::endl;
+	  usage();
+
+      	  return EXIT_FAILURE;
       	}
-	
-      	// load model
-      	std::unique_ptr<efscape::impl::DEVS> lCp_model;
-      
-      	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-      		      "Retrieving the model from the factory");
-      	lCp_model.reset( efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().createModel( mC_ModelName.c_str() ) );
 
-      	if (lCp_model.get() == 0) {
-      	  std::string lC_message = "Unable to create model <" + mC_ModelName
+      	// attempt to load model
+      	DEVSPtr lCp_model;
+
+      	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+      		      "Retrieving the model from the factory");
+        	lCp_model.reset(
+  	  Singleton<ModelHomeI>::Instance()
+  	  .getModelFactory()
+  	  .createObject( mC_modelTypeName, Json::Value() ) );
+
+      	if (lCp_model == nullptr) {
+      	  std::string lC_message = "Unable to create model <" + mC_modelName
       	    + ">";
       	  throw std::logic_error(lC_message.c_str());
       	}
+
+	// retrieve metadata
+
 
 	// run model
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -101,7 +106,10 @@ namespace efscape {
     int BuildSim::parse_options(int argc, char *argv[])
     {
       mC_extended_description.add_options()
-	("ModelName", po::value<std::string>(), "model name");
+	("modelTypeName", po::value<std::string>(), "model type name");
+
+      mC_extended_description.add_options()
+	("modelName", po::value<std::string>(), "model name");
 
       int li_status =
 	efscape::utils::CommandOpt::parse_options(argc,argv);	// parent method
@@ -112,13 +120,14 @@ namespace efscape {
       }
 
 
-      if (mC_variable_map.count("ModelName")) {
-	mC_ModelName = mC_variable_map["ModelName"].as<std::string>();
-	std::cout << "model name = <" << mC_ModelName << ">\n";	
+      if (mC_variable_map.count("modelTypeName")) {
+	mC_modelName = mC_variable_map["modelTypeName"].as<std::string>();
+      }
+      if (mC_variable_map.count("modelName")) {
+	mC_modelName = mC_variable_map["modelName"].as<std::string>();
+	std::cout << "model name = <" << mC_modelName << ">\n";
       }
 
-      std::cout << "BuildSim::parse_options(...)\n";
-      
       return li_status;
     }
 
@@ -129,9 +138,10 @@ namespace efscape {
 		<< "where [] indicates optional option:\n\n"
 		<< mC_description
 		<< "examples:\n\t\t"
+		<< program_name() << " --modelTypeName model_type_name [--modelName model_name]\n\t\t"
 		<< program_name() << " param_name\n\t\t"
 		<< program_name() << " -d -o output_name param_name\n\n";
- 
+
       exit( exit_value );
     }
 

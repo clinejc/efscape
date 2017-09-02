@@ -5,16 +5,27 @@
 #include <cstdlib>
 
 #include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/ModelType.hpp>
+
 #include "job.hpp"
 
 #include <adevs/adevs_cereal.hpp>
+#include <json/json.h>
 
 namespace gpt {
+
+  /** transd model metadata */
+  class transdType : public efscape::impl::ModelType
+  {
+  public:
+    transdType();
+  };
+
   /*
     The transducer computes various statistics about the
     performance of the queuing system.  It receives new jobs
     on its ariv port, finished jobs on its solved port,
-    and generates and output on its out port when the observation
+    and generates an output on its out port when the observation
     interval has elapsed.
   */
   class transd: public adevs::Atomic<efscape::impl::IO_Type>
@@ -53,9 +64,18 @@ namespace gpt {
     /// Model input port
     static const efscape::impl::PortType ariv;
     static const efscape::impl::PortType solved;
+    static const efscape::impl::PortType properties_in;
     
     /// Model output port
     static const efscape::impl::PortType out;
+    static const efscape::impl::PortType log;
+
+    /**
+     * Returns the model type
+     *
+     * @returns const reference to model type
+     */
+    static const efscape::impl::ModelType& getModelType();
 
   private:
     friend class cereal::access;
@@ -77,6 +97,15 @@ namespace gpt {
     std::vector<job> jobs_arrived;
     std::vector<job> jobs_solved; 
     double observation_time, sigma, total_ta, t;
+
+    /** message buffer in JSON format */
+    Json::Value mC_messages;
+
+    bool is_broadcasting;
+
+    /** pointer to model type */
+    static efscape::impl::ModelTypePtr mSCp_modelType;
+
   };
 
 }

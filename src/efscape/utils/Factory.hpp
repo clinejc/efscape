@@ -95,12 +95,16 @@ namespace efscape {
       bool
       registerTypeWithArgs(IdentifierType id,
 			   boost::function<BaseType* (Json::Value)>
-			   aF_createObj )
+			   aF_createObj,
+			   Json::Value properties=Json::Value())
       {	
 	bool lb_registered =
 	  (mCF_factory_with_args_map.
 	   insert( std::make_pair(id,
 				  aF_createObj) ) ).second;
+	if (lb_registered)
+	  mCC_properties_map[id] = properties;
+
 	return lb_registered;
       }
       

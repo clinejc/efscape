@@ -82,7 +82,6 @@ AC_CONFIG_FILES([Makefile
 		 src/efscape/utils/Makefile
 		 src/efscape/impl/Makefile
 		 src/efscape/server/Makefile
-		 src/simplesim/Makefile
 		 examples/Makefile
 		 examples/gpt/Makefile])
 AC_OUTPUT

@@ -11,7 +11,7 @@
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
-#include <efscape/impl/AdevsModel.hpp>
+// #include <efscape/impl/AdevsModel.hpp>
 #include <efscape/impl/SimRunner.hpp>
 
 #include <boost/filesystem/operations.hpp>
@@ -82,10 +82,10 @@ namespace efscape {
 
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "Loading libraries");
-	Singleton<ModelHomeI>::Instance().LoadLibraries();	
+	Singleton<ModelHomeI>::Instance().LoadLibraries();
 
 	// processing argument (should be only 1 input file)
-	std::unique_ptr<DEVS> lCp_model;
+	std::shared_ptr<DEVS> lCp_model;
 
 	std::string lC_ParmName = (*this)[0];
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
@@ -99,10 +99,8 @@ namespace efscape {
 	boost::filesystem::path p =
 	  boost::filesystem::path(lC_ParmName.c_str());
 	if (p.extension().string() == ".xml") {
-	  lCp_model.reset( Singleton<ModelHomeI>::Instance().
-			   createModelFromXML(lC_ParmName.c_str()) );
-	}
-	else if (p.extension().string() == ".json") {
+	    lCp_model = DEVSPtr( loadAdevs(lC_ParmName.c_str()) );
+	} else if (p.extension().string() == ".json") {
 	  // try to load the parameter file
 	  std::ifstream parmFile(lC_ParmName.c_str());
 
@@ -115,12 +113,13 @@ namespace efscape {
 	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 			  buf.str() );
 
-	    lCp_model.reset( Singleton<ModelHomeI>::Instance().
-			     createModelFromJSON(buf.str()) );
+	    lCp_model =
+	      Singleton<ModelHomeI>::Instance().
+	      createModelFromJSON(buf.str());
 	  }
 	}
 
-	if (lCp_model.get() == 0) {
+	if (lCp_model == nullptr) {
 	  LOG4CXX_ERROR(ModelHomeI::getLogger(),
 			"Unable to create model from parameter file <"
 			<< lC_ParmName << ">");
@@ -131,30 +130,30 @@ namespace efscape {
       	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
       		      "Creating simulator...");
       	adevs::Simulator<IO_Type> lCp_simulator(lCp_model.get() );
- 
+
       	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
       		      "Attempt to create simulation model successful!"
       		      << "...Initializing simulation...");
 
-      	if (!initializeModel(lCp_model.get()) ) // initialize model
-      	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			"Unable to initialize model using InitObject interface...");
-
-      	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-      		      "Running simulation...");
+      // 	if (!initializeModel(lCp_model.get()) ) // initialize model
+      // 	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+			// "Unable to initialize model using InitObject interface...");
+      //
+      // 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+      // 		      "Running simulation...");
 
 	// initialize the simulation clock
 	double ld_timeMax = adevs_inf<double>();
 	ClockIPtr lCp_clock;
-	AdevsModel* lCp_RootModel = // note: root model derived from model
-	  dynamic_cast<AdevsModel*>(lCp_model.get());
+	// AdevsModel* lCp_RootModel = // note: root model derived from model
+	//   dynamic_cast<AdevsModel*>(lCp_model.get());
 	SimRunner* lCp_SimRunner = // note: alternative root model
 	  dynamic_cast<SimRunner*>(lCp_model.get());
-	
-	if (lCp_RootModel) {
-	  lCp_clock = lCp_RootModel->getClockIPtr();
-	}
-	else if (lCp_SimRunner) {
+
+	// if (lCp_RootModel) {
+	//   lCp_clock = lCp_RootModel->getClockIPtr();
+	// }
+	/*else*/ if (lCp_SimRunner) {
 	  lCp_clock = lCp_SimRunner->getClockIPtr();
 	}
 
@@ -169,7 +168,7 @@ namespace efscape {
 			<< lCp_clock->timeUnits());
 
       	}
-	
+
       	// simulate model until time max
 	double ld_time = 0.;
       	while ( (ld_time = lCp_simulator.nextEventTime())
@@ -192,7 +191,7 @@ namespace efscape {
       		      "Error occurred parsing argument <"
       		      << (*this)[0] << ">");
       }
-  
+
       return EXIT_SUCCESS;
 
     } // RunSim::execute()
@@ -237,7 +236,7 @@ namespace efscape {
 		<< "examples:\n\t\t"
 		<< program_name() << " param_name\n\t\t"
 		<< program_name() << " -d -o output_name param_name\n\n";
- 
+
       exit( exit_value );
     }
 

@@ -9,17 +9,11 @@
 
 #include <efscape/impl/adevs_config.hpp>
 #include <efscape/utils/CommandOpt.hpp>
-#include <boost/function.hpp>
-#include <log4cxx/logger.h>
-
-// boost serialization definitions
-#include <boost/serialization/version.hpp>
-#include <boost/serialization/type_info_implementation.hpp>
-
-#include <boost/dll.hpp>	// boost dynamic library
-
 #include <efscape/utils/Factory.hpp>
-#include <efscape/utils/type.hpp>
+
+#include <log4cxx/logger.h>
+#include <boost/dll.hpp>	// boost dynamic library
+#include <boost/function.hpp>
 #include <string>
 #include <map>
 #include <stdexcept>
@@ -31,13 +25,13 @@ namespace efscape {
     // typedefs
     typedef efscape::utils::Factory< std::string, DEVS > model_factory;
     typedef efscape::utils::Factory< std::string, efscape::utils::CommandOpt > command_factory;
-    
+
     /**
      * Implements the local server-side ModelHome interface, a factory for
      * simulation models.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 3.2.0 created 24 Dec 2006, revised 23 Apr 2017
+     * @version 3.3.0 created 24 Dec 2006, revised 20 Aug 2017
      */
     class ModelHomeI
     {
@@ -47,12 +41,12 @@ namespace efscape {
       virtual ~ModelHomeI();
 
       // methods for creating models
-      adevs::Devs<IO_Type>* createModel(const char* acp_classname);
-      adevs::Devs<IO_Type>* createModelFromXML(const char* acp_filename)
+      DEVSPtr createModel(std::string aC_classname);
+      DEVSPtr createModelFromXML(std::wstring aC_buffer)
 	throw(std::logic_error);
-      adevs::Devs<IO_Type>* createModelFromXML(const std::wstring& aCr_buffer)
+      DEVSPtr createModelFromJSON(std::string aC_JSONstring)
 	throw(std::logic_error);
-      adevs::Devs<IO_Type>* createModelFromJSON(const std::string& aCr_JSONstring)
+      DEVSPtr createModelFromParameters(std::string aC_ParameterString)
 	throw(std::logic_error);
 
       model_factory& getModelFactory();

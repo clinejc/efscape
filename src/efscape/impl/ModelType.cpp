@@ -10,34 +10,23 @@
 namespace efscape {
   namespace impl {
 
-    ModelType::ModelType()
+    ModelType::ModelType() :
+      mC_typeName(""),
+      mC_description(""),
+      mC_libraryName(""),
+      mi_version(1)
     {
-      mC_attributes["model_name"] = "";
-      mC_attributes["description"] = "";
-      mC_attributes["library_name"] = "";
-      mC_attributes["version"] = 1;
-
-      mC_attributes["ports"]["inputs"] = Json::Value();
-      mC_attributes["ports"]["outputs"] = Json::Value();
-
-      mC_attributes["properties"] = Json::Value();
     }
 
-    ModelType::ModelType(std::string aC_model_name,
+    ModelType::ModelType(std::string aC_typeName,
 			 std::string aC_description,
-			 std::string aC_library_name,
-			 int ai_version)
+			 std::string aC_libraryName,
+			 int ai_version) :
+      mC_typeName(aC_typeName),
+      mC_description(aC_description),
+      mC_libraryName(aC_libraryName),
+      mi_version(ai_version)
     {
-      mC_attributes["model_name"] = aC_model_name;
-      mC_attributes["description"] = aC_description;
-      mC_attributes["library_name"] = aC_library_name;
-      mC_attributes["version"] = ai_version;
-
-      mC_attributes["ports"]["inputs"] = Json::Value();
-      mC_attributes["ports"]["outputs"] = Json::Value();
-
-      mC_attributes["properties"] = Json::Value();
-
     }
 
     ModelType::~ModelType() {}
@@ -46,43 +35,66 @@ namespace efscape {
     // accessor/mutator methods
     //
     
-    std::string ModelType::model_name() const {
-      return mC_attributes["model_name"].asString();
+    std::string ModelType::typeName() const {
+      return mC_typeName;
+    }
+
+    std::string ModelType::description() const {
+      return mC_description;
+    }
+
+    std::string ModelType::libraryName() const {
+      return mC_libraryName;
+    }
+
+    int ModelType::version() const {
+      return mi_version;
     }
     
-    void ModelType::addInputPort(std::string aC_port_name,
-				 Json::Value aC_port_value)
+    Json::Value
+    ModelType::addInputPort(std::string aC_portName,
+			    Json::Value aC_portValue)
     {
-      mC_attributes["ports"]["inputs"][aC_port_name] = aC_port_value;
+      mC_inputPorts[aC_portName] = aC_portValue;
+      return mC_inputPorts;
     }
 
-    void ModelType::addOutputPort(std::string aC_port_name,
-				  Json::Value aC_port_value)
+    Json::Value
+    ModelType::addOutputPort(std::string aC_portName,
+			     Json::Value aC_portValue)
     {
-      mC_attributes["ports"]["outputs"][aC_port_name] = aC_port_value;
-
+      mC_outputPorts[aC_portName] = aC_portValue;
+      return mC_outputPorts;
     }
 
-    void ModelType::setProperties(Json::Value aC_properties)
+    Json::Value
+    ModelType::setProperties(Json::Value aC_properties)
     {
-      mC_attributes["properties"] = aC_properties;
+      mC_properties = aC_properties;
+      
+      return mC_properties;
+    }
+
+    Json::Value
+    ModelType::getProperties() const {
+      return mC_properties;
     }
 
     Json::Value ModelType::toJSON() const {
-      return mC_attributes;
-    }
+      Json::Value lC_attributes;
+      
+      lC_attributes["typeName"] = mC_typeName;
+      lC_attributes["description"] = mC_description;
+      lC_attributes["libraryName"] = mC_libraryName;
+      lC_attributes["version"] = mi_version;
 
-    ModelTypePtr createModelTypePtr(std::string aC_model_name,
-				  std::string aC_description,
-				  std::string aC_library_name)
-    {
-      ModelTypePtr
-	lCp_info(new
-		 ModelType(aC_model_name,
-			  aC_description,
-			  aC_library_name,
-			  1) );
-      return lCp_info;
+      lC_attributes["ports"]["inputs"] = mC_inputPorts;
+      lC_attributes["ports"]["outputs"] = mC_outputPorts;
+
+      lC_attributes["properties"] = mC_properties;
+
+      
+      return lC_attributes;
     }
     
   } // namespace impl

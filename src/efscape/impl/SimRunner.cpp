@@ -9,11 +9,9 @@
 #include <efscape/impl/SimRunner.hpp>
 
 #include <efscape/impl/ModelHomeI.hpp>
+#include <efscape/impl/ModelHomeSingleton.hpp>
 #include <efscape/impl/ModelType.hpp>
-#include <efscape/impl/adevs_json.hpp>
-
-#include <json/json.h>
-#include <boost/property_tree/json_parser.hpp>
+// #include <efscape/impl/adevs_json.hpp>
 
 #include <sstream>
 
@@ -27,13 +25,55 @@ namespace efscape {
     const PortType SimRunner::properties_in =
       "properties_in";
 
-
     SimRunner::SimRunner() :
       ModelWrapperBase()
     {      
       // initialize the clock
-      mCp_ClockI.reset(new ClockI);     
+      mCp_ClockI.reset(new ClockI);
+      mCp_ClockI->timeMax() = DBL_MAX;
     }
+
+    SimRunner::SimRunner(Json::Value aC_parameters) :
+      ModelWrapperBase()
+    {
+      // initialize the clock
+      //
+      mCp_ClockI.reset(new ClockI);
+      mCp_ClockI->timeMax() = DBL_MAX;
+
+      // retrieve <modelTypeName>
+      //
+      Json::Value lC_modelTypeNameValue = aC_parameters["modelTypeName"];
+      if (!lC_modelTypeNameValue.isString()) {
+	LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		      "Missing <modelTypeName>");
+	return;
+      }
+
+      mC_modelTypeName = lC_modelTypeNameValue.asString();
+
+      // retrieve the model properties
+      //
+      Json::Value lC_modelProperties = aC_parameters["properties"];
+
+      // load and set wrapped model
+      //      
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		    "Retrieving the model from the factory");
+      DEVSPtr lCp_model( Singleton<ModelHomeI>::Instance()
+			 .getModelFactory()
+			 .createObject( mC_modelTypeName, lC_modelProperties ) );
+
+      if (lCp_model == nullptr) {
+	LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		      "Unable to create model <" << mC_modelName << ">");
+	return;
+      }
+
+      setWrappedModel(lCp_model);
+      
+    } // SimRunner::SimRunner(Json::Value)
+
 
     SimRunner::~SimRunner() {
     }
@@ -67,7 +107,6 @@ namespace efscape {
 	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 			  "properties="
 			  << lC_properties);
-	    convert_from_json(lC_properties);
 	  }
 	  catch(const boost::bad_any_cast &) {
 	    LOG4CXX_ERROR(ModelHomeI::getLogger(),
@@ -153,78 +192,7 @@ namespace efscape {
     //-------------------------
     // accessor/mutator methods
     //-------------------------
-
-    Json::Value SimRunner::get_info() {
-      // Json::Value lC_jsonObj;
-      // lC_jsonObj["info"] =
-      // 	"Implements an adevs-based model wrapper that encapsulates a simulation model session";
-      // lC_jsonObj["library"] = "efscape-impl";
-
-      // return lC_jsonObj;
-      ModelType lC_model_type(utils::type<SimRunner>(),
-			      "Implements an adevs-based model wrapper that encapsulates a simulation model session.",
-			      gcp_libname,
-			      1);
-
-      return lC_model_type.toJSON();
-    }
-
-    ///
-    /// model configuraiton/properties
-    ///
-    std::string SimRunner::convert_to_json() const
-    {
-      return mC_modelJson;
-    }
-
-    unsigned int
-    SimRunner::convert_from_json(const std::string& aC_modelJson)
-    {
-      // and parse properies
-      unsigned int li_property_cnt = 0;
-
-      Json::Value lC_config;
-      Json::Value lC_attribute;
-      
-      std::istringstream lC_buffer_in(aC_modelJson.c_str());
-      lC_buffer_in >> lC_config;
-
-      if ( (lC_attribute = lC_config["baseClassName"]).isString() ) {
-	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Found <baseClassName>: already processed");
-	++li_property_cnt;
-      }
-
-      if ( (lC_attribute = lC_config["className"]).isString() ) {
-	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Found <className>: already processed");
-	++li_property_cnt;
-      }
-
-      if ( (lC_attribute = lC_config["wrappedModel"]).isString() ) {
-	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Found <wrappedModel>: already processed");
-	++li_property_cnt;
-      }
-
-      if ( (lC_attribute = lC_config["time"]).isObject() ) {
-	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Found time info: setting clock");
-
-	efscape::impl::convert_from_json(lC_attribute, *mCp_ClockI);
-	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Simulation time units = " << mCp_ClockI->timeUnits() );
-	++li_property_cnt;
-      }
-      else {
-	LOG4CXX_ERROR(ModelHomeI::getLogger(),
-		      "Attribute <time> is not an object and cannot be parsed!");
-      }	// if ( (lC_attribute = lC_config["time"]).isObject() )
-
-      return li_property_cnt;
-
-    } // unsigned int SimRunner::convert_from_json()
-    
+     
     ///
     /// clock
     ///
@@ -235,7 +203,7 @@ namespace efscape {
       mCp_ClockI = aCp_clock;
     }
 
-    const ClockI* SimRunner::getClock() const { return mCp_ClockI.get(); }
+    const ClockI& SimRunner::getClock() const { return *mCp_ClockI; }
 
   } // namespace impl
   

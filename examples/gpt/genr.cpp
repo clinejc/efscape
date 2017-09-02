@@ -1,14 +1,69 @@
 #include "genr.hpp"
 
+#include "gpt_config.hpp"
+
 #include <efscape/impl/ModelHomeI.hpp>
+#include <efscape/impl/ModelType.ipp>
+#include <efscape/utils/type.hpp>
 
 namespace gpt {
 
   /// Create the static ports and assign them unique 'names'
   const efscape::impl::PortType genr::stop("stop");
   const efscape::impl::PortType genr::start("start");
+  const efscape::impl::PortType genr::properties_in("properties_in");
   const efscape::impl::PortType genr::out("out");
+
+  /// define genr model metadata
+  genrType::genrType() :
+    efscape::impl::ModelType(efscape::utils::type<genr>(),
+  			     "The genr class produces jobs periodically. The genr starts producing jobs when it receives an input on its start port. It stops producing jobs when it receives an input on its stop port. Jobs appear on the out port.",
+  			     gcp_libname,
+  			     1)
+  {
+
+    //========================================================================
+    // input ports:
+    // * "start": NULL
+    // * "stop": NULL
+    //========================================================================
+    Json::Value lC_portValue;
+    addInputPort(genr::start, lC_portValue);
+    addInputPort(genr::stop, lC_portValue);
+    addInputPort(genr::properties_in, lC_portValue);
+      
+    //========================================================================
+    // output ports:
+    // * "out": job
+    //========================================================================
+    job j;
+    lC_portValue =
+      efscape::impl::exportDataTypeToJSON<job>(j);
+
+    addOutputPort(genr::out, lC_portValue);
+
+    //========================================================================
+    // properties
+    //========================================================================
+    Json::Value lC_properties;
+    lC_properties["period"] = 1.0;
+      
+    setProperties(lC_properties);
+  }
+
+  /// instantiate model type
+  efscape::impl::ModelTypePtr genr::mSCp_modelType;
+
+  const efscape::impl::ModelType& genr::getModelType()
+  {
+    if (mSCp_modelType == nullptr)
+     mSCp_modelType.reset(new genrType());
+    return *mSCp_modelType;
+  }
   
+  //============================================================================
+  // class genr definition
+  //============================================================================ 
   genr::genr():
     adevs::Atomic<efscape::impl::IO_Type>(),
     period(1.0),
@@ -58,6 +113,29 @@ namespace gpt {
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		      "Stopping genr...");
 	sigma = DBL_MAX;
+      }
+    }
+    // Look for input on the property_in port.
+    for (iter = x.begin(); iter != x.end(); iter++) {
+      if ((*iter).port == properties_in) {
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "Loading properties for genr...");
+	try {
+	  Json::Value args = boost::any_cast<Json::Value>( (*iter).value );
+	  Json::Value lC_property = args["genr_period"];
+	  if (lC_property.isDouble()) {
+	    period = lC_property.asDouble();
+	    sigma = period;
+	    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+			  "Loaded property <genr_period> = "
+			  << period << " for proc...");
+	    
+	  }
+	}
+	catch(const boost::bad_any_cast &) {
+	  LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+			"Unable to cast input as <Json::Value>");
+	}
       }
     }
   }

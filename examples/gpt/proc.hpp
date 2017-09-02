@@ -3,15 +3,23 @@
 
 // parent class and data member definitions
 #include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/ModelType.hpp>
 #include "job.hpp"
 
 // serialization definitions
-// #include <adevs/adevs_serialization.hpp>
 #include <adevs/adevs_cereal.hpp>
 
 #include <cstdlib>
 
 namespace gpt {
+
+  /** proc model metadata */
+  class procType : public efscape::impl::ModelType
+  {
+  public:
+    procType();
+  };
+  
   /*
     A processor requires a fixed period of time to service a job.
     The processor can serve only one job at a time.  It the processor
@@ -52,8 +60,17 @@ namespace gpt {
 
     /// Model input port
     static const efscape::impl::PortType in;
+    static const efscape::impl::PortType properties_in;
+
     /// Model output port
     static const efscape::impl::PortType out;
+
+    /**
+     * Returns the model type
+     *
+     * @returns const reference to model type
+     */
+    static const efscape::impl::ModelType& getModelType();
 
   private:
     friend class cereal::access;
@@ -73,21 +90,12 @@ namespace gpt {
     double processing_time, sigma;
     std::shared_ptr<job> val;
     double t;
+
+    /** pointer to model type */
+    static efscape::impl::ModelTypePtr mSCp_modelType;
+
   };
 
 } // namespace gpt
-
-// namespace boost {
-//   namespace serialization {
-//     template<class Archive>
-//     void serialize(Archive & ar, gpt::proc& prc, const unsigned int version)
-//     {
-//       ar & boost::serialization::make_nvp("Atomic",
-// 					  boost::serialization::base_object<efscape::impl::ATOMIC >(prc) );
-//     }
-//   }
-// }
-
-// BOOST_CLASS_VERSION(gpt::proc, 1)
 
 #endif

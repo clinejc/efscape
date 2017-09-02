@@ -10,11 +10,11 @@
 // model factory definitions
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
+#include <efscape/impl/ModelType.hpp>
 
 //--------------------------------------------
 // efscape::utils::CommandOpt-derived classes
 //--------------------------------------------
-#include <efscape/impl/BuildModel.hpp>
 #include <efscape/impl/BuildSim.hpp>
 #include <efscape/impl/RunSim.hpp>
 
@@ -28,32 +28,40 @@ namespace efscape {
     //-----------------
     // register classes
     //-----------------
-    /**
-     * Creates DIGRAPH class metadata
-     *
-     * @returns metadata in a JSON property tree
-     */
-    Json::Value create_Digraph_info() {
-      Json::Value lC_jsonObj;
-      lC_jsonObj["info"] =
-	"The components of a digraph model must use PortValue objects as their basic I/O type: the port and value types are template arguments.";
-      lC_jsonObj["library"] =  "efscape-impl";
-
-      return lC_jsonObj;
-    }
+    // DIGRAPH class metadata
+    class DigraphType : public ModelType
+    {
+    public:
+      DigraphType() :
+	ModelType("efscape::impl::DIGRAPH",
+		  "The components of a digraph model must use PortValue objects as their basic I/O type: the port and value types are template arguments.",
+		  gcp_libname,
+		  1) {}
+    };
 
     const bool
     lb_Digraph_registered =
-      Singleton<ModelHomeI>::Instance().getModelFactory().
-      registerType<DIGRAPH>("efscape::impl::DIGRAPH",
-			    create_Digraph_info() );
+       Singleton<ModelHomeI>::Instance().getModelFactory().
+       registerType<DIGRAPH>(DigraphType().typeName(),
+			     DigraphType().toJSON());
+
+    // SimRunner class metadata
+    class SimRunnerType : public ModelType
+    {
+    public:
+      SimRunnerType() :
+	ModelType(utils::type<SimRunner>(),
+		  "Implements an adevs-based model wrapper that encapsulates a simulation model session.",
+		  gcp_libname,
+		  6) {}
+    };
 
     const bool
     lb_SimRunner_registered =
       Singleton<ModelHomeI>::Instance().getModelFactory().
-      registerType<SimRunner>(efscape::utils::type<SimRunner>(),
-    			      SimRunner::get_info() );
-    
+      registerType<SimRunner>(SimRunnerType().typeName(),
+    			      SimRunnerType().toJSON() );
+
     // const bool
     // lb_BuildModel_registered =
     //   Singleton<ModelHomeI>::Instance().getCommandFactory().
@@ -67,6 +75,6 @@ namespace efscape {
     const bool lb_BuildSim_registered =
       Singleton<ModelHomeI>::Instance().getCommandFactory().
       registerType<BuildSim>( BuildSim::ProgramName() );
-    
+
   } // namespace impl
 }   // namespace efscape

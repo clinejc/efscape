@@ -7,6 +7,7 @@
 #include <efscape/impl/ClockI.hpp>
 
 #include <efscape/impl/ModelHomeI.hpp>
+#include <efscape/impl/ModelType.ipp>
 #include <boost/algorithm/string.hpp>
 
 // using namespace repast;
@@ -17,6 +18,9 @@ namespace efscape {
 
   namespace impl {
 
+    // instantiate utility method for exporting clock value to JSON
+    template Json::Value exportDataTypeToJSON<ClockI>(ClockI clock);
+    
     /** constructor */
     ClockI::ClockI() :
       md_TimeCurrent(0.),

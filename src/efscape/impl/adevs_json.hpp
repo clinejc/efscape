@@ -9,13 +9,7 @@
 
 // efscape definitions
 #include <efscape/impl/adevs_config.hpp>
-#include <efscape/impl/ClockI.hpp>
-
-#include <boost/property_tree/ptree.hpp>
 #include <json/json.h>
-
-#include <cereal/cereal.hpp>
-
 #include <string>
 
 namespace efscape {
@@ -29,36 +23,8 @@ namespace efscape {
      * @param aC_config JSON value containing model configuration
      * @returns handle to model 
      */   
-    DEVS* createModelFromJSON(const Json::Value& lC_config);
+    DEVS* buildModelFromJSON(Json::Value lC_config);
     
-    /**
-     * This utility function loads information from a JSON file.
-     * 
-     * @param aC_path relative path of the JSON file
-     * @returns JSON property tree
-     */
-    boost::property_tree::ptree loadInfoFromJSON(std::string aC_path);
-
-    //
-    // Some utility functions and classes for working with model JSON data
-    //
-
-    /**
-     * Parses clock parameters from a JSON object.
-     *
-     * @param aCr_value json value
-     * @param aCr_clock reference to clock
-     */
-    void convert_from_json(const Json::Value& aCr_value, ClockI& aCr_clock);
-
-    /**
-     * Copies clock parameters to a JSON object
-     *
-     * @param aCr_clock reference to clock
-     * @returns JSON object with time info
-     */
-    Json::Value convert_to_json(const ClockI& aCr_clock);
-
     /**
      * A simple class that provides scaffolding for building a Digraph
      * from a JSON configuration data.

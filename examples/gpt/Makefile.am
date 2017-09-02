@@ -12,13 +12,14 @@ hpp_sources += genr.hpp
 hpp_sources += job.hpp
 hpp_sources += proc.hpp
 hpp_sources += transd.hpp
+hpp_sources += gpt_config.hpp
 hpp_sources += CreateGpt.hpp
 
 cpp_sources = genr.cpp
 cpp_sources += proc.cpp
 cpp_sources += transd.cpp
-cpp_sources += CreateGpt.cpp
 cpp_sources += export_libgpt.cpp
+cpp_sources += CreateGpt.cpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 AM_CPPFLAGS += -I$(top_srcdir)/examples

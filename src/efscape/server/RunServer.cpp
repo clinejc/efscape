@@ -79,7 +79,7 @@ namespace efscape {
 
 	LOG4CXX_DEBUG(impl::ModelHomeI::getLogger(),
 		      "Loading libraries");
-	impl::Singleton<impl::ModelHomeI>::Instance().LoadLibraries();	
+	impl::Singleton<impl::ModelHomeI>::Instance().LoadLibraries();
 
 	//----------------------
 	// launch the ICE server
@@ -111,7 +111,7 @@ namespace efscape {
 	}
 	delete [] argv;
 
-      }  
+      }
       catch(std::logic_error lC_excp) {
       	LOG4CXX_ERROR(impl::ModelHomeI::getLogger(),
       		      lC_excp.what());
@@ -171,7 +171,7 @@ namespace efscape {
 		<< "examples:\n\t\t"
 		<< program_name() << "\n\t\t"
 		<< program_name() << " -d -o logfile_name\n\n";
- 
+
       exit( exit_value );
     }
 
@@ -192,7 +192,7 @@ namespace efscape {
       efscape::ModelHomePtr lCp_ModelHome = lCp_ModelHomeTie;
 
       adapter->add(lCp_ModelHome,
-		   communicator()->stringToIdentity("ModelHome"));
+		   Ice::stringToIdentity("ModelHome"));
 
       adapter->activate();
 

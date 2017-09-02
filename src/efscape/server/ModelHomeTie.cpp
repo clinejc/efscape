@@ -33,10 +33,10 @@ namespace efscape {
 			 const Ice::Current& current)
     {
       // attempt create the model
-      adevs::Devs<efscape::impl::IO_Type>* lCp_model =
-	impl::Singleton<impl::ModelHomeI>::Instance().createModel(name.c_str());
+      efscape::impl::DEVSPtr lCp_model =
+	impl::Singleton<impl::ModelHomeI>::Instance().createModel(name);
 
-      if (lCp_model) {
+      if (lCp_model != nullptr) {
 	// wrap the model
 	ModelTie* lCp_ModelTie = new ModelTie(lCp_model);
 
@@ -57,7 +57,7 @@ namespace efscape {
     } // ModelHomeTie::create(...)
 
     /**
-     * Create a new ::efscape::Model proxy from the specified XML configuration.
+     * Create a new ::efscape::Model proxy from the specified XML file.
      *
      * @param configuration model XML configuration
      * @param current method invocation
@@ -65,27 +65,27 @@ namespace efscape {
      */
     ::efscape::ModelPrx
     ModelHomeTie::createFromXML(const ::std::wstring& configuration,
-				const Ice::Current& current)
+				 const Ice::Current& current)
     {
       efscape::ModelPtr lCp_model = 0;
 
       try {
 	// attempt create the model
-	adevs::Devs<efscape::impl::IO_Type>* lCp_modelI =
+	efscape::impl::DEVSPtr lCp_modelI =
 	  impl::Singleton<impl::ModelHomeI>::Instance().createModelFromXML(configuration);
 
-	if (lCp_modelI) {
+	if (lCp_modelI != nullptr) {
 	  // tie the model
 	  lCp_model = new ModelTie(lCp_modelI);
 	}
 	else {
 	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-			"efscape::server::ModelHomeTie(): model implementation not found!");
+			"efscape::server::ModelHomeTie::createFromXML(): model implementation not found!");
 	}
       }
       catch (std::logic_error exp) {
 	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		      "efscape::server::ModelHomeTie()"
+		      "efscape::server::ModelHomeTie::createFromXML(): "
 		      << exp.what() );
       }
 
@@ -97,17 +97,19 @@ namespace efscape {
 	  efscape::ModelPrx::uncheckedCast(current.adapter
 					   ->addWithUUID( lCp_model ) );
 	return lCp_ModelPrx;
-					   
+
       }
 
       LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+		    "efscape::server::ModelHomeTie::createFromXML(): "
+
 		    "Model not found...");
       return 0;
 
     } // ModelHomeTie::createFromXML(...)
 
     /**
-     * Create a new ::efscape::Model proxy from the specified JSON configuration.
+     * Create a new ::efscape::Model proxy from the specified JSON file.
      *
      * @param configuration model JSON configuration
      * @param current method invocation
@@ -115,27 +117,27 @@ namespace efscape {
      */
     ::efscape::ModelPrx
     ModelHomeTie::createFromJSON(const ::std::string& configuration,
-				const Ice::Current& current)
+				 const Ice::Current& current)
     {
       efscape::ModelPtr lCp_model = 0;
 
       try {
 	// attempt create the model
-	adevs::Devs<efscape::impl::IO_Type>* lCp_modelI =
+	efscape::impl::DEVSPtr lCp_modelI =
 	  impl::Singleton<impl::ModelHomeI>::Instance().createModelFromJSON(configuration);
 
-	if (lCp_modelI) {
+	if (lCp_modelI != nullptr) {
 	  // tie the model
 	  lCp_model = new ModelTie(lCp_modelI);
 	}
 	else {
 	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-			"efscape::server::ModelHomeTie(): model implementation not found!");
+			"efscape::server::ModelHomeTie::createFromJSON(): model implementation not found!");
 	}
       }
       catch (std::logic_error exp) {
 	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		      "efscape::server::ModelHomeTie()"
+		      "efscape::server::ModelHomeTie::createFromJSON(): "
 		      << exp.what() );
       }
 
@@ -147,14 +149,68 @@ namespace efscape {
 	  efscape::ModelPrx::uncheckedCast(current.adapter
 					   ->addWithUUID( lCp_model ) );
 	return lCp_ModelPrx;
-					   
+
+      }
+
+      LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+		    "efscape::server::ModelHomeTie::createFromJSON(): "
+
+		    "Model not found...");
+      return 0;
+
+    } // ModelHomeTie::createFromJSON(...)
+
+    /**
+     * Create a new ::efscape::Model proxy from the specified JSON parameter
+     * file.
+     *
+     * @param parameters string containing model parameters JSON
+     * @param current method invocation
+     * @returns ::efscape::Model proxy
+     */
+    ::efscape::ModelPrx
+    ModelHomeTie::createFromParameters(const ::std::string& parameters,
+				       const Ice::Current& current)
+    {
+      efscape::ModelPtr lCp_model = 0;
+
+      try {
+	// attempt create the model
+	efscape::impl::DEVSPtr lCp_modelI =
+	  impl::Singleton<impl::ModelHomeI>::Instance().createModelFromParameters(parameters);
+
+	if (lCp_modelI != nullptr) {
+	  // tie the model
+	  lCp_model = new ModelTie(lCp_modelI);
+	}
+	else {
+	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+			"efscape::server::ModelHomeTie::createModelFromParameters(): model implementation not found!");
+	}
+      }
+      catch (std::logic_error exp) {
+	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
+		      "efscape::server::ModelHomeTie::createModelFromParameters(): "
+		      << exp.what() );
+      }
+
+      if (lCp_model) {
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "efscape::server::ModelHomeTie::createModelFromParameters(): "
+		      "Model <" << lCp_model->getName() << "> found...");
+
+	efscape::ModelPrx lCp_ModelPrx =
+	  efscape::ModelPrx::uncheckedCast(current.adapter
+					   ->addWithUUID( lCp_model ) );
+	return lCp_ModelPrx;
+
       }
 
       LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
 		    "Model not found...");
       return 0;
 
-    } // ModelHomeTie::createFromJSON(...)
+    }
 
     /**
      * Returns a list of available models.
@@ -178,7 +234,7 @@ namespace efscape {
 		      "=> modelName=" << *iter);
 	lC1_ModelNameList.push_back(*iter);
       }
-	
+
       return lC1_ModelNameList;
     }
 

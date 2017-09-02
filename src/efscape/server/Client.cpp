@@ -24,10 +24,13 @@ log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("org.efscape.client"));
  * Catches exceptions to handle known on the exit.
  */
 void singleton_terminate(void) {
-  static bool tried_throw = false;
+  // static bool tried_throw = false;
+  static int tried_throw = 0;
 
   try {
-    if (!tried_throw++) throw;
+    // if (!tried_throw++) throw;
+    if ( (tried_throw++) > 0) throw;
+
         std::cout << "no active exception" << std::endl;
   }
   catch (const std::logic_error& err) {
@@ -143,18 +146,7 @@ EfscapeClient::run(int argc, char* argv[])
 		    << ">");
 
       // convert file to a string
-      if (p.extension().string() == ".xml") {
-	std::wostringstream wbuf;
-	char ch;
-	while (wbuf && parmFile.get( ch ))
-	  wbuf.put( (wchar_t)ch );
-	LOG4CXX_DEBUG(logger,
-		      "XML buffer=>");
-	LOG4CXX_DEBUG(logger,
-		      wbuf.str() );
-	lCp_Model = lCp_ModelHome->createFromXML(wbuf.str());
-      }
-      else if (p.extension().string() == ".json") {
+      if (p.extension().string() == ".json") {
 	std::ostringstream buf;
 	char ch;
 	while (buf && parmFile.get( ch ))

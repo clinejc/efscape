@@ -7,7 +7,7 @@
 #include <efscape/server/ModelTie.hpp>
 
 #include <efscape/impl/ModelHomeI.hpp>
-#include <efscape/impl/AdevsModel.hpp>
+#include <efscape/impl/SimRunner.hpp>
 #include <efscape/utils/type.hpp>
 #include <efscape/utils/boost_utils.ipp>
 
@@ -15,6 +15,8 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/optional.hpp>
 #include <boost/regex.hpp>
+
+#include <fstream>
 
 namespace efscape {
 
@@ -58,16 +60,16 @@ namespace efscape {
       // initialize the simulation clock
       mCp_clock.reset(new efscape::impl::ClockI);
 
-      efscape::impl::AdevsModel* lCp_RootModel =
-	dynamic_cast<efscape::impl::AdevsModel*>(lCp_model);
-      std::string lC_ParmName("efscape.xml"); // model parameter file
+      efscape::impl::SimRunner* lCp_RootModel =
+	dynamic_cast<efscape::impl::SimRunner*>(lCp_model);
+      std::string lC_ParmName("efscape.json"); // model parameter file
       if (lCp_RootModel) {
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		      "Setting simulation environment from root model attributes");
 	mCp_clock = lCp_RootModel->getClockIPtr();
-	lC_ParmName =
-	  lCp_RootModel->getWorkDir() + "/" +
-	  lCp_RootModel->name() + ".xml";
+	// lC_ParmName =
+	//   lCp_RootModel->getWorkDir() + "/" +
+	//   lCp_RootModel->name() + ".xml";
       }
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		    "Setting the simulation clock");
@@ -75,10 +77,10 @@ namespace efscape {
       try {
 	// compute the initial state of the model
 
-	if (!efscape::impl::initializeModel(lCp_model) )
-	  // initialize wrapped model
-	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-			"Unable to initialize DEVS model -- continuing anyway")
+	// if (!efscape::impl::initializeModel(lCp_model) )
+	//   // initialize wrapped model
+	//   LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+	// 		"Unable to initialize DEVS model -- continuing anyway")
 
 	while ( mCp_simulator->nextEventTime() == 0) {
 	  mCp_simulator->execNextEvent();
@@ -120,7 +122,9 @@ namespace efscape {
 
 	// save the initial state of the model in xml format
 	try {
-	  efscape::impl::saveAdevs(lCp_model,lC_ParmName.c_str());
+    // make an archive
+    std::ofstream ofs(lC_ParmName.c_str());
+	  efscape::impl::saveAdevsToJSON(mCp_WrappedModel, ofs);
 	}
 	catch(std::exception lC_exp) {
 	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -204,7 +208,7 @@ namespace efscape {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		    "ModelTie::confluentTransition:"
 		    << "message length = " << msg.size() );
-	
+
       //---------------------------
       // 1) internalTransition(...)
       //---------------------------
@@ -229,7 +233,7 @@ namespace efscape {
     ModelTie::outputFunction(const Ice::Current& current)
     {
       ::efscape::Message lC_message;
-      
+
       // add content to message
       std::map<std::string, std::string> lC_ClockAttributes;
       lC_ClockAttributes["time_max"] =
@@ -252,32 +256,6 @@ namespace efscape {
     }
 
     /**
-     * Returns input port descriptions.
-     *
-     * @param current method invocation
-     * @returns sequence of port descriptions
-     */
-    ::efscape::PortDescriptions
-    ModelTie::getInPorts(const Ice::Current& current) const
-    {
-      ::efscape::PortDescriptions lC1_InPorts;
-      return lC1_InPorts;
-    }
-
-    /**
-     * Returns output port descriptions.
-     *
-     * @param current method invocation
-     * @returns sequence of port descriptions
-     */
-    ::efscape::PortDescriptions
-    ModelTie::getOutPorts(const Ice::Current& current) const
-    {
-      ::efscape::PortDescriptions lC1_OutPorts;
-      return lC1_OutPorts;
-    }
-
-    /**
      * Returns the type of the model.
      *
      * @param current method invocation
@@ -285,18 +263,6 @@ namespace efscape {
      */
     ::std::string
     ModelTie::getType(const Ice::Current& current) const
-    {
-      return "";
-    }
-
-    /**
-     * Returns the type of the model.
-     *
-     * @param current method invocation
-     * @returns model type
-     */
-    ::std::string
-    ModelTie::getBaseType(const Ice::Current& current) const
     {
       return "";
     }
@@ -316,15 +282,15 @@ namespace efscape {
     }
 
     /**
-     * Returns the configuration of the model in XML format via a string.
+     * Returns the configuration of the model in JSON format via a string.
      *
      * @param current method invocation
-     * @returns model configuration in XML format
+     * @returns model configuration in JSON format
      */
-    ::std::wstring
-    ModelTie::saveXML(const Ice::Current& current)
+    ::std::string
+    ModelTie::saveJSON(const Ice::Current& current)
     {
-      ::std::wstring lC_config = L"";
+      ::std::string lC_config = "";
       return lC_config;
     }
 
@@ -354,9 +320,9 @@ namespace efscape {
      *
      * @param aCp_model handle to model to be tied
      */
-    ModelTie::ModelTie(adevs::Devs<efscape::impl::IO_Type>* aCp_model)
+    ModelTie::ModelTie(const efscape::impl::DEVSPtr& aCp_model)
     {
-      if (aCp_model == NULL)
+      if (aCp_model == nullptr)
 	return;
 
       setWrappedModel(aCp_model);
@@ -372,10 +338,10 @@ namespace efscape {
      * @param aCp_model handle to model to be tied
      * @param acp_name name of model
      */
-    ModelTie::ModelTie(adevs::Devs<efscape::impl::IO_Type>* aCp_model,
+    ModelTie::ModelTie(const efscape::impl::DEVSPtr& aCp_model,
 		       const char* acp_name)
     {
-      if (aCp_model == NULL)
+      if (aCp_model == nullptr)
 	return;
 
       setWrappedModel(aCp_model);
@@ -431,7 +397,7 @@ namespace efscape {
 		  << (*i).value.port << ">...\n";
 	try {
 
-	  // first try to extract a boost::property_tree::ptree	  
+	  // first try to extract a boost::property_tree::ptree
 	  if (::efscape::utils::is_type<boost::property_tree::ptree>((*i).value.value)) {
 
 	    boost::property_tree::ptree pt =
@@ -443,7 +409,7 @@ namespace efscape {
 	    lC_content.valueToJson = ::efscape::utils::ptree_to_json(pt);
 	    aCr_external_output.push_back( lC_content );
 	  }
-	  
+
 	}
 	catch (const boost::bad_any_cast &) {
 	  std::cout << "Unable to translate output\n";

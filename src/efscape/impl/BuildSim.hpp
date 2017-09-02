@@ -68,8 +68,11 @@ namespace efscape {
        */
       void usage( int exit_value = 0 );
 
+      /** model type name */
+      std::string mC_modelTypeName;
+
       /** model name */
-      std::string mC_ModelName;
+      std::string mC_modelName;
 
     private:
 

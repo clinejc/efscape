@@ -17,8 +17,8 @@
 #include <adevs/adevs_serialization.hpp>
 #include <efscape/impl/adevs_decorator_serialization.hpp>
 
-#include <efscape/impl/EntityI.hpp>
-#include <efscape/impl/AdevsModel.hpp>
+// #include <efscape/impl/EntityI.hpp>
+// #include <efscape/impl/AdevsModel.hpp>
 #include <efscape/impl/SimRunner.hpp>
 
 #include <fstream>
@@ -57,6 +57,9 @@ BOOST_SERIALIZATION_SPLIT_FREE(efscape::impl::DIGRAPH)
 BOOST_CLASS_IS_WRAPPER(efscape::impl::CELLSPACE)
 BOOST_SERIALIZATION_SPLIT_FREE(efscape::impl::CELLSPACE)
 
+BOOST_CLASS_IS_WRAPPER(efscape::impl::SimRunner)
+BOOST_SERIALIZATION_SPLIT_FREE(efscape::impl::SimRunner)
+
 BOOST_CLASS_EXPORT(efscape::impl::DEVS)
 BOOST_CLASS_EXPORT(efscape::impl::ATOMIC)
 BOOST_CLASS_EXPORT(efscape::impl::NetworkModel)
@@ -79,8 +82,8 @@ BOOST_CLASS_EXPORT(efscape::impl::ModelWrapperBase)
 BOOST_CLASS_EXPORT(efscape::impl::CellDevs)
 BOOST_CLASS_EXPORT(efscape::impl::CellModelBase)
 
-BOOST_CLASS_EXPORT(efscape::impl::EntityI)
-BOOST_CLASS_EXPORT(efscape::impl::AdevsModel)
+// BOOST_CLASS_EXPORT(efscape::impl::EntityI)
+// BOOST_CLASS_EXPORT(efscape::impl::AdevsModel)
 BOOST_CLASS_EXPORT(efscape::impl::SimRunner)
 
 namespace efscape {

@@ -19,7 +19,7 @@ namespace efscape {
 
   namespace impl {
 
-    char const gcp_libname[] = "efscapeimpl";
+    char const gcp_libname[] = "libefscape-impl";
 
     /**
      * Helper function for injecting a bag events into a model.
@@ -57,7 +57,8 @@ namespace efscape {
 		    DEVS* aCp_model)
     {
       if (aCp_model == NULL) {
-	
+	std::cout << "model is null!\n";
+	return;
       }
       ATOMIC* lCp_atomic = NULL;
       if ( (lCp_atomic = aCp_model->typeIsAtomic() ) != NULL ) {

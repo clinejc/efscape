@@ -18,14 +18,14 @@
 
 namespace cereal
 {
-  
-  template <class Archive> 
+
+  template <class Archive>
   struct specialize<Archive, efscape::impl::ATOMIC, cereal::specialization::non_member_serialize> {};
 
-  template <class Archive> 
+  template <class Archive>
   struct specialize<Archive, efscape::impl::NETWORK, cereal::specialization::non_member_serialize> {};
-  
-  template <class Archive> 
+
+  template <class Archive>
   struct specialize<Archive, efscape::impl::DIGRAPH, cereal::specialization::non_member_load_save> {};
 
   template<class Archive>
@@ -34,13 +34,13 @@ namespace cereal
     ar( cereal::make_nvp("model", node.model),
 	cereal::make_nvp("port", node.port) );
   }
-  
-  template <class Archive> 
+
+  template <class Archive>
   struct specialize<Archive, efscape::impl::ModelWrapperBase, cereal::specialization::non_member_load_save> {};
 
-  template <class Archive> 
-  struct specialize<Archive, efscape::impl::SimRunner, cereal::specialization::non_member_load_save> {};
-  
+  template <class Archive>
+  struct specialize<Archive, efscape::impl::SimRunner, cereal::specialization::member_serialize> {};
+
 }
 
 #include <cereal/archives/json.hpp>
@@ -66,12 +66,6 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(efscape::impl::ModelWrapperBase,
 // model factory definitions
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
-
-//--------------------------------------------
-// efscape::utils::CommandOpt-derived classes
-//--------------------------------------------
-#include <efscape/impl/BuildModel.hpp>
-#include <efscape/impl/RunSim.hpp>
 
 namespace efscape {
   namespace impl {

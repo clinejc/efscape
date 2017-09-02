@@ -2,11 +2,21 @@
 #define _genr_hpp_
 
 #include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/ModelType.hpp>
 #include "job.hpp"
 
 #include <adevs/adevs_cereal.hpp>
+#include <json/json.h>
 
 namespace gpt {
+  
+  /** genr model metadata */
+  class genrType : public efscape::impl::ModelType
+  {
+  public:
+    genrType();
+  };
+  
   /*
     The genr class produces jobs periodically.  The genr starts
     producing jobs when it receives an input on its start port.
@@ -41,9 +51,17 @@ namespace gpt {
     /// Model input ports
     static const efscape::impl::PortType start;
     static const efscape::impl::PortType stop;
+    static const efscape::impl::PortType properties_in;
 
     /// Model output port
     static const efscape::impl::PortType out;
+
+    /**
+     * Returns the model type
+     *
+     * @returns const reference to model type
+     */
+    static const efscape::impl::ModelType& getModelType();
 
   private:
     friend class cereal::access;
@@ -61,8 +79,11 @@ namespace gpt {
     /// Model state variables
     double period, sigma;
     int count;
+
+    /** pointer to model type */
+    static efscape::impl::ModelTypePtr mSCp_modelType;
   };
 
-}
+} // namespace gpt
   
 #endif

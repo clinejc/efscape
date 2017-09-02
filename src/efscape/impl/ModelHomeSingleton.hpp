@@ -7,8 +7,6 @@
 #ifndef EFSCAPE_IMPL_MODELHOME_SINGLETON_HPP
 #define EFSCAPE_IMPL_MODELHOME_SINGLETON_HPP
 
-#include <efscape/impl/singletondll_export.h>
-
 namespace efscape {
 
   namespace impl {
