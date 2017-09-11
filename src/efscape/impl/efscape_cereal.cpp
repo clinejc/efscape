@@ -1,6 +1,6 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : export.hpp
+// File Name : efscape_cereal.cpp
 // Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
@@ -11,6 +11,8 @@
 #include <cereal/types/memory.hpp>
 #include <cereal/types/vector.hpp>
 #include <cereal/access.hpp>
+
+#include <efscape/impl/efscape_cereal.hpp>
 
 // efscape adevs definitions
 #include <efscape/impl/adevs_config.hpp>

@@ -21,6 +21,7 @@
 
 // data member definitions
 #include <efscape/impl/ClockI.hpp>
+#include <efscape/impl/efscape_cereal.hpp> // cereal for ClockI
 #include <efscape/utils/type.hpp>
 
 #include <json/json.h>

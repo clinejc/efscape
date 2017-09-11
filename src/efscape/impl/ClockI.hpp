@@ -4,11 +4,12 @@
 // Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-#ifndef EFSCAPE_IMPL_CLOCK_I_HH
-#define EFSCAPE_IMPL_CLOCK_I_HH
+#ifndef EFSCAPE_IMPL_CLOCK_I_HPP
+#define EFSCAPE_IMPL_CLOCK_I_HPP
 
-#include <boost/shared_ptr.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp> // date_time definitions
+
+// boost serialiation definitions
 #include <boost/serialization/nvp.hpp>
 #include <boost/date_time/posix_time/time_serialize.hpp>
 
@@ -64,7 +65,7 @@ namespace efscape {
 
       boost::posix_time::ptime date_time( double ad_time ) const;
       void base_date(const boost::posix_time::ptime& aCr_datetime);
- 
+
       /** @returns time units */
       boost::posix_time::time_duration units() const {
 	return mC_units;
@@ -107,47 +108,4 @@ namespace efscape {
 
 } // namespace efscape
 
-#include <cereal/cereal.hpp>
-
-// cereal serialization
-namespace cereal {
-  //
-  // cereal serialization for ClockI
-  //
-  template<class Archive>
-  void load(Archive & ar, efscape::impl::ClockI& aCr_clock)
-  {
-    double ld_time;
-    double ld_timeDelta;
-    double ld_timeMax;
-    std::string lC_timeUnits;
-    
-    ar( cereal::make_nvp("time", ld_time),
-	cereal::make_nvp("time_delta", ld_timeDelta),
-	cereal::make_nvp("time_max", ld_timeMax),
-	cereal::make_nvp("time_units", lC_timeUnits) );
-    
-    aCr_clock.time() = ld_time;
-    aCr_clock.timeDelta() = ld_timeDelta;
-    aCr_clock.timeMax() = ld_timeMax;
-    aCr_clock.timeUnits(lC_timeUnits.c_str() );
-  }
-
-  template<class Archive>
-  void save(Archive & ar, const efscape::impl::ClockI& aCr_clock)
-  {
-    double ld_time = aCr_clock.time();
-    double ld_timeDelta = aCr_clock.timeDelta();
-    double ld_timeMax = aCr_clock.timeMax();
-    std::string lC_timeUnits = aCr_clock.timeUnits();
-    
-    ar( cereal::make_nvp("time", ld_time),
-	cereal::make_nvp("time_delta", ld_timeDelta),
-	cereal::make_nvp("time_max", ld_timeMax),
-	cereal::make_nvp("time_units", lC_timeUnits) );
-  }
-  
-} // namespace cereal
-
-#endif	// #ifndef EFSCAPE_IMPL_CLOCK_I_HH
-
+#endif	// #ifndef EFSCAPE_IMPL_CLOCK_I_HPP

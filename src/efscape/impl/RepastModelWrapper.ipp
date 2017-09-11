@@ -5,14 +5,20 @@
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 
-#include <efscape/impl/RepastModelWrapper.hpp>
+#include <efscape/impl/RepastModelWrapper.hpp> // class definition
 
+// definitions for efscape models
 #include <efscape/impl/ModelHomeI.hh>
 #include <efscape/utils/type.hpp>
+
+// Repast HPC definitions
 #include <repast_hpc/RepastProcess.h>
 #include <repast_hpc/logger.h>
-#include <boost/property_tree/ptree.hpp>
+
+// boost definitions
 #include <boost/foreach.hpp>
+
+// other definitions
 #include <log4cxx/logger.h>
 #include <iostream>
 

@@ -6,6 +6,8 @@
 // __COPYRIGHT_END__
 #include <efscape/impl/ClockI.hpp>
 
+#include <efscape/impl/efscape_cereal.hpp>
+
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelType.ipp>
 #include <boost/algorithm/string.hpp>
@@ -20,7 +22,7 @@ namespace efscape {
 
     // instantiate utility method for exporting clock value to JSON
     template Json::Value exportDataTypeToJSON<ClockI>(ClockI clock);
-    
+
     /** constructor */
     ClockI::ClockI() :
       md_TimeCurrent(0.),
@@ -65,7 +67,7 @@ namespace efscape {
 
     /**
      * Sets the base date/time of the simulation.
-     * 
+     *
      * @param aCr_datetime
      */
     void ClockI::base_date(const ptime& aCr_datetime) {

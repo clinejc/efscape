@@ -4,6 +4,7 @@ hh_sources = adevs_config.hpp
 hh_sources += adevs_json.hpp
 hh_sources += adevs_decorator.h
 hh_sources += adevs_decorator_serialization.hpp
+hh_sources += efscape_cereal.hpp
 hh_sources += ClockI.hpp
 hh_sources += ModelHomeI.hpp
 hh_sources += ModelHomeSingleton.hpp

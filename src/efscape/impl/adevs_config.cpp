@@ -6,8 +6,6 @@
 // __COPYRIGHT_END__
 #include <efscape/impl/adevs_config.hpp>
 
-#include <efscape/impl/InitObject.hpp>
-
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
@@ -96,7 +94,7 @@ namespace efscape {
      */
     DEVSPtr cloneModel( const DEVSPtr& aCp_model ) {
 
-      // serialize the model out to a buffer and then back in as a clone 
+      // serialize the model out to a buffer and then back in as a clone
       std::ostringstream lC_buffer_out;
       saveAdevsToJSON(aCp_model, lC_buffer_out);
       std::istringstream lC_buffer_in(lC_buffer_out.str().c_str());
@@ -109,7 +107,7 @@ namespace efscape {
      * Helper function for running a simulation
      *
      * @param aCp_model pointer to model
-     * @param ad_timeMax time max 
+     * @param ad_timeMax time max
      */
     void runSim( DEVS* aCp_model, double ad_timeMax ) {
       adevs::Simulator<IO_Type> lC_sim( aCp_model );
@@ -118,48 +116,6 @@ namespace efscape {
       while (lC_sim.nextEventTime() < ad_timeMax) {
 	lC_sim.execNextEvent();
       }
-    }
-    
-    /**
-     * Helper function for initializing an adevs model
-     *
-     * @param aCp_model handle to model
-     * @returns whether the model has been successfully initialized
-     */
-    bool initializeModel( DEVS* aCp_model ) {
-      if (!aCp_model)
-	return false;
-
-      try {
-	// first attempt to use the InitObject interface if it is available
-	InitObject* lCp_InitObj;
-	if ( ( lCp_InitObj = dynamic_cast<InitObject*>(aCp_model) ) ) {
-	  lCp_InitObj->initialize();
-	  return true;
-	}
-      }
-      catch(std::logic_error lC_excp) {
-	std::cerr << "*** error *** Encountered <" << lC_excp.what()
-		  << "> in function 'initializeModel(DEVS*)'\n";
-	return false;
-      }
-
-      // next, if this is a network model
-      NETWORK* lCp_network = 0;
-
-      if ( ( lCp_network = dynamic_cast<NETWORK*>(aCp_model) ) ) {
-	typedef adevs::Set<DEVS* > ComponentSet;
-
-	ComponentSet lC_models;
-	lCp_network->getComponents(lC_models);
-	ComponentSet::iterator iModel;
-	for ( iModel = lC_models.begin(); iModel != lC_models.end(); iModel++)
-	  if (!initializeModel(*iModel))
-	    return false;
-      }
-
-      // note (2009.02.28): initialization status may not be verified
-      return true;
     }
 
     /**
@@ -286,7 +242,7 @@ namespace efscape {
 						      IO_Type(mC_InputPort,
 							      *iter)));
       }
-      
+
       return true;
     }
 
