@@ -76,39 +76,27 @@ namespace efscape {
       }
     }
 
-    /**
-     * Helper function for creating an adevs model from the model factory.
-     *
-     * @param acp_classname class name of model
-     * @returns handle to model (null if missing from the factory)
-     */
     DEVS* createModel( const char* acp_classname ) {
       return ( Singleton<ModelHomeI>::Instance().getModelFactory().createObject(acp_classname) );
     }
 
-    /**
-     * Helper function for cloning an adevs model
-     *
-     * @param aCp_model handle to model
-     * @returns handle to model clone (null if cloning fails)
-     */
-    DEVSPtr cloneModel( const DEVSPtr& aCp_model ) {
+   DEVSPtr cloneModelUsingJSON( const DEVSPtr& aCp_model ) {
 
-      // serialize the model out to a buffer and then back in as a clone
-      std::ostringstream lC_buffer_out;
-      saveAdevsToJSON(aCp_model, lC_buffer_out);
-      std::istringstream lC_buffer_in(lC_buffer_out.str().c_str());
-      DEVSPtr lCp_clone = loadAdevsFromJSON(lC_buffer_in);
+     DEVSPtr lCp_clone;
+     try {
+       // serialize the model out to a buffer and then back in as a clone
+       std::ostringstream lC_buffer_out;
+       saveAdevsToJSON(aCp_model, lC_buffer_out);
+       std::istringstream lC_buffer_in(lC_buffer_out.str().c_str());
+       lCp_clone = loadAdevsFromJSON(lC_buffer_in);
+     } catch(...) {
+       LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		     "Exception encountered during attempt to clone adevs model");
+     }
 
-      return lCp_clone;
+     return lCp_clone;
     }
 
-    /**
-     * Helper function for running a simulation
-     *
-     * @param aCp_model pointer to model
-     * @param ad_timeMax time max
-     */
     void runSim( DEVS* aCp_model, double ad_timeMax ) {
       adevs::Simulator<IO_Type> lC_sim( aCp_model );
 
@@ -118,13 +106,6 @@ namespace efscape {
       }
     }
 
-    /**
-     * Utility function that returns the root model of the adevs hierarchy
-     * containing this model.
-     *
-     * @param aCp_model
-     * @returns handle to root model
-     */
     adevs::Devs<IO_Type>*
     getRootModel(adevs::Devs<IO_Type>* aCp_model)
     {
@@ -137,14 +118,6 @@ namespace efscape {
 
     } // getRooModel(adevs::Devs<IO_Type>*)
 
-
-    /**
-     * Utility function that returns the root model of the adevs hierarchy
-     * containing this model.
-     *
-     * @param aCp_model
-     * @returns handle to root model
-     */
     const adevs::Devs<IO_Type>*
     getRootModel(const adevs::Devs<IO_Type>* aCp_model)
     {

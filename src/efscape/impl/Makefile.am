@@ -62,9 +62,9 @@ efdriver_SOURCES = driver.cpp
 
 efdriver_LDFLAGS = $(BOOST_MPI_LDFLAGS)
 
-efdriver_LDADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
+#efdriver_LDADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
+efdriver_LDADD = libefscape-impl.la
 efdriver_LDADD += $(BOOST_MPI_LIBS)
-#efdriver_LDADD += $(BOOST_SERIALIZATION_LIBS)
 efdriver_LDADD += $(DEPS_LIBS)
 
 # efbuilder: program for running a model
@@ -72,9 +72,8 @@ efbuilder_SOURCES = driver.cpp
 
 efbuilder_LDFLAGS = $(BOOST_MPI_LDFLAGS)
 
-efbuilder_LDADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
+efbuilder_LDADD = libefscape-impl.la
 efbuilder_LDADD += $(BOOST_MPI_LIBS)
-#efbuilder_LDADD += $(BOOST_SERIALIZATION_LIBS)
 efbuilder_LDADD += $(DEPS_LIBS)
 
 copyright:

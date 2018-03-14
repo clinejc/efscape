@@ -127,7 +127,7 @@ namespace efscape {
 		    "Received XML string =>"
 		    << lC_buffer.str());
 
-      return DEVSPtr( loadAdevs(lC_buffer) );
+      return DEVSPtr( loadAdevsFromXML(lC_buffer) );
 
     } // ModelHomeI::createModelFromXML(std::wstring)
 

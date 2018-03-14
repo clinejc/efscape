@@ -18,6 +18,9 @@
 #include <efscape/impl/adevs_config.hpp>
 #include <efscape/impl/SimRunner.hpp>
 
+// definitions for accessing the model home
+#include <efscape/impl/ModelHomeI.hpp>
+
 namespace cereal
 {
 
@@ -82,16 +85,21 @@ namespace efscape {
     void saveAdevsToJSON(const DEVSPtr& aCp_model,
 			 std::ostream& aCr_ostream)
      {
-      // make an archive
-      assert(aCr_ostream.good());
-      cereal::JSONOutputArchive oa( aCr_ostream );
+       // make an archive
+       try{
+	 // assert(aCr_ostream.good());
+	 cereal::JSONOutputArchive oa( aCr_ostream );
 
-      oa( cereal::make_nvp("efscape",aCp_model) );
+	 oa( cereal::make_nvp("efscape",aCp_model) );
+       } catch(...) {
+	LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		      "Exception encountered during serialization of adevs model");
+       }
     }
 
     /**
      * This function attempts to load an adevs model hierarchy serialized with
-     * the boost serialization library.
+     * the cereal serialization library JSON archive.
      *
      * @param aCr_istream reference to input stream
      * @returns handle to loaded model
@@ -99,10 +107,15 @@ namespace efscape {
     DEVSPtr loadAdevsFromJSON(std::istream& aCr_istream)
     {
       DEVSPtr lCp_model;
-      assert(aCr_istream.good());
-      cereal::JSONInputArchive ia( aCr_istream );
+      try {
+	assert(aCr_istream.good());
+	cereal::JSONInputArchive ia( aCr_istream );
 
-      ia( cereal::make_nvp("efscape",lCp_model) );
+	ia( cereal::make_nvp("efscape",lCp_model) );
+      } catch(...) {
+	LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		      "Exception encountered during deserialization of adevs model");
+      }
 
       return lCp_model;
     }

@@ -57,25 +57,56 @@ namespace efscape {
 		    DEVS* aCp_model);
 
     // serialization functions for adevs::Devs<IO_Type> models
-    void saveAdevs(const DEVS* aCp_model, const char* acp_filename);
-    void saveAdevs(const DEVS* aCp_model, std::ostream& aCr_ostream);
-    DEVS* loadAdevs(const char* acp_filename);
-    DEVS* loadAdevs(std::istream& aCr_istream);
+    void saveAdevsToXML(const DEVS* aCp_model, const char* acp_filename);
+    void saveAdevsToXML(const DEVS* aCp_model, std::ostream& aCr_ostream);
+    DEVS* loadAdevsFromXML(const char* acp_filename);
+    DEVS* loadAdevsFromXML(std::istream& aCr_istream);
 
     void saveAdevsToJSON(const DEVSPtr& aCp_model,
 			 std::ostream& aCr_ostream);
     DEVSPtr loadAdevsFromJSON(std::istream& aCr_istream);
 
-    // Helper functions for creating, cloning, and initializing an adevs model
+    /**
+     * Helper function for creating an adevs model from the model factory.
+     *
+     * @param acp_classname class name of model
+     * @returns handle to model (null if missing from the factory)
+     */
     DEVS* createModel(const char* acp_classname);
-    DEVSPtr cloneModel( const DEVSPtr& aCp_model );
 
+    /**
+     * Helper function for cloning an adevs model using JSON serialization
+     *
+     * @param aCp_model handle to model
+     * @returns handle to model clone (null if cloning fails)
+     */
+    DEVSPtr cloneModelUsingJSON( const DEVSPtr& aCp_model );
+
+    /**
+     * Helper function for running a simulation
+     *
+     * @param aCp_model pointer to model
+     * @param ad_timeMax time max
+     */
     void runSim( DEVS* aCp_model, double ad_timeMax = DBL_MAX );
 
-    // Returns the root model of the adevs hierarchy.containing this model.
+    /**
+     * Utility function that returns the root model of the adevs hierarchy
+     * containing this model.
+     *
+     * @param aCp_model
+     * @returns handle to root model
+     */
     adevs::Devs<IO_Type>*
     getRootModel(adevs::Devs<IO_Type>* aCp_model);
 
+    /**
+     * Utility function that returns the root model of the adevs hierarchy
+     * containing this model.
+     *
+     * @param aCp_model
+     * @returns handle to root model
+     */
     const adevs::Devs<IO_Type>*
     getRootModel(const adevs::Devs<IO_Type>* aCp_model);
 

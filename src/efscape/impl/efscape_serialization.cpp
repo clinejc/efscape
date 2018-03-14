@@ -17,9 +17,10 @@
 #include <adevs/adevs_serialization.hpp>
 #include <efscape/impl/adevs_decorator_serialization.hpp>
 
-// #include <efscape/impl/EntityI.hpp>
-// #include <efscape/impl/AdevsModel.hpp>
 #include <efscape/impl/SimRunner.hpp>
+
+// definitions for accessing the model home
+#include <efscape/impl/ModelHomeI.hpp>
 
 #include <fstream>
 
@@ -96,12 +97,12 @@ namespace efscape {
      * @param aCp_model handle to model (reference)
      * @param acp_filename file name
      */
-    void saveAdevs(const adevs::Devs<IO_Type>* aCp_model,
-		   const char* acp_filename)
+    void saveAdevsToXML(const adevs::Devs<IO_Type>* aCp_model,
+			const char* acp_filename)
     {
       // make an archive
       std::ofstream ofs(acp_filename);
-      saveAdevs(aCp_model, ofs);
+      saveAdevsToXML(aCp_model, ofs);
       ofs.close();
     }
 
@@ -112,16 +113,21 @@ namespace efscape {
      * @param aCp_model handle to model (reference)
      * @param aCr_ostream output stream
      */
-    void saveAdevs(const adevs::Devs<IO_Type>* aCp_model,
-		   std::ostream& aCr_ostream)
+    void saveAdevsToXML(const adevs::Devs<IO_Type>* aCp_model,
+			std::ostream& aCr_ostream)
     {
       // make an archive
-      assert(aCr_ostream.good());
-      boost::archive::xml_oarchive oa(aCr_ostream);
+      try {
+	// assert(aCr_ostream.good());
+	boost::archive::xml_oarchive oa(aCr_ostream);
 
-      oa << boost::serialization::make_nvp("efscape",aCp_model);
+	oa << boost::serialization::make_nvp("efscape",aCp_model);
 
-      // aCr_ostream << "</boost_serialization>";
+	// aCr_ostream << "</boost_serialization>";
+      } catch(...) {
+	LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		      "Exception encountered during serialization of adevs model");
+      }
     }
 
     /**
@@ -131,10 +137,10 @@ namespace efscape {
      * @param acp_filename file name
      * @returns handle to loaded model
      */
-    adevs::Devs<IO_Type>* loadAdevs(const char* acp_filename)
+    adevs::Devs<IO_Type>* loadAdevsFromXML(const char* acp_filename)
     {
       std::ifstream ifs(acp_filename);
-      return loadAdevs(ifs);
+      return loadAdevsFromXML(ifs);
     }
 
     /**
@@ -144,13 +150,16 @@ namespace efscape {
      * @param aCr_istream reference to input stream
      * @returns handle to loaded model
      */
-    adevs::Devs<IO_Type>* loadAdevs(std::istream& aCr_istream)
+    adevs::Devs<IO_Type>* loadAdevsFromXML(std::istream& aCr_istream)
     {
-      adevs::Devs<IO_Type>* lCp_model;
-//       std::ifstream ifs(acp_filename);
-      assert(aCr_istream.good());
-      boost::archive::xml_iarchive ia(aCr_istream);
-      ia >> BOOST_SERIALIZATION_NVP(lCp_model);
+      adevs::Devs<IO_Type>* lCp_model = nullptr;
+      try {
+	boost::archive::xml_iarchive ia(aCr_istream);
+	ia >> BOOST_SERIALIZATION_NVP(lCp_model);
+      } catch(...) {
+	LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		      "Exception encountered during deserialization of adevs model");
+      }
       return lCp_model;
     }
 
