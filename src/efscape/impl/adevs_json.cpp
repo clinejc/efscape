@@ -7,45 +7,14 @@
 #include <efscape/impl/adevs_json.hpp>
 
 #include <efscape/impl/ModelHomeI.hpp>
-#include <efscape/impl/ClockI.hpp>
-
-// boost definitions
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/optional.hpp>
-#include <boost/foreach.hpp>
-
-#include <sstream>
 
 namespace efscape {
 
   namespace impl {
 
-    //
-    // utility functions
-    //
-    
-    void convert_from_json(const Json::Value& aCr_value, ClockI& aCr_clock) {
-      if (aCr_value["delta_t"].isDouble())
-	aCr_clock.timeDelta() = aCr_value["delta_t"].asDouble();
-      if (aCr_value["stopAt"].isDouble())
-	aCr_clock.timeMax() = aCr_value["stopAt"].asDouble();
-      if (aCr_value["units"].isString()) {
-	aCr_clock.timeUnits( aCr_value["units"].asString().c_str() );
-      }   
-    }
-
-    Json::Value convert_to_json(const ClockI& aCr_clock) {
-      Json::Value lC_value;
-      
-      lC_value["delta_t"] = aCr_clock.timeDelta();
-      lC_value["stopAt"] = aCr_clock.timeMax();
-      lC_value["units"] = aCr_clock.timeUnits();
-
-      return lC_value;
-    }
 
     // utility function for building a model from JSON
-    DEVS* createModelFromJSON(const Json::Value& aC_config) {
+    DEVS* buildModelFromJSON(Json::Value aC_config) {
       // This function supports the following model type configurations:
       // 1. ATOMIC
       //    a. ModelWrapper (contains a "wrappedModel")
@@ -57,29 +26,22 @@ namespace efscape {
 	return lCp_model;
       }
 
-      // check <baseClassName>
-      Json::Value lC_attribute = aC_config["baseClassName"];
-      if (!lC_attribute) {
+      // check <modelTypeName>
+      Json::Value lC_attribute = aC_config["modelTypeName"];
+      if (!lC_attribute.isString()) {
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Missing <baseClassName>");
+		      "Missing <modelTypeName>");
 	return lCp_model;
       }
-
-      // check <className>
-      if (!(lC_attribute = aC_config["className"]) ) {
-	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Missing <className>");
-	return lCp_model;
-      }
-
-      if (!lC_attribute.isString()) { // <className> should be a string
-	return lCp_model;
-      }
-
-      std::string lC_className = lC_attribute.asString();
+      
+      std::string lC_modelTypeName = lC_attribute.asString();
       
       // attempt to create the model from the factory
-      if ( (lCp_model = createModel(lC_className.c_str()) )
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		    "Attempt to create a <"
+		    << lC_modelTypeName
+		    << "> model");
+      if ( (lCp_model = createModel(lC_modelTypeName.c_str()) )
 	     != NULL ) {
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "Successfully created the model!");
@@ -140,19 +102,7 @@ namespace efscape {
 	      return NULL;
 	    }
 
-	    if (!lC_wrappedModel["className"].isString()) {
-	      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			    "Missing wrapped model <className>");
-	      return lCp_model;
-	    }
-
-	    lC_className = lC_wrappedModel["className"].asString();
-
-	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  "Attempting to create wrapped model of type <"
-			  << lC_className << ">");
-	    DEVS* lCp_wrappedModel =
-	      createModelFromJSON(lC_wrappedModel);
+	    DEVSPtr lCp_wrappedModel( buildModelFromJSON(lC_wrappedModel ) );
 	    
 	    if (lCp_wrappedModel) { // if the wrappedModel exists
 	      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
@@ -162,65 +112,44 @@ namespace efscape {
 	    else {
 	      LOG4CXX_ERROR(ModelHomeI::getLogger(),
 			    "The wrappedModel is missing!");
-	    }
+	    } // else missing a wrapped model
+	  } // else not a wrapper model
+	  
+	  // inject input (model properties file)
+	  // note: must be done before initializing the simulator
+	  Json::Value lC_properties = aC_config["properties"];
+	  if ( lC_properties.isObject() ) {
+	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+			  "Attempting to load properties for model <"
+			  << lC_modelTypeName << ">");
 
-	    // inject input (model properties file)
-	    // note: must be done before initializing the simulator
 	    adevs::Bag<efscape::impl::IO_Type> xb;
 	    efscape::impl::IO_Type e;
 	    e.port = "properties_in";
-	    
-	    std::ostringstream lC_buffer_out;
-	    lC_buffer_out << aC_config;
-	    e.value = lC_buffer_out.str();
+	    e.value = lC_properties;
 	    
 	    xb.insert(e);
 
-	    inject_events(-0.1, xb, lCp_model);
-
+	    inject_events(0.0, xb, lCp_model);
+	  } else {
+	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+			  "No properties for model <"
+			  << lC_modelTypeName << ">");
 	  }
 	} // else [this is an ATOMIC model
       }	  // if (!aC_config)
       
       return lCp_model;
       
-    } // createModelFromJSON(const Json::Value&)
-
-    // utility function for loading info from a JSON file
-    boost::property_tree::ptree loadInfoFromJSON(std::string aC_path) {
-      // path is relative
-      std::string lC_FileName =
-	ModelHomeI::getHomeDir() + std::string("/") + aC_path;
-
-      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		    "model info path = <" << lC_FileName << "> ***");
-
-      boost::property_tree::ptree pt;
-      std::string lC_JsonStr = "{}";
-      try {
-	boost::property_tree::read_json( lC_FileName.c_str(), pt );
-
-	std::ostringstream lC_buffer;
-	boost::property_tree::write_json(lC_buffer, pt, false);
-	lC_JsonStr = lC_buffer.str();
-	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "JSON=>" << lC_JsonStr);
-      }
-      catch (...) {
-	LOG4CXX_ERROR(ModelHomeI::getLogger(),
-		      "unknown exception occurred parsing model info JSON file.");
-      }
-
-      return pt;
-    }
+    } // buildModelFromJSON(const Json::Value&)
 
     //
     // DigraphBuilder
     //
     Json::Value DigraphBuilder::convert_to_json() const {
       Json::Value lC_config;
-      lC_config["baseClassName"] = "efscape::impl::DEVS";
-      lC_config["className"] = "efscape::impl::DIGRAPH";
+      
+      lC_config["modelTypeName"] = "efscape::impl::DIGRAPH";
       
       Json::Value lC_models;
       Json::Value lC1_couplings;
@@ -231,12 +160,11 @@ namespace efscape {
       }
       lC_config["models"] = lC_models;
 
-      std::istringstream lC_buffer_in("[]");
-      lC_buffer_in >> lC1_couplings;
+      lC1_couplings = Json::Value(Json::arrayValue);
 
       for (int i = 0; i < mC1_couplings.size(); i++) {
-	Json::Value lC_coupling = mC1_couplings[i].convert_to_json();
-	lC1_couplings.append(lC_coupling);
+	Json::Value lC_edge = mC1_couplings[i].convert_to_json();
+	lC1_couplings.append(lC_edge);
       }
       lC_config["couplings"] = lC1_couplings;
 
@@ -271,7 +199,7 @@ namespace efscape {
       
       for (int i = 0; i < lC_memberNames.size(); i++) {
 	DEVS* lCp_subModel =
-	  createModelFromJSON(lC_modelsAttribute[ lC_memberNames[i] ] );
+	  buildModelFromJSON(lC_modelsAttribute[ lC_memberNames[i] ] );
 	if (lCp_subModel) {
 	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 			"Adding model <"
@@ -294,12 +222,12 @@ namespace efscape {
 
       // add couplings
       for (int i = 0; i < lC1_couplings.size(); i++) {
-	Json::Value lC_couplingValue = lC1_couplings[i];
-	struct coupling dgc;
-	dgc.convert_from_json(lC_couplingValue);
+	Json::Value lC_edgeValue = lC1_couplings[i];
+	struct edge dgc;
+	dgc.convert_from_json(lC_edgeValue);
 
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Adding model coupling ("
+		      "Adding model edge ("
 		      << dgc.from.model << "," << dgc.from.port << ")"
 		      << "=>("
 		      << dgc.to.model << "," << dgc.to.port << ")");

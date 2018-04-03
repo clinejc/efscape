@@ -9,23 +9,12 @@
 
 // efscape definitions
 #include <efscape/impl/adevs_config.hpp>
-#include <efscape/impl/ClockI.hpp>
-
-#include <boost/property_tree/ptree.hpp>
 #include <json/json.h>
-
-#include <picojson_serializer.h>
-#include <picojson_set_serializer.h>
-#include <picojson_vector_serializer.h>
-
 #include <string>
 
 namespace efscape {
 
   namespace impl {
-
-    // forward declarations
-    class ClockI;
 
     /**
      * This utility function parses JSON data in a JSON value and attempts
@@ -34,36 +23,8 @@ namespace efscape {
      * @param aC_config JSON value containing model configuration
      * @returns handle to model 
      */   
-    DEVS* createModelFromJSON(const Json::Value& lC_config);
+    DEVS* buildModelFromJSON(Json::Value lC_config);
     
-    /**
-     * This utility function loads information from a JSON file.
-     * 
-     * @param aC_path relative path of the JSON file
-     * @returns JSON property tree
-     */
-    boost::property_tree::ptree loadInfoFromJSON(std::string aC_path);
-
-    //
-    // Some utility functions and classes for working with model JSON data
-    //
-
-    /**
-     * Parses clock parameters from a JSON object.
-     *
-     * @param aCr_value json value
-     * @param aCr_clock reference to clock
-     */
-    void convert_from_json(const Json::Value& aCr_value, ClockI& aCr_clock);
-
-    /**
-     * Copies clock parameters to a JSON object
-     *
-     * @param aCr_clock reference to clock
-     * @returns JSON object with time info
-     */
-    Json::Value convert_to_json(const ClockI& aCr_clock);
-
     /**
      * A simple class that provides scaffolding for building a Digraph
      * from a JSON configuration data.
@@ -128,7 +89,7 @@ namespace efscape {
       };
 
       /** digraph node coupling */
-      struct coupling {
+      struct edge {
 	/** source node */
 	node from;
 
@@ -136,7 +97,7 @@ namespace efscape {
 	node to;
 
 	/** default constructor */
-	coupling() :
+	edge() :
 	  from("",""),
 	  to("","") {}
 
@@ -146,7 +107,7 @@ namespace efscape {
 	 * @param source node
 	 * @param destination node
 	 */
-	coupling(node fromNode, node toNode) :
+	edge(node fromNode, node toNode) :
 	  from(fromNode),
 	  to(toNode) {}
 
@@ -158,7 +119,7 @@ namespace efscape {
 	 * @param modelTo name of destination model
 	 * @param portTo destination port
 	 */
-	coupling(std::string modelFrom, std::string portFrom,
+	edge(std::string modelFrom, std::string portFrom,
 		 std::string modelTo, std::string portTo) :
 	  from(modelFrom, portFrom),
 	  to(modelTo, portTo) {}
@@ -166,11 +127,11 @@ namespace efscape {
 	/**
 	 * copy constructor
 	 *
-	 * @param aCoupling coupling to be copied
+	 * @param aEdge edge to be copied
 	 */
-	coupling(const coupling& aCoupling) :
-	  from(aCoupling.from),
-	  to(aCoupling.to) {}
+	edge(const edge& aEdge) :
+	  from(aEdge.from),
+	  to(aEdge.to) {}
 
 	/**
 	 * Loads the coupling parameters from a JSON object.
@@ -224,9 +185,9 @@ namespace efscape {
       void coupling(std::string modelFrom, std::string portFrom,
 		    std::string modelTo, std::string portTo)
       {
-	struct coupling lC_coupling(modelFrom, portFrom,
-				    modelTo, portTo);
-	mC1_couplings.push_back(lC_coupling);
+	struct edge lC_edge(modelFrom, portFrom,
+			    modelTo, portTo);
+	mC1_couplings.push_back(lC_edge);
       }
 
       /**
@@ -251,7 +212,7 @@ namespace efscape {
       std::map<std::string, Json::Value> mCC_models;
 
       /** array of digraph couplings */
-      std::vector<coupling> mC1_couplings;
+      std::vector<edge> mC1_couplings;
 	
     };				// DigraphBuilder
     

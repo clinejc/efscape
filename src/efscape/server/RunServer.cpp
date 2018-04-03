@@ -67,27 +67,19 @@ namespace efscape {
       // create a root model from the model repository
       //----------------------------------------------
       try {
-	if (mC_variable_map.count("debug")) {
-	  std::cout << "debug is set\n";
-	}
-	else
-	  std::cout << "debug is not set\n";
 
 	if (debug_on()) {
-	  std::cout << "Setting logger to Debug...\n";
-
 	  // note (2008.06.05):
 	  // The default debug setting is not working.
 	  impl::ModelHomeI::getLogger()->setLevel(log4cxx::Level::getDebug());
 	}
 	else {
-	  std::cout << "Setting logger to error...\n";
 	  impl::ModelHomeI::getLogger()->setLevel(log4cxx::Level::getError());
 	}
 
 	LOG4CXX_DEBUG(impl::ModelHomeI::getLogger(),
 		      "Loading libraries");
-	impl::Singleton<impl::ModelHomeI>::Instance().LoadLibraries();	
+	impl::Singleton<impl::ModelHomeI>::Instance().LoadLibraries();
 
 	//----------------------
 	// launch the ICE server
@@ -119,7 +111,7 @@ namespace efscape {
 	}
 	delete [] argv;
 
-      }  
+      }
       catch(std::logic_error lC_excp) {
       	LOG4CXX_ERROR(impl::ModelHomeI::getLogger(),
       		      lC_excp.what());
@@ -179,7 +171,7 @@ namespace efscape {
 		<< "examples:\n\t\t"
 		<< program_name() << "\n\t\t"
 		<< program_name() << " -d -o logfile_name\n\n";
- 
+
       exit( exit_value );
     }
 
@@ -200,7 +192,7 @@ namespace efscape {
       efscape::ModelHomePtr lCp_ModelHome = lCp_ModelHomeTie;
 
       adapter->add(lCp_ModelHome,
-		   communicator()->stringToIdentity("ModelHome"));
+		   Ice::stringToIdentity("ModelHome"));
 
       adapter->activate();
 

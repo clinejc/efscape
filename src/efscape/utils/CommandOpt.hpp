@@ -23,7 +23,7 @@ namespace efscape {
      * class CommandOpt
      *
      * @author Jon C. Cline <clinej@stanfordalumni.org>
-     * @version 1.0.0 created:	11 November 1999, revised 12 Aug 2014
+     * @version 1.1.0 created:	11 November 1999, revised 10 Jul 2017
      *
      * This class encapsulates the details of processing the command line
      * options.\n\n
@@ -62,6 +62,9 @@ namespace efscape {
       /** program option descriptions */
       boost::program_options::options_description mC_description;
 
+      /** program option extended descriptions */
+      boost::program_options::options_description mC_extended_description;
+      
       /** program variables */
       boost::program_options::variables_map mC_variable_map;
 

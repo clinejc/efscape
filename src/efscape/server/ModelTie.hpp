@@ -13,8 +13,6 @@
 
 #include <efscape/impl/adevs_config.hpp>
 #include <efscape/impl/ClockI.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/scoped_ptr.hpp>
 
 namespace efscape {
 
@@ -25,7 +23,7 @@ namespace efscape {
      * interface for server-side models.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 1.0.0 created 18 Oct 2008, revised 22 Apr 2017
+     * @version 1.1.0 created 18 Oct 2008, revised 20 Aug 2017
      */
     class ModelTie : virtual public ::efscape::Model,
 		     public adevs::EventListener<efscape::impl::IO_Type>
@@ -33,8 +31,8 @@ namespace efscape {
     public:
 
       ModelTie();
-      ModelTie(adevs::Devs<efscape::impl::IO_Type>* aCp_model);
-      ModelTie(adevs::Devs<efscape::impl::IO_Type>* aCp_model,
+      ModelTie(const efscape::impl::DEVSPtr& aCp_model);
+      ModelTie(const efscape::impl::DEVSPtr& aCp_model,
 	       const char* acp_name);
       ~ModelTie();
 
@@ -57,14 +55,10 @@ namespace efscape {
       virtual ::efscape::Message outputFunction(const Ice::Current&);
 
       virtual ::std::string getType(const Ice::Current&) const;
-      virtual ::std::string getBaseType(const Ice::Current&) const;
       virtual void setName(const std::string&,
 			   const Ice::Current&);
 
-      virtual ::efscape::PortDescriptions getInPorts(const Ice::Current&) const;
-      virtual ::efscape::PortDescriptions getOutPorts(const Ice::Current&) const;
-
-      virtual ::std::wstring saveXML(const Ice::Current&);
+      virtual ::std::string saveJSON(const Ice::Current&);
 
       virtual void destroy(const Ice::Current&);
 
@@ -82,13 +76,13 @@ namespace efscape {
        *
        * @param aCp_model handle to adevs::devs object
        */
-      void setWrappedModel(adevs::Devs<efscape::impl::IO_Type>* aCp_model) {
-	mCp_WrappedModel.reset(aCp_model);
+      void setWrappedModel(const efscape::impl::DEVSPtr& aCp_model) {
+	mCp_WrappedModel = aCp_model;
       }
 
       /** @returns handle to associated model */
-      adevs::Devs<efscape::impl::IO_Type>* getWrappedModel() {
-	return mCp_WrappedModel.get();
+      efscape::impl::DEVSPtr getWrappedModel() {
+	return mCp_WrappedModel;
       }
 
     protected:
@@ -103,12 +97,11 @@ namespace efscape {
 			  aCr_internal_input);
 
       /** handle to simulator */
-      boost::scoped_ptr< adevs::Simulator<efscape::impl::IO_Type> >
+      std::unique_ptr< adevs::Simulator<efscape::impl::IO_Type> >
       mCp_simulator;
 
       /** handle to model */
-      boost::scoped_ptr< adevs::Devs<efscape::impl::IO_Type> >
-      mCp_WrappedModel;
+      efscape::impl::DEVSPtr mCp_WrappedModel;
 
       /** output buffer */
       adevs::Bag< adevs::Event<efscape::impl::IO_Type> > mCC_OutputBuffer;

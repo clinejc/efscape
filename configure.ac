@@ -9,22 +9,31 @@ dnl --------------------------------
 AC_INIT([efscape],[1.0.0])
 AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE
-#AM_INIT_AUTOMAKE([subdir-objects])
+AM_INIT_AUTOMAKE([subdir-objects])
 LT_INIT
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/efscape/efscape.ice])
 #AC_CONFIG_HEADER([config.h])
+
+# required for libraries built by this package
+AC_PROG_RANLIB
 
 dnl -----------------------------------------------
 dnl Adds configure options
 dnl -----------------------------------------------
 
 # Checks for programs.
+
+# Set lang c++
+AC_LANG(C++)
 AC_PROG_CC([mpicc mpixlc])
 AC_PROG_CXX([mpic++ mpixlcxx])
+CXXFLAGS="-std=c++11 -fPIC"
+
 AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
 AM_SANITY_CHECK
+
 
 dnl -----------------------------------------------
 dnl Checks for libraries
@@ -36,7 +45,6 @@ PKG_CHECK_MODULES(DEPS,
 	liblog4cxx > 0.1
 	zeroc-ice >= 3.5
 	repast >= 2.0)
-
 
 BOOST_REQUIRE([1.60])
 
@@ -76,5 +84,7 @@ AC_CONFIG_FILES([Makefile
 		 src/efscape/utils/Makefile
 		 src/efscape/impl/Makefile
 		 src/efscape/server/Makefile
-		 src/simplesim/Makefile])
+		 examples/Makefile
+		 examples/gpt/Makefile
+		 examples/zombie/Makefile])
 AC_OUTPUT

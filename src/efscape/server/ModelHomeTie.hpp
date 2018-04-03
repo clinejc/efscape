@@ -20,7 +20,7 @@ namespace efscape {
      * models. It replaces the ModelRepository interface.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 3.0.0 created 24 Dec 2006, revised 23 Apr 2017
+     * @version 3.1.0 created 24 Dec 2006, revised 20 Aug 2017
      */
     class ModelHomeTie : virtual public ::efscape::ModelHome
     {
@@ -35,11 +35,15 @@ namespace efscape {
 
       virtual
       ::efscape::ModelPrx createFromXML(const ::std::wstring&,
-					const Ice::Current&);
+   				const Ice::Current&);
 
       virtual
       ::efscape::ModelPrx createFromJSON(const ::std::string&,
 					 const Ice::Current&);
+
+      virtual
+      ::efscape::ModelPrx createFromParameters(const ::std::string&,
+					       const Ice::Current&);
 
       virtual ::efscape::ModelNameList getModelList(const Ice::Current&);
 

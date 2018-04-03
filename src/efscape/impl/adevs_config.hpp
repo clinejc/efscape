@@ -30,12 +30,13 @@ namespace efscape {
     typedef std::string PortType;
     typedef adevs::PortValue<boost::any,PortType> IO_Type;
     typedef adevs::Devs<IO_Type> DEVS;
+    typedef std::shared_ptr<DEVS> DEVSPtr;
     typedef adevs::Atomic<IO_Type> ATOMIC;
     typedef adevs::ModelWrapper<IO_Type,IO_Type> ModelWrapperBase;
     typedef adevs::Network<IO_Type> NETWORK;
     typedef adevs::Network<IO_Type> NetworkModel;
     typedef adevs::ModelDecorator<IO_Type> ModelDecorator;
-    typedef adevs::SimpleDigraph<IO_Type> SIMPLEDIGRAPH;
+    typedef adevs::SimpleDigraph<boost::any> SIMPLEDIGRAPH;
     typedef adevs::Digraph<boost::any,PortType> DIGRAPH;
     typedef adevs::CellEvent<boost::any> CellEvent;
     typedef adevs::Devs<CellEvent> CellDevs;
@@ -56,21 +57,56 @@ namespace efscape {
 		    DEVS* aCp_model);
 
     // serialization functions for adevs::Devs<IO_Type> models
-    void saveAdevs(const DEVS* aCp_model, const char* acp_filename);
-    void saveAdevs(const DEVS* aCp_model, std::ostream& aCr_ostream);
-    DEVS* loadAdevs(const char* acp_filename);
-    DEVS* loadAdevs(std::istream& aCr_istream);
+    void saveAdevsToXML(const DEVS* aCp_model, const char* acp_filename);
+    void saveAdevsToXML(const DEVS* aCp_model, std::ostream& aCr_ostream);
+    DEVS* loadAdevsFromXML(const char* acp_filename);
+    DEVS* loadAdevsFromXML(std::istream& aCr_istream);
 
-    // Helper functions for creating, cloning, and initializing an adevs model
+    void saveAdevsToJSON(const DEVSPtr& aCp_model,
+			 std::ostream& aCr_ostream);
+    DEVSPtr loadAdevsFromJSON(std::istream& aCr_istream);
+
+    /**
+     * Helper function for creating an adevs model from the model factory.
+     *
+     * @param acp_classname class name of model
+     * @returns handle to model (null if missing from the factory)
+     */
     DEVS* createModel(const char* acp_classname);
-    DEVS* cloneModel( const DEVS* aCp_model );
- 
-    bool initializeModel( DEVS* aCp_model );
 
-    // Returns the root model of the adevs hierarchy.containing this model.
+    /**
+     * Helper function for cloning an adevs model using JSON serialization
+     *
+     * @param aCp_model handle to model
+     * @returns handle to model clone (null if cloning fails)
+     */
+    DEVSPtr cloneModelUsingJSON( const DEVSPtr& aCp_model );
+
+    /**
+     * Helper function for running a simulation
+     *
+     * @param aCp_model pointer to model
+     * @param ad_timeMax time max
+     */
+    void runSim( DEVS* aCp_model, double ad_timeMax = DBL_MAX );
+
+    /**
+     * Utility function that returns the root model of the adevs hierarchy
+     * containing this model.
+     *
+     * @param aCp_model
+     * @returns handle to root model
+     */
     adevs::Devs<IO_Type>*
     getRootModel(adevs::Devs<IO_Type>* aCp_model);
 
+    /**
+     * Utility function that returns the root model of the adevs hierarchy
+     * containing this model.
+     *
+     * @param aCp_model
+     * @returns handle to root model
+     */
     const adevs::Devs<IO_Type>*
     getRootModel(const adevs::Devs<IO_Type>* aCp_model);
 
@@ -127,7 +163,7 @@ namespace efscape {
 	  lCp_target = getTargetModel<T>(aCp_model);
 	}
 	else if ( ( lCp_digraph = dynamic_cast<const DIGRAPH*>(aCp_model) ) ) {
-	  typedef adevs::Set<const DEVS* > ComponentSet;
+	  typedef adevs::Set<DEVS* > ComponentSet;
 
 	  ComponentSet lC_models;
 	  lCp_digraph->getComponents(lC_models);
@@ -151,7 +187,7 @@ namespace efscape {
      * @version 0.01 created 11 Oct 2007, revised 11 Oct 2007
      */
     template <class InputType, class OutputType>
-    class InputConsumer 
+    class InputConsumer
     {
     public:
 
@@ -198,12 +234,12 @@ namespace efscape {
     typedef OutputProducer<CellEvent,IO_Type> CellPortProducer;
     typedef OutputProducer<IO_Type,CellEvent> PortCellProducer;
 
-    typedef boost::shared_ptr< PortPortConsumer > PortPortConsumerPtr;
-    typedef boost::shared_ptr< PortCellConsumer > PortCellConsumerPtr;
-    typedef boost::shared_ptr< CellPortConsumer > CellPortConsumerPtr;
-    typedef boost::shared_ptr< PortPortProducer > PortPortProducerPtr;
-    typedef boost::shared_ptr< PortCellProducer > PortCellProducerPtr;
-    typedef boost::shared_ptr< CellPortProducer > CellPortProducerPtr;
+    typedef std::shared_ptr< PortPortConsumer > PortPortConsumerPtr;
+    typedef std::shared_ptr< PortCellConsumer > PortCellConsumerPtr;
+    typedef std::shared_ptr< CellPortConsumer > CellPortConsumerPtr;
+    typedef std::shared_ptr< PortPortProducer > PortPortProducerPtr;
+    typedef std::shared_ptr< PortCellProducer > PortCellProducerPtr;
+    typedef std::shared_ptr< CellPortProducer > CellPortProducerPtr;
 
     typedef std::vector<PortPortConsumerPtr> PortPortConsumerVector;
     typedef std::vector<PortCellConsumerPtr> PortCellConsumerVector;

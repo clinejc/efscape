@@ -19,8 +19,8 @@
 #include <efscape/utils/CommandOpt.hpp>
 #include <map>
 #include <string>
-#include <boost/scoped_ptr.hpp>
 #include <log4cxx/propertyconfigurator.h>
+#include <boost/filesystem.hpp>
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>
@@ -76,44 +76,16 @@ int main(int argc, char** argv) {
   //---------------------------------------
   // extract the program name from the path
   //---------------------------------------
-  std::string lC_program_name = argv[0];
-
-  // find path prefix
-  std::string::size_type pos = 0;
-  std::string::size_type startpos = 0;
-  while ( (pos = lC_program_name.find_first_of("/",pos)) != std::string::npos) {
-    ++pos;
-    startpos = pos;
-  }
-  if ( startpos != 0 || startpos != std::string::npos) {
-    lC_program_name = lC_program_name.substr(startpos);
-  }
-  // std::cout << "program name = <" << lC_program_name << ">\n";
+  std::string lC_program_name = boost::filesystem::path(argv[0]).filename().string();
 
   //-----------------------------
   // program name == command name
   //-----------------------------
   int li_option_status = 0;
   int li_cmd_status = 0;
-  boost::scoped_ptr<efscape::utils::CommandOpt> lCp_command;
-
-  // attempt to retrieve the root directory of efscape ICE configuration
-  std::string lC_EfscapeIcePath = "."; // default location
-  char* lcp_env_variable =	// get EFSCAPE_HOME
-    getenv("EFSCAPE_HOME");
-
-  if ( lcp_env_variable != 0 )
-    lC_EfscapeIcePath = lcp_env_variable;
-
-  std::string lC_logger_config = lC_EfscapeIcePath
-    + "/log4j.properties";
+  std::unique_ptr<efscape::utils::CommandOpt> lCp_command;
 
   try {
-    // Set up logging configuration
-    // std::cout << "Loading logger configuration from <"
-    // 	      << lC_logger_config << ">...\n";
-    log4cxx::PropertyConfigurator::configure(lC_logger_config.c_str());
-
     lCp_command.reset( efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().getCommandFactory().
 		       createObject(lC_program_name) );
   }

@@ -7,19 +7,24 @@
 #ifndef EFSCAPE_IMPL_SIMRUNNER_HPP
 #define EFSCAPE_IMPL_SIMRUNNER_HPP
 
+// cereal serialization definitions
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/memory.hpp>
+
 // boost serialization definitions
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include <boost/serialization/scoped_ptr.hpp>
 
 // parent class definition
 #include <efscape/impl/adevs_config.hpp>
 
 // data member definitions
 #include <efscape/impl/ClockI.hpp>
-#include <boost/property_tree/ptree.hpp>
+#include <efscape/impl/efscape_cereal.hpp> // cereal for ClockI
+#include <efscape/utils/type.hpp>
 
+#include <json/json.h>
 #include <adevs/adevs_exception.h>
 
 namespace efscape {
@@ -28,19 +33,24 @@ namespace efscape {
 
     /**
      * Implements an adevs-based model wrapper that encapsulates a simulation
-     * model session. It replace the efscape::impl::AdevsModel
+     * model session. It replaces the efscape::impl::AdevsModel
      *
      * @author Jon C. Cline <clinej@stanfordalumni.org>
-     * @version 0.1.1 created 27 Apr 2017, revised 09 June 2017
+     * @version 0.2.0 created 27 Apr 2017, revised 11 Aug 2017
      */
     class SimRunner : public ModelWrapperBase
     {
-      friend class boost::serialization::access;
-
     public:
 
       /** constructor */
       SimRunner();
+
+      /**
+       * constructor*
+       *
+       * @param aC_parameters embedded in a JSON string
+       */
+      SimRunner(Json::Value aC_parameters);
 
       /** destructor */
       ~SimRunner();
@@ -49,34 +59,25 @@ namespace efscape {
       // accessor/mutator methods
       //-------------------------
 
-      /**
-       * Class method that returns information about this model class.
-       *
-       * @returns info about this model class
-       */
-      static boost::property_tree::ptree get_info();
- 
-      ///
-      /// model configuration/properties
-      ///
+      /** @returns model type name */
+      std::string getModelTypeName() const {
+	return mC_modelTypeName;
+      }
 
-      /** @returns model configuration in JSON */
-      std::string convert_to_json() const;
-
-      /**
-       * Sets the model properties
-       *
-       * @param aC_modelJson model JSON configuration string
-       * @returns number of properties found
-       */
-      virtual unsigned int
-      convert_from_json(const std::string& aC_modelJson);
+      /** @returns model name */
+      std::string getModelName() const{
+	return mC_modelName;
+      }
 
       //
       // clock
       //
+
       /** @returns reference to clock */
       ClockIPtr& getClockIPtr();
+
+      /** @returns reference to clock */
+      const ClockIPtr& getClockIPtr() const;
 
       /**
        * Sets the handle to a clock.
@@ -85,8 +86,8 @@ namespace efscape {
        */
       void setClockIPtr(const ClockIPtr& aCr_clock);
 
-      /** @returns handle to clock */
-      const ClockI* getClock() const;
+      /** @returns reference to clock */
+      const ClockI& getClock() const;
 
       //---------------------------
       // adevs ModelWrapper methods
@@ -120,9 +121,9 @@ namespace efscape {
        * @returns time advance
        */
       double ta();
-      
+
       /// implementing abtract methods
-      
+
       /**
        * This method is used to translate incoming input objects into input
        * objects that the wrapped model can process.
@@ -139,7 +140,7 @@ namespace efscape {
        *
        * @param internal_output bag of output from the internal model
        * @param external_output bag of output from the ModelWrapper
-       */     
+       */
       void translateOutput(const
 			   adevs::Bag<adevs::Event<IO_Type> >&
 			   internal_output,
@@ -169,7 +170,7 @@ namespace efscape {
       static const efscape::impl::PortType properties_in;
 
     protected:
-      
+
       /**
        * Create the wrapped model (to be overridden by derived classes)
        *
@@ -178,60 +179,79 @@ namespace efscape {
       virtual void createModel()
 	throw(adevs::exception);
 
-      /** model configuration as a JSON string */
-      std::string mC_modelJson;
-      
+      std::string mC_modelTypeName;
+      std::string mC_modelName;
+
       /** simulation clock (implementation) */
       ClockIPtr mCp_ClockI;
 
     private:
+      friend class cereal::access;
 
       template<class Archive>
-      void save(Archive & ar, const unsigned int version) const
+      void serialize(Archive & ar)
       {
-	// save parent class data
-	ar & boost::serialization::make_nvp("ModelWrapper",
-					    boost::serialization::base_object<ModelWrapperBase>(*this) );
-
-	// save model configuration
-	ar  & boost::serialization::make_nvp("modelJson",mC_modelJson);
-	
-	// save clock
-	ar  & boost::serialization::make_nvp("Clock",mCp_ClockI);
-
-	// save the wrapped model
-	const DEVS* lCp_wrappedModel =
-	  this->ModelWrapperBase::getWrappedModel();
-	ar & boost::serialization::make_nvp("WrappedModel", lCp_wrappedModel );
+	// invoke serialization
+	ar( cereal::make_nvp("adevs::ModelWrapper", // parent class
+			     cereal::base_class<efscape::impl::ModelWrapperBase>(this) ),
+	    cereal::make_nvp("modelTypeName", mC_modelTypeName),
+	    cereal::make_nvp("modelName", mC_modelName),
+	    cereal::make_nvp("clock", mCp_ClockI) );
       }
-
-      template<class Archive>
-      void load(Archive & ar, const unsigned int version)
-      {
-	// load parent class data
-	ar & boost::serialization::make_nvp("ModelWrapper",
-					    boost::serialization::base_object<ModelWrapperBase>(*this) );
-
-	// save model configuration
-	ar  & boost::serialization::make_nvp("modelJson",mC_modelJson);
-
-	// load clock
-	ar  & boost::serialization::make_nvp("Clock",mCp_ClockI);
-
-	// save the wrapped model
-	DEVS* lCp_wrappedModel = NULL;
-	ar & boost::serialization::make_nvp("WrappedModel", lCp_wrappedModel );
-	this->ModelWrapperBase::setWrappedModel( lCp_wrappedModel );
-      }
-
-      BOOST_SERIALIZATION_SPLIT_MEMBER();
-
-    };
+    };				// class SimRunner
 
   } // namespace impl
 
 } // namespace efscape
 
-BOOST_CLASS_VERSION(efscape::impl::SimRunner,5)
+namespace boost {
+
+  namespace seralization {
+
+    template<class Archive>
+    void save(Archive & ar, const efscape::impl::SimRunner& simRunner,
+	      const unsigned int version)
+    {
+      // first retrieve the wrapped model
+      const efscape::impl::DEVSPtr lCp_wrappedModel =
+	simRunner.getWrappedModel();
+
+      efscape::impl::ClockIPtr lCp_clock =
+	simRunner.getClockIPtr();
+
+      // save parent class data
+      ar & boost::serialization::make_nvp("ModelWrapper",
+					  boost::serialization::base_object<efscape::impl::ModelWrapperBase>(simRunner) );
+
+      // save clock
+      ar  & boost::serialization::make_nvp("Clock", lCp_clock);
+
+      // save the wrapped model
+      ar & boost::serialization::make_nvp("WrappedModel", lCp_wrappedModel );
+    }
+
+    template<class Archive>
+    void load(Archive & ar, efscape::impl::SimRunner& simRunner,
+	      const unsigned int version)
+    {
+      efscape::impl::DEVSPtr lCp_wrappedModel;
+      efscape::impl::ClockIPtr lCp_clock;
+
+      // load parent class data
+      ar & boost::serialization::make_nvp("ModelWrapper",
+					  boost::serialization::base_object<efscape::impl::ModelWrapperBase>(simRunner) );
+
+      // load clock
+      ar  & boost::serialization::make_nvp("Clock", lCp_clock);
+
+      // save the wrapped model
+      ar & boost::serialization::make_nvp("WrappedModel", lCp_wrappedModel );
+
+      simRunner.setWrappedModel( lCp_wrappedModel );
+      simRunner.setClockIPtr(lCp_clock);
+    }
+
+  } // namespace serialization
+} // namespace boost
 
 #endif	// #ifndef EFSCAPE_IMPL_SIMRUNNER_HPP

@@ -1,206 +1,80 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : export.hpp
+// File Name : export.cpp
 // Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 
-// boost serialization archive definitions
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-
-#include <boost/serialization/export.hpp>
-#include <boost/serialization/wrapper.hpp>
-#include <boost/serialization/assume_abstract.hpp>
-
-// class boost serialization export definitions
-#include <adevs/adevs_serialization.hpp>
-#include <efscape/impl/adevs_decorator_serialization.hpp>
-
-#include <efscape/impl/EntityI.hpp>
-#include <efscape/impl/AdevsModel.hpp>
 #include <efscape/impl/SimRunner.hpp>
 
 // model factory definitions
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
+#include <efscape/impl/ModelType.hpp>
 
 //--------------------------------------------
 // efscape::utils::CommandOpt-derived classes
 //--------------------------------------------
-#include <efscape/impl/BuildModel.hpp>
+#include <efscape/impl/BuildSim.hpp>
 #include <efscape/impl/RunSim.hpp>
 
+#include <json/json.h>
+
 #include <fstream>
-
-//----------------------------
-// adevs serialization exports
-//----------------------------
-BOOST_CLASS_IS_WRAPPER(efscape::impl::DEVS)
-// BOOST_IS_ABSTRACT(efscape::impl::DEVS)
-BOOST_CLASS_IS_WRAPPER(efscape::impl::CellDevs)
-
-BOOST_CLASS_IS_WRAPPER(efscape::impl::ATOMIC)
-// BOOST_IS_ABSTRACT(efscape::impl::ATOMIC)
-BOOST_CLASS_IS_WRAPPER(efscape::impl::CellModelBase)
-
-BOOST_CLASS_IS_WRAPPER(efscape::impl::ModelWrapperBase)
-BOOST_SERIALIZATION_SPLIT_FREE(efscape::impl::ModelWrapperBase)
-// BOOST_IS_ABSTRACT(efscape::impl::AtomicWrapperBase)
-
-BOOST_CLASS_IS_WRAPPER(efscape::impl::CellWrapperBase)
-BOOST_SERIALIZATION_SPLIT_FREE(efscape::impl::CellWrapperBase)
-// BOOST_IS_ABSTRACT(efscape::impl::CellWrapperBase)
-
-BOOST_CLASS_IS_WRAPPER(efscape::impl::NetworkModel)
-// BOOST_IS_ABSTRACT(efscape::impl::NetworkModel)
-
-BOOST_CLASS_IS_WRAPPER(efscape::impl::ModelDecorator)
-BOOST_SERIALIZATION_SPLIT_FREE(efscape::impl::ModelDecorator)
-
-BOOST_CLASS_IS_WRAPPER(efscape::impl::SIMPLEDIGRAPH)
-BOOST_SERIALIZATION_SPLIT_FREE(efscape::impl::SIMPLEDIGRAPH)
-
-BOOST_CLASS_IS_WRAPPER(efscape::impl::DIGRAPH)
-BOOST_SERIALIZATION_SPLIT_FREE(efscape::impl::DIGRAPH)
-
-BOOST_CLASS_IS_WRAPPER(efscape::impl::CELLSPACE)
-BOOST_SERIALIZATION_SPLIT_FREE(efscape::impl::CELLSPACE)
-
-BOOST_CLASS_EXPORT(efscape::impl::DEVS)
-BOOST_CLASS_EXPORT(efscape::impl::ATOMIC)
-BOOST_CLASS_EXPORT(efscape::impl::NetworkModel)
-BOOST_CLASS_EXPORT(efscape::impl::ModelDecorator)
-
-namespace boost {
- namespace serialization {
-   template<class Archive>
-   void serialize(Archive & ar, efscape::impl::DIGRAPH::node& node,
-		   const unsigned int version)
-   {
-     ar & BOOST_SERIALIZATION_NVP(node.model); // serialize model
-     ar & BOOST_SERIALIZATION_NVP(node.port); // serialize port
-   }
- }
-}
-BOOST_CLASS_EXPORT(efscape::impl::DIGRAPH)
-BOOST_CLASS_EXPORT(efscape::impl::ModelWrapperBase)
-
-BOOST_CLASS_EXPORT(efscape::impl::CellDevs)
-BOOST_CLASS_EXPORT(efscape::impl::CellModelBase)
-
-BOOST_CLASS_EXPORT(efscape::impl::EntityI)
-BOOST_CLASS_EXPORT(efscape::impl::AdevsModel)
-BOOST_CLASS_EXPORT(efscape::impl::SimRunner)
 
 namespace efscape {
   namespace impl {
 
-    /**
-     * This function attemps to serialize and save an adevs model hierarchy via
-     * the boost serialization library.
-     *
-     * @param aCp_model handle to model (reference)
-     * @param acp_filename file name
-     */
-    void saveAdevs(const adevs::Devs<IO_Type>* aCp_model,
-		   const char* acp_filename)
-    {
-      // make an archive
-      std::ofstream ofs(acp_filename);
-      saveAdevs(aCp_model, ofs);
-      ofs.close();
-    }
-
-    /**
-     * This function attemps to serialize and save an adevs model hierarchy via
-     * the boost serialization library.
-     *
-     * @param aCp_model handle to model (reference)
-     * @param aCr_ostream output stream
-     */
-    void saveAdevs(const adevs::Devs<IO_Type>* aCp_model,
-		   std::ostream& aCr_ostream)
-    {
-      // make an archive
-      assert(aCr_ostream.good());
-      boost::archive::xml_oarchive oa(aCr_ostream);
-
-      oa << boost::serialization::make_nvp("efscape",aCp_model);
-
-      // aCr_ostream << "</boost_serialization>";
-    }
-
-    /**
-     * This function attempts to load an adevs model hierarchy serialized with
-     * the boost serialization library
-     *
-     * @param acp_filename file name
-     * @returns handle to loaded model
-     */
-    adevs::Devs<IO_Type>* loadAdevs(const char* acp_filename)
-    {
-      std::ifstream ifs(acp_filename);
-      return loadAdevs(ifs);
-    }
-
-    /**
-     * This function attempts to load an adevs model hierarchy serialized with
-     * the boost serialization library.
-     *
-     * @param aCr_istream reference to input stream
-     * @returns handle to loaded model
-     */
-    adevs::Devs<IO_Type>* loadAdevs(std::istream& aCr_istream)
-    {
-      adevs::Devs<IO_Type>* lCp_model;
-//       std::ifstream ifs(acp_filename);
-      assert(aCr_istream.good());
-      boost::archive::xml_iarchive ia(aCr_istream);
-      ia >> BOOST_SERIALIZATION_NVP(lCp_model);
-      return lCp_model;
-    }
-
     //-----------------
     // register classes
     //-----------------
-    /**
-     * Creates DIGRAPH class metadata
-     *
-     * @returns metadata in a JSON property tree
-     */
-    boost::property_tree::ptree create_Digraph_info() {
-      boost::property_tree::ptree lC_ptree;
-      lC_ptree.put("info",
-    		   "The components of a digraph model must use PortValue objects as their basic I/O type: the port and value types are template arguments.");
-      lC_ptree.put("library", "efscape-impl" );
-
-      return lC_ptree;
-    }
+    // DIGRAPH class metadata
+    class DigraphType : public ModelType
+    {
+    public:
+      DigraphType() :
+	ModelType("efscape::impl::DIGRAPH",
+		  "The components of a digraph model must use PortValue objects as their basic I/O type: the port and value types are template arguments.",
+		  gcp_libname,
+		  1) {}
+    };
 
     const bool
     lb_Digraph_registered =
-      Singleton<ModelHomeI>::Instance().getModelFactory().
-      registerType<DIGRAPH>("efscape::impl::DIGRAPH",
-			    create_Digraph_info() );
+       Singleton<ModelHomeI>::Instance().getModelFactory().
+       registerType<DIGRAPH>(DigraphType().typeName(),
+			     DigraphType().toJSON());
+
+    // SimRunner class metadata
+    class SimRunnerType : public ModelType
+    {
+    public:
+      SimRunnerType() :
+	ModelType(utils::type<SimRunner>(),
+		  "Implements an adevs-based model wrapper that encapsulates a simulation model session.",
+		  gcp_libname,
+		  6) {}
+    };
 
     const bool
     lb_SimRunner_registered =
       Singleton<ModelHomeI>::Instance().getModelFactory().
-      registerType<SimRunner>(efscape::utils::type<SimRunner>(),
-    			      SimRunner::get_info() );
-    
-    const bool
-    lb_BuildModel_registered =
-      Singleton<ModelHomeI>::Instance().getCommandFactory().
-      registerType<BuildModel>( BuildModel::ProgramName() );
+      registerType<SimRunner>(SimRunnerType().typeName(),
+    			      SimRunnerType().toJSON() );
+
+    // const bool
+    // lb_BuildModel_registered =
+    //   Singleton<ModelHomeI>::Instance().getCommandFactory().
+    //   registerType<BuildModel>( BuildModel::ProgramName() );
 
     const bool
     lb_RunSim_registered =
       Singleton<ModelHomeI>::Instance().getCommandFactory().
       registerType<RunSim>( RunSim::ProgramName() );
-   
+
+    const bool lb_BuildSim_registered =
+      Singleton<ModelHomeI>::Instance().getCommandFactory().
+      registerType<BuildSim>( BuildSim::ProgramName() );
 
   } // namespace impl
-
 }   // namespace efscape

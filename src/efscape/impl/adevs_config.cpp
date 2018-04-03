@@ -6,8 +6,6 @@
 // __COPYRIGHT_END__
 #include <efscape/impl/adevs_config.hpp>
 
-#include <efscape/impl/InitObject.hpp>
-
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
@@ -19,7 +17,7 @@ namespace efscape {
 
   namespace impl {
 
-    char const gcp_libname[] = "efscapeimpl";
+    char const gcp_libname[] = "libefscape-impl";
 
     /**
      * Helper function for injecting a bag events into a model.
@@ -57,7 +55,8 @@ namespace efscape {
 		    DEVS* aCp_model)
     {
       if (aCp_model == NULL) {
-	
+	std::cout << "model is null!\n";
+	return;
       }
       ATOMIC* lCp_atomic = NULL;
       if ( (lCp_atomic = aCp_model->typeIsAtomic() ) != NULL ) {
@@ -77,82 +76,36 @@ namespace efscape {
       }
     }
 
-    /**
-     * Helper function for creating an adevs model from the model factory.
-     *
-     * @param acp_classname class name of model
-     * @returns handle to model (null if missing from the factory)
-     */
     DEVS* createModel( const char* acp_classname ) {
       return ( Singleton<ModelHomeI>::Instance().getModelFactory().createObject(acp_classname) );
     }
 
-    /**
-     * Helper function for cloning an adevs model
-     *
-     * @param aCp_model handle to model
-     * @returns handle to model clone (null if cloning fails)
-     */
-    DEVS* cloneModel( const DEVS* aCp_model ) {
+   DEVSPtr cloneModelUsingJSON( const DEVSPtr& aCp_model ) {
 
-      // serialize the model out to a buffer and then back in as a clone 
-      std::ostringstream lC_buffer_out;
-      saveAdevs(aCp_model, lC_buffer_out);
-      std::istringstream lC_buffer_in(lC_buffer_out.str().c_str());
-      DEVS* lCp_clone = loadAdevs(lC_buffer_in);
+     DEVSPtr lCp_clone;
+     try {
+       // serialize the model out to a buffer and then back in as a clone
+       std::ostringstream lC_buffer_out;
+       saveAdevsToJSON(aCp_model, lC_buffer_out);
+       std::istringstream lC_buffer_in(lC_buffer_out.str().c_str());
+       lCp_clone = loadAdevsFromJSON(lC_buffer_in);
+     } catch(...) {
+       LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		     "Exception encountered during attempt to clone adevs model");
+     }
 
-      return lCp_clone;
+     return lCp_clone;
     }
 
-    /**
-     * Helper function for initializing an adevs model
-     *
-     * @param aCp_model handle to model
-     * @returns whether the model has been successfully initialized
-     */
-    bool initializeModel( DEVS* aCp_model ) {
-      if (!aCp_model)
-	return false;
+    void runSim( DEVS* aCp_model, double ad_timeMax ) {
+      adevs::Simulator<IO_Type> lC_sim( aCp_model );
 
-      try {
-	// first attempt to use the InitObject interface if it is available
-	InitObject* lCp_InitObj;
-	if ( ( lCp_InitObj = dynamic_cast<InitObject*>(aCp_model) ) ) {
-	  lCp_InitObj->initialize();
-	  return true;
-	}
+      // simulate model until infinity
+      while (lC_sim.nextEventTime() < ad_timeMax) {
+	lC_sim.execNextEvent();
       }
-      catch(std::logic_error lC_excp) {
-	std::cerr << "*** error *** Encountered <" << lC_excp.what()
-		  << "> in function 'initializeModel(DEVS*)'\n";
-	return false;
-      }
-
-      // next, if this is a network model
-      NETWORK* lCp_network = 0;
-
-      if ( ( lCp_network = dynamic_cast<NETWORK*>(aCp_model) ) ) {
-	typedef adevs::Set<DEVS* > ComponentSet;
-
-	ComponentSet lC_models;
-	lCp_network->getComponents(lC_models);
-	ComponentSet::iterator iModel;
-	for ( iModel = lC_models.begin(); iModel != lC_models.end(); iModel++)
-	  if (!initializeModel(*iModel))
-	    return false;
-      }
-
-      // note (2009.02.28): initialization status may not be verified
-      return true;
     }
 
-    /**
-     * Utility function that returns the root model of the adevs hierarchy
-     * containing this model.
-     *
-     * @param aCp_model
-     * @returns handle to root model
-     */
     adevs::Devs<IO_Type>*
     getRootModel(adevs::Devs<IO_Type>* aCp_model)
     {
@@ -165,14 +118,6 @@ namespace efscape {
 
     } // getRooModel(adevs::Devs<IO_Type>*)
 
-
-    /**
-     * Utility function that returns the root model of the adevs hierarchy
-     * containing this model.
-     *
-     * @param aCp_model
-     * @returns handle to root model
-     */
     const adevs::Devs<IO_Type>*
     getRootModel(const adevs::Devs<IO_Type>* aCp_model)
     {
@@ -270,7 +215,7 @@ namespace efscape {
 						      IO_Type(mC_InputPort,
 							      *iter)));
       }
-      
+
       return true;
     }
 

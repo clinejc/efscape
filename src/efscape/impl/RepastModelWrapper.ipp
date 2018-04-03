@@ -5,14 +5,22 @@
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
 
-#include <efscape/impl/RepastModelWrapper.hpp>
+#include <efscape/impl/RepastModelWrapper.hpp> // class definition
 
-#include <efscape/impl/ModelHomeI.hh>
+// definitions for efscape models
+#include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/utils/type.hpp>
+
+// Repast HPC definitions
 #include <repast_hpc/RepastProcess.h>
 #include <repast_hpc/logger.h>
-#include <boost/property_tree/ptree.hpp>
+
+#include <json/json.h>
+
+// boost definitions
 #include <boost/foreach.hpp>
+
+// other definitions
 #include <log4cxx/logger.h>
 #include <iostream>
 
@@ -125,11 +133,11 @@ namespace efscape {
 			"Found port=" << properties_in);
 	  try {
 	    // 1) try to extract the properties file name
-	    boost::property_tree::ptree pt =
-	      boost::any_cast<boost::property_tree::ptree>( (*i).value );
+	    Json::Value lC_value =
+	      boost::any_cast<Json::Value>( (*i).value );
 
-	    // 2) if time < 0., need to initialize the model
-	    if ( e < 0.) {
+	    // 2) if time <= 0., need to initialize the model
+	    if ( e <= 0.) {
 	      // 2014-09-26 added by jcline: (re-)sets clock to 0.
 	      repast::RepastProcess::instance()->getScheduleRunner().init();
 
@@ -142,15 +150,15 @@ namespace efscape {
 
 	      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 			    "Loading properties...");
-	      BOOST_FOREACH( boost::property_tree::ptree::value_type const& rowPair,
-			     pt.get_child( "" ) ) {
-		LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			      "=> property "
-			      << "<" << rowPair.first << ">="
-			      << "<" << rowPair.second.get_value<std::string>() << ">");
-		lC_props.putProperty(rowPair.first,
-				     rowPair.second.get_value<std::string>() );
-	      }
+	      // BOOST_FOREACH( boost::property_tree::ptree::value_type const& rowPair,
+	      // 		     pt.get_child( "" ) ) {
+	      // 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+	      // 		      "=> property "
+	      // 		      << "<" << rowPair.first << ">="
+	      // 		      << "<" << rowPair.second.get_value<std::string>() << ">");
+	      // 	lC_props.putProperty(rowPair.first,
+	      // 			     rowPair.second.get_value<std::string>() );
+	      // }
 	      
 	      mCp_model->setup(lC_props);
 	    }
@@ -213,14 +221,15 @@ namespace efscape {
       // 	yb.insert(y);
       // }
 
-      boost::property_tree::ptree lC_output =
+      // boost::property_tree::ptree lC_output =
+      Json::Value lC_output =
 	mCp_model->outputFunction();
-      BOOST_FOREACH(boost::property_tree::ptree::value_type &v,
-		    lC_output.get_child("")) {
-        y.port = v.first;
-	y.value = v.second;
-	yb.insert(y);
-      }
+      // BOOST_FOREACH(boost::property_tree::ptree::value_type &v,
+      // 		    lC_output.get_child("")) {
+      //   y.port = v.first;
+      // 	y.value = v.second;
+      // 	yb.insert(y);
+      // }
     }
 
     /**

@@ -4,16 +4,12 @@
 // Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-#include <efscape/impl/ModelHomeI.hpp>
+#include <efscape/impl/ModelHomeI.hpp> // class declaration
 
-// Includes for loading dynamic libraries
-#include <efscape/utils/DynamicLibrary.hpp>
+#include <efscape/impl/SimRunner.hpp> // SimRunner for wrapping models
+#include <log4cxx/propertyconfigurator.h> // logging
 
 // Include for handling JSON
-#include <efscape/impl/adevs_json.hpp>
-#include <efscape/utils/boost_utils.ipp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 #include <json/json.h>
 
 #include <boost/filesystem/operations.hpp>
@@ -22,7 +18,9 @@
 #include <sstream>
 #include <cstdlib>
 
-using namespace efscape::utils;
+#include <locale>
+#include <codecvt>
+
 namespace fs = boost::filesystem;
 
 namespace efscape {
@@ -37,17 +35,22 @@ namespace efscape {
     /** constructor */
     ModelHomeI::ModelHomeI()
     {
-      LOG4CXX_INFO(mSCp_logger, "Entering application.");
-
       //------------------------------------------
       // set the home directory for Efscape models
       //------------------------------------------
       std::string lC_EfscapeHome = "."; // default location
       char* lcp_env_variable =	// get EFSCAPE_HOME
-	getenv("EFSCAPE_HOME");
+	std::getenv("EFSCAPE_HOME");
 
       if ( lcp_env_variable != 0 )
 	lC_EfscapeHome = lcp_env_variable;
+
+      std::string lC_logger_config = lC_EfscapeHome
+	+ "/log4j.properties";
+
+      log4cxx::PropertyConfigurator::configure(lC_logger_config.c_str());
+
+      LOG4CXX_DEBUG(getLogger(), "Entering application.");
 
       // set resource path to model resources
       setHomeDir(lC_EfscapeHome.c_str());
@@ -56,8 +59,8 @@ namespace efscape {
       mCp_ModelFactory.reset( new model_factory );
       mCp_CommandFactory.reset( new command_factory );
 
-      LOG4CXX_INFO(mSCp_logger, "Created EFSCAPE model respository...");
-      
+      LOG4CXX_DEBUG(getLogger(), "Created EFSCAPE model respository...");
+
     } // ModelHomeI::ModelHomeI()
 
     /** destructor */
@@ -69,144 +72,125 @@ namespace efscape {
     /**
      * Creates a model from the specified model class name.
      *
-     * @param acp_classname model class name
-     * @returns handle to model
+     * @param aC_classname model class name
+     * @returns smart pointer to model
      */
-    adevs::Devs<IO_Type>*
-    ModelHomeI::createModel(const char* acp_classname)
+    DEVSPtr
+    ModelHomeI::createModel(std::string aC_classname)
     {
       std::string lC_LogMsg = "ModelHomeI::createModel("
-	+ std::string(acp_classname) + "): ";
+	+ std::string(aC_classname) + "): ";
 
       // attempt to retrieve model from the model factory
-      DEVS* lCp_ModelI = getModelFactory().createObject(acp_classname);
+      DEVS* lCp_ModelI = getModelFactory().createObject(aC_classname);
       if (lCp_ModelI == 0) {
 	LOG4CXX_ERROR(getLogger(),
 		      lC_LogMsg << "model not found");
-
-	std::set<std::string> lC1_ModelNames =
-	  getModelFactory().getTypeIDs();
-	std::set<std::string>::iterator iter;
-	LOG4CXX_DEBUG(getLogger(),
-		      "*** Available models: ***");
-	for (iter = lC1_ModelNames.begin(); iter != lC1_ModelNames.end(); iter++)
-	  LOG4CXX_DEBUG(getLogger(),
-			"=> modelName=" << *iter);
 	return 0;
       }
 
       LOG4CXX_DEBUG(getLogger(),
       		    lC_LogMsg << "model found...");
 
-      return dynamic_cast<adevs::Devs<IO_Type>* >(lCp_ModelI);
+      return DEVSPtr(lCp_ModelI);
 
     } // ModelHomeI::createModel(const char*)
 
     /**
-     * Creates a model from a model configuration stored in a string
-     * buffer.
+     * Creates a model from XML serialization stored in a string
      *
-     * @param aCr_buffer buffer containing the model configuration
-     * @returns handle to model
+     * @param aC_buffer model serialization embedded in a XML string
+     * @returns smart pointer to model
      * @throws std::logic_error
      */
-    adevs::Devs<IO_Type>*
-    ModelHomeI::createModelFromXML(const std::wstring& aCr_buffer)
-      throw(std::logic_error)
-    {
-      char lcp_FileName[] = "/tmp/fileXXXXXX";
-      int fd;			// file descriptor
-      
-      if ( (fd = mkstemp(lcp_FileName) ) == -1)
-	throw std::logic_error("Unable to open temporary file");
-
-      std::wofstream lC_OutFile(lcp_FileName);
-      if (!lC_OutFile) {
-	std::string lC_ErrorMsg = "Unable to open temporary file name <"
-	  + std::string(lcp_FileName) + ">";
-
-	throw std::logic_error(lC_ErrorMsg.c_str());
-      }
-
-      // write buffer to the temporary file
-      lC_OutFile << aCr_buffer;
-      lC_OutFile.close();
-
-      try {
-	return this->createModelFromXML(lcp_FileName);
-      }
-      catch(std::logic_error excp) {
-	throw excp;
-      }
-
-    } // ModelHomeI::createModelFromXML(const std::wstring&)
-
-    /**
-     * Creates a model from a model configuration stored in an XML file.
-     *
-     * @param acp_filename name of configuration file
-     * @returns handle to root model
-     * @throws std::logic_error
-     */
-    adevs::Devs<IO_Type>*
-    ModelHomeI::createModelFromXML(const char* acp_filename)
-      throw(std::logic_error)
-    {
-      std::string lC_message = "ModelHomeI::createModelFromXML("
-	+ std::string(acp_filename) + "):";
-
-      // attempt to load adevs model serialized in XML format
-      adevs::Devs<IO_Type>* lCp_model =
-	loadAdevs(acp_filename); // create root model
-      if (!lCp_model) {
-	lC_message += " unable to create model from parameter file";
-	throw std::logic_error(lC_message.c_str());
-      }
-
-      return lCp_model;
-
-    } // ModelHomeI::createModelFromXML(...)
-
-    /**
-     * Creates a model from a model configuration stored in a JSON
-     * string.
-     *
-     * @param aCr_JSONstring model configuration embedded in a JSON string
-     * @returns handle to model
-     * @throws std::logic_error
-     */
-    adevs::Devs<IO_Type>*
-    ModelHomeI::createModelFromJSON(const std::string& aCr_JSONstring)
+    DEVSPtr
+    ModelHomeI::createModelFromXML(std::wstring aC_buffer)
 	throw(std::logic_error)
     {
       LOG4CXX_DEBUG(getLogger(),
-		    "Attempting to create model from a JSON configuration...");
-      std::stringstream lC_OutStream;
-      if (!lC_OutStream) {
-	std::string lC_ErrorMsg = "Unable to open string stream";
+		    "attempting to create model from a JSON configuration...");
 
-	throw std::logic_error(lC_ErrorMsg.c_str());
-      }
+      // Load XML contents into a stringstream buffer
 
-      // write buffer to the temporary file
-      lC_OutStream << aCr_JSONstring;
+      // First need to convert from wstring to string
+      // 29 Aug 2017 -- see https://stackoverflow.com/questions/4804298/how-to-convert-wstring-into-string
 
+      //setup converter
+      using convert_type = std::codecvt_utf8<wchar_t>;
+      std::wstring_convert<convert_type, wchar_t> converter;
+
+      //use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
+      std::string converted_str = converter.to_bytes( aC_buffer );
+
+      std::stringstream lC_buffer(converted_str);
       LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		     "Received JSON string =>"
-		     << aCr_JSONstring);
+		    "Received XML string =>"
+		    << lC_buffer.str());
 
-      // read in the JSON data
-      istringstream lC_buffer_in(aCr_JSONstring.c_str());
-      // boost::property_tree::ptree pt;
-      // boost::property_tree::read_json( lC_OutStream, pt );
+      return DEVSPtr( loadAdevsFromXML(lC_buffer) );
 
-      Json::Value lC_config;
-      lC_buffer_in >> lC_config;
+    } // ModelHomeI::createModelFromXML(std::wstring)
 
-      return efscape::impl::createModelFromJSON(lC_config);
-      
-    } // ModelHomeI::createModelFromJSON(const char*)
-    
+    /**
+     * Creates a model from JSON serialization stored in a string
+     *
+     * @param aC_JSONstring model serialization embedded in a JSON string
+     * @returns smart pointer to model
+     * @throws std::logic_error
+     */
+    DEVSPtr
+    ModelHomeI::createModelFromJSON(std::string aC_jsonString)
+	throw(std::logic_error)
+    {
+      LOG4CXX_DEBUG(getLogger(),
+		    "attempting to create model from a JSON configuration...");
+
+      // Load JSON contents into a stringstream buffer
+      std::stringstream lC_buffer(aC_jsonString);
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		    "Received JSON string =>"
+		    << lC_buffer.str());
+
+      return loadAdevsFromJSON(lC_buffer);
+
+    } // ModelHomeI::createModelFromJSON(std::string)
+
+    /**
+     * Creates a model from a model parameters stored in a JSON
+     * string.
+     *
+     * @param aC_parameters model configuration embedded in a JSON string
+     * @returns smart pointer to model
+     * @throws std::logic_error
+     */
+    DEVSPtr
+    ModelHomeI::createModelFromParameters(std::string aC_jsonString)
+      throw(std::logic_error)
+    {
+      LOG4CXX_DEBUG(getLogger(),
+		    "Attempting to create model from a JSON parameters...");
+
+      // Load JSON contents into a stringstream buffer
+      std::stringstream lC_buffer(aC_jsonString);
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		    "Received JSON string =>"
+		    << lC_buffer.str());
+
+      // Load JSON from buffer into Json::Value
+      Json::Value lC_jsonParameters;
+      lC_buffer >> lC_jsonParameters;
+
+      // Attempt to create the specified model with a SimRunner wrapper
+      SimRunner* lCp_simRunner = new SimRunner(lC_jsonParameters);
+      DEVSPtr lCp_model(lCp_simRunner);
+
+      if (lCp_simRunner->getWrappedModel() == nullptr)
+	return DEVSPtr();
+
+      return lCp_model;
+
+    } // ModelHomeI::createModelFromParameters(std:;string)
+
     /**
      * Loads the specified library.
      *
@@ -216,13 +200,13 @@ namespace efscape {
     void ModelHomeI::LoadLibrary(const char* acp_libname)
       throw(std::logic_error)
     {
-      boost::shared_ptr< boost::dll::shared_library >
+      std::shared_ptr< boost::dll::shared_library >
 	lCp_library(new boost::dll::shared_library(acp_libname) );
- 
+
       mCCp_libraries[std::string(acp_libname)] = lCp_library;
- 
+
     } // ModelHomeI::LoadLibrary(const char*)
-    
+
     /**
      * This function dynamically loads libraries in the simulator library
      * directory. All simulation libraries containing self-registering classes
@@ -263,7 +247,7 @@ namespace efscape {
 
       // verify that this is a directory
       if ( !fs::is_directory(lC_registry_path) ) {
-	std::string error_msg = 
+	std::string error_msg =
 	  "ModelHomeI::LoadLibraries(): can't open <"
 	  + lC_registry_path.string() + std::string(">");
 
@@ -285,7 +269,7 @@ namespace efscape {
       	  continue;		// skip if not a regular file
 
       	std::string lC_filename = dir_itr->path().string();
-	
+
       	//------------------------
       	// find the file extension
       	//------------------------
@@ -315,11 +299,11 @@ namespace efscape {
 		      "=>" << ++li_cnt << ") " << *iter);
 
 	// get model info
-	boost::property_tree::ptree lC_info =
+	Json::Value lC_info =
 	  getModelFactory().getProperties(*iter);
 
 	std::ostringstream lC_buffer_out;
-	boost::property_tree::write_json(lC_buffer_out, lC_info);
+	lC_buffer_out << lC_info;
 
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      lC_buffer_out.str());
@@ -349,11 +333,11 @@ namespace efscape {
 	mCp_CommandFactory.reset( new command_factory );
       return *mCp_CommandFactory;
     }
-    
+
     /**
      * Returns smart handle to logger.
      *
-     * @returns reference to logger
+     * @returns smart handle to logger
      */
     log4cxx::LoggerPtr& ModelHomeI::getLogger() {
       return mSCp_logger;

@@ -4,11 +4,12 @@
 // Copyright (C) 2006-2017 by Jon C. Cline (clinej@alumni.stanford.edu)
 // Distributed under the terms of the LGPLv3 or newer.
 // __COPYRIGHT_END__
-#ifndef EFSCAPE_IMPL_CLOCK_I_HH
-#define EFSCAPE_IMPL_CLOCK_I_HH
+#ifndef EFSCAPE_IMPL_CLOCK_I_HPP
+#define EFSCAPE_IMPL_CLOCK_I_HPP
 
-#include <boost/shared_ptr.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp> // date_time definitions
+
+// boost serialiation definitions
 #include <boost/serialization/nvp.hpp>
 #include <boost/date_time/posix_time/time_serialize.hpp>
 
@@ -20,7 +21,7 @@ namespace efscape {
     class ClockI;
 
     // typedefs
-    typedef boost::shared_ptr<ClockI> ClockIPtr;
+    typedef std::shared_ptr<ClockI> ClockIPtr;
 
     /**
      * Defines the Clock class, which holds time-related information for
@@ -64,7 +65,7 @@ namespace efscape {
 
       boost::posix_time::ptime date_time( double ad_time ) const;
       void base_date(const boost::posix_time::ptime& aCr_datetime);
- 
+
       /** @returns time units */
       boost::posix_time::time_duration units() const {
 	return mC_units;
@@ -107,5 +108,4 @@ namespace efscape {
 
 } // namespace efscape
 
-#endif	// #ifndef EFSCAPE_IMPL_CLOCK_I_HH
-
+#endif	// #ifndef EFSCAPE_IMPL_CLOCK_I_HPP
