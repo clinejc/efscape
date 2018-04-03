@@ -27,7 +27,7 @@ libzombie_la_LIBADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 bin_PROGRAMS = zombie_model
 
 zombie_model_SOURCES = main.cpp
-zombie_model_LDADD = $(top_srcdir)/examples/zombie/libzombie.la
+zombie_model_LDADD = libzombie.la
 zombie_model_LDADD += $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 zombie_model_LDADD += $(DEPS_LIBS)
 zombie_model_LDADD += $(BOOST_MPI_LIBS)

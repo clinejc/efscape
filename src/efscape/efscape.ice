@@ -7,8 +7,7 @@
 //=============================================================================
 //=============================================================================
 //
-#ifndef EFSCAPE_IDL
-#define EFSCAPE_IDL
+#pragma once
 
 /**
  * Defines the efscape interface, a interface for a DEVS-based simulation
@@ -17,6 +16,7 @@
  * @author Jon C. Cline <clinej@stanfordalumni.org>
  * @version 0.2.0 created 06 Dec 2006, revised 20 Aug 2017
  */
+[["js:es6-module"]]
 module efscape {
 
   //-------------------------------------------------------------------------
@@ -145,5 +145,3 @@ module efscape {
   };
 
 };
-
-#endif

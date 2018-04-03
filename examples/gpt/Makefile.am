@@ -35,13 +35,13 @@ libgpt_la_LIBADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 bin_PROGRAMS = runGpt createGpt
 
 runGpt_SOURCES = main.cpp
-runGpt_LDADD = $(top_srcdir)/examples/gpt/libgpt.la
+runGpt_LDADD = libgpt.la
 runGpt_LDADD += $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 runGpt_LDADD += $(DEPS_LIBS)
 runGpt_LDADD += $(BOOST_MPI_LIBS)
 
 createGpt_SOURCES = $(top_srcdir)/src/efscape/impl/driver.cpp
-createGpt_LDADD = $(top_srcdir)/examples/gpt/libgpt.la
+createGpt_LDADD = libgpt.la
 createGpt_LDADD += $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 createGpt_LDADD += $(DEPS_LIBS)
 createGpt_LDADD += $(BOOST_MPI_LIBS)

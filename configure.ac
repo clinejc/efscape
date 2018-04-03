@@ -44,9 +44,7 @@ PKG_CHECK_MODULES(DEPS,
 	jsoncpp >= 1.8.0
 	liblog4cxx > 0.1
 	zeroc-ice >= 3.5
-	repast >= 2.0
-	libmongocxx >= 3.1)
-
+	repast >= 2.0)
 
 BOOST_REQUIRE([1.60])
 

@@ -99,7 +99,7 @@ namespace efscape {
 	boost::filesystem::path p =
 	  boost::filesystem::path(lC_ParmName.c_str());
 	if (p.extension().string() == ".xml") {
-	    lCp_model = DEVSPtr( loadAdevs(lC_ParmName.c_str()) );
+	    lCp_model = DEVSPtr( loadAdevsFromXML(lC_ParmName.c_str()) );
 	} else if (p.extension().string() == ".json") {
 	  // try to load the parameter file
 	  std::ifstream parmFile(lC_ParmName.c_str());
