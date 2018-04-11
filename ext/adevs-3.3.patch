@@ -1,0 +1,2797 @@
+diff -Naur adevs-3.3/Makefile.am adevs-3.3~patched/Makefile.am
+--- adevs-3.3/Makefile.am	1969-12-31 19:00:00.000000000 -0500
++++ adevs-3.3~patched/Makefile.am	2018-04-08 20:14:30.000000000 -0400
+@@ -0,0 +1,15 @@
++## top directory
++
++#Build in these directories:
++#SUBDIRS= src examples
++SUBDIRS= src
++
++#Distribute these directories:
++DIST_SUBDIRS = src
++
++pkgconfigdir = $(libdir)/pkgconfig
++pkgconfig_DATA = pkgconfig/adevs.pc
++
++EXTRA_DIST=autogen.sh
++
++ACLOCAL_AMFLAGS= -I m4
+diff -Naur adevs-3.3/autogen.sh adevs-3.3~patched/autogen.sh
+--- adevs-3.3/autogen.sh	1969-12-31 19:00:00.000000000 -0500
++++ adevs-3.3~patched/autogen.sh	2018-04-08 20:14:30.000000000 -0400
+@@ -0,0 +1,47 @@
++#! /bin/sh
++
++# $Id: autogen.sh,v 1.4 2002/12/02 01:39:49 murrayc Exp $
++#
++# Copyright (c) 2002  Daniel Elstner  <daniel.elstner@gmx.net>
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License VERSION 2 as
++# published by the Free Software Foundation.  You are not allowed to
++# use any other version of the license; unless you got the explicit
++# permission from the author to do so.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++
++
++dir=`echo "$0" | sed 's,[^/]*$,,'`
++test "x${dir}" = "x" && dir='.'
++
++if test "x`cd "${dir}" 2>/dev/null && pwd`" != "x`pwd`"
++then
++    echo "This script must be executed directly from the source directory."
++    exit 1
++fi
++
++rm -f config.cache acconfig.h
++
++echo "- libtoolize."		&& \
++glibtoolize --force		&& \
++echo "- aclocal."		&& \
++aclocal -I/usr/local/share/aclocal	&& \
++echo "- autoconf."		&& \
++autoconf			&& \
++echo "- automake."		&& \
++touch NEWS README AUTHORS ChangeLog && \
++automake --add-missing --gnu	&& \
++echo				&& \
++./configure "$@"		&& exit 0
++
++exit 1
++
+diff -Naur adevs-3.3/configure.ac adevs-3.3~patched/configure.ac
+--- adevs-3.3/configure.ac	1969-12-31 19:00:00.000000000 -0500
++++ adevs-3.3~patched/configure.ac	2018-04-08 20:32:41.000000000 -0400
+@@ -0,0 +1,43 @@
++dnl --------------------------------
++dnl Initialization macros.
++dnl --------------------------------
++AC_INIT([libadevs], [3.3])
++AC_CONFIG_SRCDIR([include/adevs.h])
++AC_CONFIG_AUX_DIR(config)
++AC_CONFIG_MACRO_DIR([m4])
++
++dnl -----------------------------------------------
++dnl Package name and version number (user defined)
++dnl -----------------------------------------------
++AM_INIT_AUTOMAKE
++
++dnl --------------------------------
++dnl Checks for programs.
++dnl --------------------------------
++AC_PROG_CC
++AC_PROG_CXX
++AC_PROG_LIBTOOL
++AC_PROG_INSTALL
++AX_OPENMP
++
++dnl -----------------------------------------------
++dnl Checks for libraries
++dnl -----------------------------------------------
++# Check for X11
++AC_PATH_X
++AC_PATH_XTRA
++
++X_CFLAGS="-I$x_includes"
++X_LIBS="-L$x_libraries -lXll"
++
++AC_SUBST(X__CFLAGS)
++AC_SUBST(X__LIBS)
++
++dnl -----------------------------------------------------
++dnl Generates Makefile's, configuration files and scripts
++dnl -----------------------------------------------------
++AC_OUTPUT(Makefile \
++	  pkgconfig/adevs.pc \
++	  src/Makefile
++)
++
+diff -Naur adevs-3.3/include/adevs_cellspace.h adevs-3.3~patched/include/adevs_cellspace.h
+--- adevs-3.3/include/adevs_cellspace.h	2018-01-10 15:28:49.000000000 -0500
++++ adevs-3.3~patched/include/adevs_cellspace.h	2017-12-10 22:05:28.000000000 -0500
+@@ -81,8 +81,13 @@
+ 	public:
+ 		/// A component model in the CellSpace
+ 		typedef Devs<CellEvent<X>,T> Cell;
++  		/// Create default CellSpace
++		CellSpace();
+ 		/// Create an Width x Height x Depth CellSpace with NULL entries in the cell locations.
+ 		CellSpace(long int width, long int height = 1, long int depth = 1);
++  		/// Create an Width x Height x Depth CellSpace with NULL entries in the cell locations.
++		void createSpace(long int width, long int height = 1, long int depth = 1);
++
+ 		/// Insert a model at the x,y,z position.
+ 		void add(Cell* model, long int x, long int y = 0, long int z = 0) 
+ 		{
+@@ -107,6 +112,7 @@
+ 		long int getDepth() const { return d; }
+ 		/// Get the model's set of components
+ 		void getComponents(Set<Cell*>& c);
++  		void getComponents(Set<const Cell*>& c) const;
+ 		/// Route events within the Cellspace
+ 		void route(const CellEvent<X>& event, Cell* model, 
+ 		Bag<Event<CellEvent<X>,T> >& r);
+@@ -117,6 +123,17 @@
+ 		Cell**** space;
+ };
+ 
++// Implementation of default constructor
++template <class X, class T>
++CellSpace<X,T>::CellSpace():
++Network<CellEvent<X>,T>(),
++w(0),
++h(0),
++d(0),
++space(0)
++{
++}
++  
+ // Implementation of constructor
+ template <class X, class T>
+ CellSpace<X,T>::CellSpace(long int width, long int height, long int depth):
+@@ -163,6 +180,49 @@
+ 	delete [] space;
+ }
+ 
++// Implementation of the createSpace() method
++template <class X,class T>
++void CellSpace<X,T>::createSpace(long int width, long int height, long int depth)
++{
++        // First destroy previously allocated space
++	for (long int x = 0; x < w; x++)
++	{
++		for (long int y = 0; y < h; y++)
++		{
++			for (long int z = 0; z < d; z++)
++			{
++				if (space[x][y][z] != NULL)
++				{
++					delete space[x][y][z];
++				}
++			}
++			delete [] space[x][y];
++		}
++		delete [] space[x];
++	}
++	delete [] space;
++
++        // Resize space
++	w = width;
++	h = height;
++	d = depth;
++	// Allocate space for the cells and set the entries to NULL
++	space = new Cell***[w];
++	for (long int x = 0; x < w; x++)
++	{
++		space[x] = new Cell**[h];
++		for (long int y = 0; y < h; y++)
++		{
++			space[x][y] = new Cell*[h];
++			for (long int z = 0; z < d; z++)
++			{
++				space[x][y][z] = NULL;
++			}
++		}
++	}
++
++}
++
+ // Implementation of the getComponents() method
+ template <class X, class T>
+ void CellSpace<X,T>::getComponents(Set<Cell*>& c)
+@@ -183,6 +243,25 @@
+ 	}
+ }
+ 
++template <class X, class T>
++void CellSpace<X,T>::getComponents(Set<const Cell*>& c) const
++{
++	// Add all non-null entries to the set c
++	for (long int x = 0; x < w; x++)
++	{
++		for (long int y = 0; y < h; y++)
++		{
++			for (long int z = 0; z < d; z++)
++			{
++				if (space[x][y][z] != NULL)
++				{
++					c.insert(space[x][y][z]);
++				}
++			}
++		}
++	}
++}
++  
+ // Event routing function for the net_exec
+ template <class X, class T>
+ void CellSpace<X,T>::route(
+diff -Naur adevs-3.3/include/adevs_cellspace.h~orig adevs-3.3~patched/include/adevs_cellspace.h~orig
+--- adevs-3.3/include/adevs_cellspace.h~orig	1969-12-31 19:00:00.000000000 -0500
++++ adevs-3.3~patched/include/adevs_cellspace.h~orig	2018-01-10 15:28:49.000000000 -0500
+@@ -0,0 +1,216 @@
++/**
++ * Copyright (c) 2013, James Nutaro
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met: 
++ *
++ * 1. Redistributions of source code must retain the above copyright notice, this
++ *    list of conditions and the following disclaimer. 
++ * 2. Redistributions in binary form must reproduce the above copyright notice,
++ *    this list of conditions and the following disclaimer in the documentation
++ *    and/or other materials provided with the distribution. 
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
++ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
++ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
++ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
++ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ *
++ * The views and conclusions contained in the software and documentation are those
++ * of the authors and should not be interpreted as representing official policies, 
++ * either expressed or implied, of the FreeBSD Project.
++ *
++ * Bugs, comments, and questions can be sent to nutaro@gmail.com
++ */
++#ifndef __adevs_cellspace_h_
++#define __adevs_cellspace_h_
++#include "adevs.h"
++#include <cstdlib>
++
++namespace adevs
++{
++
++/**
++ * Input and output events produced by components of a CellSpace must
++ * be of the type CellEvent.  A CellEvent has an event value (i.e., the actual
++ * input/output value) and a target cell for the event.
++ */
++template <class X> class CellEvent
++{
++	public:
++		/// Default constructor. Sets x = y = z = 0.
++		CellEvent():value() { x = y = z = 0; }
++		/// Copy constructor
++		CellEvent(const CellEvent<X>& src):
++		x(src.x),y(src.y),z(src.z),value(src.value){}
++		/// Assignment operator
++		const CellEvent& operator=(const CellEvent<X>& src)
++		{
++			x = src.x; y = src.y; z = src.z; value = src.value;
++			return *this;
++		}
++		/// The x coordinate of the event target
++		long int x;
++		/// The y coordinate of the event target
++		long int y;
++		/// The z coordinate of the event target
++		long int z;
++		/// The event value
++		X value;
++};
++
++/**
++ * This class describes a 3D cell space whose components accept and produce CellEvent objects.
++ * This class is meant to be useful for solving PDEs, simulating
++ * next event cell spaces, and for building other types of models represented as a space of 
++ * discrete, interacting points. Output events produced by component models must be of type CellEvent, and
++ * the CellEvent (x,y,z) coordinate indicates the
++ * target cell for the event. The corresponding input event will have the same (x,y,z) value as
++ * the output event. Targets that are outside of the CellSpace will become external output
++ * events for the CellSpace model.  Similarly, CellEvent objects that are injected into the
++ * CellSpace (i.e., external input events) will be delivered to the targeted cell.
++ */
++template <class X, class T = double> class CellSpace: public Network<CellEvent<X>,T>
++{
++	public:
++		/// A component model in the CellSpace
++		typedef Devs<CellEvent<X>,T> Cell;
++		/// Create an Width x Height x Depth CellSpace with NULL entries in the cell locations.
++		CellSpace(long int width, long int height = 1, long int depth = 1);
++		/// Insert a model at the x,y,z position.
++		void add(Cell* model, long int x, long int y = 0, long int z = 0) 
++		{
++			space[x][y][z] = model;
++			model->setParent(this);
++		}
++		/// Get the model at location x,y,z.
++		const Cell* getModel(long int x, long int y = 0, long int z = 0) const
++		{
++			return space[x][y][z];
++		}
++		/// Get a mutable version of the model at x,y,z.
++		Cell* getModel(long int x, long int y = 0, long int z = 0)
++		{
++			return space[x][y][z];
++		}
++		/// Get the width of the CellSpace.
++		long int getWidth() const { return w; }
++		/// Get the height of the CellSpace.
++		long int getHeight() const { return h; }
++		/// Get the depth of the CellSpace.
++		long int getDepth() const { return d; }
++		/// Get the model's set of components
++		void getComponents(Set<Cell*>& c);
++		/// Route events within the Cellspace
++		void route(const CellEvent<X>& event, Cell* model, 
++		Bag<Event<CellEvent<X>,T> >& r);
++		/// Destructor; this destroys the components as well.
++		~CellSpace();
++	private:	
++		long int w, h, d;
++		Cell**** space;
++};
++
++// Implementation of constructor
++template <class X, class T>
++CellSpace<X,T>::CellSpace(long int width, long int height, long int depth):
++Network<CellEvent<X>,T>()
++{
++	w = width;
++	h = height;
++	d = depth;
++	// Allocate space for the cells and set the entries to NULL
++	space = new Cell***[w];
++	for (long int x = 0; x < w; x++)
++	{
++		space[x] = new Cell**[h];
++		for (long int y = 0; y < h; y++)
++		{
++			space[x][y] = new Cell*[h];
++			for (long int z = 0; z < d; z++)
++			{
++				space[x][y][z] = NULL;
++			}
++		}
++	}
++}
++
++// Implementation of destructor
++template <class X, class T>
++CellSpace<X,T>::~CellSpace()
++{
++	for (long int x = 0; x < w; x++)
++	{
++		for (long int y = 0; y < h; y++)
++		{
++			for (long int z = 0; z < d; z++)
++			{
++				if (space[x][y][z] != NULL)
++				{
++					delete space[x][y][z];
++				}
++			}
++			delete [] space[x][y];
++		}
++		delete [] space[x];
++	}
++	delete [] space;
++}
++
++// Implementation of the getComponents() method
++template <class X, class T>
++void CellSpace<X,T>::getComponents(Set<Cell*>& c)
++{
++	// Add all non-null entries to the set c
++	for (long int x = 0; x < w; x++)
++	{
++		for (long int y = 0; y < h; y++)
++		{
++			for (long int z = 0; z < d; z++)
++			{
++				if (space[x][y][z] != NULL)
++				{
++					c.insert(space[x][y][z]);
++				}
++			}
++		}
++	}
++}
++
++// Event routing function for the net_exec
++template <class X, class T>
++void CellSpace<X,T>::route(
++const CellEvent<X>& event, Cell* model, Bag<Event<CellEvent<X>,T> >& r)
++{
++	Cell* target = NULL;
++	// If the target cell is inside of the cellspace
++	if (event.x >= 0 && event.x < w &&  // check x dimension
++	event.y >= 0 && event.y < h && // check y dimension
++	event.z >= 0 && event.z < d) // check z dimension
++	{
++		// Get the interior target
++		target = space[event.x][event.y][event.z];
++	}
++	else
++	{
++		// Otherwise, the event becomes an external output from the cellspace
++		target = this;
++	}
++	// If the target exists
++	if (target != NULL)
++	{
++		// Add an appropriate event to the receiver bag
++		Event<CellEvent<X> > io(target,event);
++		r.insert(io);
++	}
++}
++
++} // end of namespace
++
++#endif
+diff -Naur adevs-3.3/include/adevs_cereal.hpp adevs-3.3~patched/include/adevs_cereal.hpp
+--- adevs-3.3/include/adevs_cereal.hpp	1969-12-31 19:00:00.000000000 -0500
++++ adevs-3.3~patched/include/adevs_cereal.hpp	2018-04-08 20:14:30.000000000 -0400
+@@ -0,0 +1,415 @@
++// __COPYRIGHT_START__
++// Package Name : efscape
++// File Name : adevs_serialization.hh
++// Copyright (C) 2006-2009 by Jon C. Cline
++//
++// This library is free software; you can redistribute it and/or
++// modify it under the terms of the GNU Lesser General Public
++// License as published by the Free Software Foundation; either
++// version 2 of the License, or (at your option) any later version.
++//
++// This library is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++// Lesser General Public License for more details.
++//
++// You should have received a copy of the GNU Lesser General Public
++// License along with this library; if not, write to the Free Software
++// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++//
++// Bugs, comments, and questions can be sent to clinej@stanfordalumni.org
++// __COPYRIGHT_END__
++#ifndef ADEVS_ADEVS_CEREAL_HPP
++#define ADEVS_ADEVS_CEREAL_HPP
++
++#include <adevs.h>
++
++#include <cereal/types/vector.hpp>
++#include <cereal/types/set.hpp>
++#include <cereal/types/map.hpp>
++#include <cereal/types/base_class.hpp>
++#include <cereal/types/memory.hpp>
++
++namespace adevs {
++
++  /**
++   * Free function for serialization of the adevs::Devs<X> class.
++   *
++   * @param ar reference to archive type
++   * @param devs reference to DEVS model
++   */
++  template<class Archive, class X>
++  void serialize(Archive & ar, adevs::Devs<X>& devs)
++  {
++  }
++
++  /**    
++   * Free function for serialization of the adevs::Atomic<X> class.
++   *
++   * @param ar reference to archive type
++   * @param atomic reference to ATOMIC model
++   */
++  template<class Archive, class X>
++  void serialize(Archive & ar, adevs::Atomic<X>& atomic)
++  {
++    // invoke serialization of the parent class
++    ar( cereal::make_nvp("adevs::Devs",
++			 cereal::base_class<adevs::Devs<X> >(&atomic) ) );
++  }
++
++  /**
++   * Free function for serialization save of the adevs::ModelWrapper<X,Y>
++   * class.
++   *
++   * @param ar reference to archive type
++   * @param wrapper reference to ModelWrapper model
++   */
++  template<class Archive, class ExternalType, class InternalType>
++  void save(Archive & ar,
++	    const adevs::ModelWrapper<ExternalType,InternalType>& wrapper)
++  {
++    // invoke serialization save of the parent class
++    double tL = wrapper.getTime();
++    std::shared_ptr< adevs::Devs<InternalType> > wrappedModel =
++	    wrapper.getWrappedModel();
++    ar( cereal::make_nvp("adevs::Atomic",
++			 cereal::base_class<adevs::Devs<ExternalType> >(&wrapper) ),
++	CEREAL_NVP(tL),
++	CEREAL_NVP(wrappedModel)
++      );
++  }
++
++  /**
++   * Free function for serialization load of the adevs::ModelWrapper<X,Y>
++   * class.
++   *
++   * @param ar reference to archive type
++   * @param wrapper reference to ModelWrapper model
++   */
++  template<class Archive, class ExternalType, class InternalType>
++  void load(Archive & ar,
++	    adevs::ModelWrapper<ExternalType,InternalType>& wrapper)
++  {
++    // invoke serialization save of the parent class
++    double tL;
++    std::shared_ptr< adevs::Devs<InternalType> > wrappedModel;
++    ar( cereal::make_nvp("adevs::Atomic",
++			 cereal::base_class<adevs::Devs<ExternalType> >(&wrapper) ),
++	CEREAL_NVP(tL),
++	CEREAL_NVP(wrappedModel)
++      );
++    wrapper.setTime(tL);
++    wrapper.setWrappedModel(wrappedModel);
++  }
++
++  /**
++   * Free function for serialization save of the adevs::Network<X> class.
++   *
++   * @param ar reference to archive type
++   * @param network reference to NETWORK model
++   */
++  template<class Archive, class X>
++  void serialize(Archive & ar, adevs::Network<X>& network)
++  {
++    // invoke serialization of the parent class
++    ar( cereal::make_nvp("adevs::Devs",
++			 cereal::base_class<adevs::Devs<X> >(&network) ) );
++  }
++
++  /**
++   * Free function for serialization save of class SimpleDigraph<X>.
++   *
++   * @param ar reference to archive type
++   * @param digraph reference to SimpleDigraph model
++   */
++  template<class Archive, class X>
++  void save(Archive & ar, const adevs::SimpleDigraph<X>& digraph)
++  {
++    //-------------------
++    // 1) save sub models
++    //-------------------
++    // get digraph components
++    // * Need to convert to std containers and smart pointers for cereal
++    typedef adevs::Devs<X> COMPONENT;
++    typedef std::shared_ptr<COMPONENT> ComponentPtr;
++    typedef adevs::Set<const COMPONENT*> ComponentSet;
++
++    ComponentSet lCCp_models;
++    digraph.getComponents(lCCp_models);
++
++    // copy adevs::Set<> to std::set<>
++    typedef std::set<ComponentPtr> ComponentStlSet;
++    ComponentStlSet models;
++    for (typename ComponentSet::iterator iter = lCCp_models.begin();
++    	 iter != lCCp_models.end();
++    	 iter++)
++      models.insert(digraph.getComponent(*iter) );
++
++    //--------------------
++    // 2) save model graph
++    //--------------------
++    // get graph
++    typedef std::map< ComponentPtr, std::set<ComponentPtr> > GRAPH;
++    GRAPH graph;
++    digraph.getGraph(graph);
++
++    // 3) save simpledigraph
++    ar( cereal::make_nvp("adevs::Devs",
++			 cereal::base_class<adevs::Network<X> >(&digraph) ),
++	models,
++	graph);
++
++  } // serialization save of class SimpleDigraph<X>
++
++  /**
++   * Free function for serialization load of class SimpleDigraph<X>.
++   *
++   * @param ar reference to archive type
++   * @param digraph reference to SimpleDigraph model
++   * @param version version number
++   */
++  template<class Archive, class X>
++  void load(Archive & ar, adevs::SimpleDigraph<X>& digraph,
++	    const unsigned int version)
++  {
++      // 1) load digraph
++      typedef adevs::Devs<X> COMPONENT;
++      typedef std::shared_ptr<COMPONENT> ComponentPtr;
++      typedef std::set<ComponentPtr> ComponentStlSet;
++      ComponentStlSet models;
++      typedef std::map< ComponentPtr, std::set<ComponentPtr> > GRAPH;
++      GRAPH graph;
++
++      ar( cereal::make_nvp("adevs::Devs",
++			   cereal::base_class<adevs::Network<X> >(&digraph) ),
++	  models,
++	  graph);
++
++      // 2 add component models to digraph (note: adding shared pointers)
++      for (typename ComponentStlSet::iterator iter = models.begin();
++    	   iter != models.end();
++    	   iter++)
++    	digraph.add(*iter);
++
++      // 3) add model couplings
++      for (typename GRAPH::iterator graph_iter = graph.begin();
++    	   graph_iter != graph.end(); graph_iter++) {
++    	for (typename std::set<COMPONENT*>::iterator model_iter =
++    	       graph_iter->second.begin();
++    	     model_iter != graph_iter->second.end();
++    	     model_iter++) {
++      
++    	  digraph.couple(graph_iter->first.get(), (*model_iter).get() );
++    	} // for (typename std::set<Node>
++      }	// for (typename Graph::iterator = ...
++
++  } // serialization load of class SimpleDigraph<X>
++  
++
++  /**
++   * Free function for serialization of the DIGRAPH::node struct.
++   *
++   * @param ar reference to archive type
++   * @param node reference to graph node
++   * @param version version number
++   */
++  template<class Archive, class X, class PORT>
++  void serialize(Archive & ar, typename adevs::Digraph<X,PORT>::nodeplus& node)
++  {
++    ar( cereal::make_nvp("model", node.model),
++	cereal::make_nvp("port", node.port) );
++  }
++
++  /**
++   * Free function for serialization save of the Digraph class.
++   *
++   * @param ar reference to archive type
++   * @param digraph reference to Digraph model
++   * @param version version number
++   */
++  template<class Archive, class X, class PORT>
++  void save(Archive & ar, const adevs::Digraph<X,PORT>& digraph)
++  {
++      //-------------------
++      // 1) save sub models
++      //-------------------
++      // get digraph components
++      // * Need to convert to std containers and smart pointers for cereal
++      typedef adevs::PortValue<X,PORT> IO_Type;
++      typedef adevs::Devs<IO_Type> COMPONENT;
++      typedef std::shared_ptr<COMPONENT> ComponentPtr;
++      typedef adevs::Set<COMPONENT*> ComponentSet;
++
++      ComponentSet lCCp_models;
++      digraph.getComponents(lCCp_models);
++
++      // copy adevs::Set<> to std::set<>
++      typedef std::set<ComponentPtr> ComponentStlSet;
++      ComponentStlSet models;
++      for (typename ComponentSet::iterator iter = lCCp_models.begin();
++      	   iter != lCCp_models.end();
++      	   iter++) {
++	ComponentPtr lCp_devs = digraph.getComponent(*iter);
++	models.insert(lCp_devs);
++      }
++
++      //--------------------
++      // 2) save model graph
++      //--------------------
++      // get graph
++      typedef typename adevs::Digraph<X,PORT>::nodeplus NODE;
++      typedef std::map< NODE, std::set<NODE> > GRAPH;
++      GRAPH graph;
++      digraph.getGraph(graph);
++
++      // 3) save simpledigraph
++      ar( cereal::make_nvp("adevs::Network",
++			   cereal::base_class<adevs::Network<IO_Type> >(&digraph) ),
++	  cereal::make_nvp("models", models),
++	  cereal::make_nvp("graph", graph) );
++
++  } // serialization save of class Digraph<X,Port>
++
++  /**
++   * Free function for serialization load of the Digraph class.
++   *
++   * @param ar reference to archive type
++   * @param digraph reference to Digraph model
++   * @param version version number
++   */
++  template<class Archive, class X, class PORT>
++  void load(Archive & ar, adevs::Digraph<X,PORT>& digraph)
++  {
++    // 1) load digraph
++    typedef adevs::PortValue<X,PORT> IO_Type;
++    typedef adevs::Devs<IO_Type> COMPONENT;
++    typedef std::shared_ptr<COMPONENT> ComponentPtr;
++    typedef std::set<ComponentPtr> ComponentStlSet;
++    ComponentStlSet models;
++    typedef typename adevs::Digraph<X,PORT>::nodeplus NODE;
++    typedef std::map< NODE, std::set<NODE> > GRAPH;
++    GRAPH graph;
++
++    ar( cereal::make_nvp("adevs::Network",
++			 cereal::base_class<adevs::Network<IO_Type> >(&digraph) ),
++	cereal::make_nvp("models", models),
++	cereal::make_nvp("graph", graph) );
++
++    // 2 add component models to digraph (note: adding shared pointers)
++    for (typename ComponentStlSet::iterator iter = models.begin();
++	 iter != models.end();
++	 iter++)
++      digraph.add(*iter);
++
++    // 3) add model couplings
++    for (typename GRAPH::iterator graph_iter = graph.begin() ;
++    	 graph_iter != graph.end(); graph_iter++) {
++            COMPONENT* srcModel = graph_iter->first.model.get();
++	    if (srcModel == NULL) srcModel = &digraph;
++      for (typename std::set<NODE>::iterator node_iter =
++    	     graph_iter->second.begin();
++    	   node_iter != graph_iter->second.end();
++    	   node_iter++) {
++	      COMPONENT* dstModel = node_iter->model.get();
++	      if (dstModel == NULL) dstModel = &digraph;
++
++    	digraph.couple(srcModel, graph_iter->first.port,
++    		       dstModel, node_iter->port);
++      } // for (typename std::set<Node>
++    }	// for (typename Graph::iterator = ...
++
++  } // serialization load of class Digraph<X,Port>
++
++    // /**
++    //  * Free function for serialization save of the Cellspace class.
++    //  *
++    //  * @param ar reference to archive type
++    //  * @param cellspace reference to Cellspace model
++    //  * @param version version number
++    //  */
++    // template<class Archive, class X>
++    // void save(Archive & ar, const adevs::CellSpace<X>& cellspace,
++    // 	      const unsigned int version)
++    // {
++    //   // 1) invoke serialization of the parent class
++    //   ar & boost::serialization::make_nvp("NetworkModel",
++    // 					  boost::serialization::base_object<adevs::Network<adevs::CellEvent<X> > >(cellspace) );
++
++    //   // 2) save the dimensions of the cell space
++    //   long width = cellspace.getWidth();
++    //   ar & BOOST_SERIALIZATION_NVP(width);
++
++    //   long height = cellspace.getHeight();
++    //   ar & BOOST_SERIALIZATION_NVP(height);
++
++    //   long depth = cellspace.getDepth();
++    //   ar & BOOST_SERIALIZATION_NVP(depth);
++
++    //   //-------------------
++    //   // 3) save sub models
++    //   //-------------------
++    //   // get cellspace components
++    //   typedef adevs::Devs<adevs::CellEvent<X> > Cell;
++    //   std::vector<const Cell*> models;
++
++    //   long ll_volume = width*height*depth;
++    //   for (int x = 0; x < width; x++) {
++    // 	for (int y = 0; y < height; y++) {
++    // 	  for (int z = 0; z < depth; z++) {
++    // 	    models.push_back(cellspace.getModel(x,y,z));
++    // 	  }
++    // 	}
++    //   }
++
++    //   // save component models
++    //   ar & BOOST_SERIALIZATION_NVP(models);
++
++    // }
++
++    // /**
++    //  * Free function for serialization save of the Cellspace class.
++    //  *
++    //  * @param ar reference to archive type
++    //  * @param cellspace reference to Cellspace model
++    //  * @param version version number
++    //  */
++    // template<class Archive, class X>
++    // void load(Archive & ar, adevs::CellSpace<X>& cellspace,
++    // 	      const unsigned int version)
++    // {
++    //   // 1) invoke serialization of the parent class
++    //   ar & boost::serialization::make_nvp("NetworkModel",
++    // 					  boost::serialization::base_object<adevs::Network<adevs::CellEvent<X> > >(cellspace) );
++
++    //   // 2) load the dimensions of the cell space and initialize
++    //   long width;
++    //   ar & BOOST_SERIALIZATION_NVP(width);
++
++    //   long height;
++    //   ar & BOOST_SERIALIZATION_NVP(height);
++
++    //   long depth;
++    //   ar & BOOST_SERIALIZATION_NVP(depth);
++
++    //   cellspace.createSpace(width,height,depth);
++
++    //   // 3) load component models
++    //   typedef adevs::Devs<adevs::CellEvent<X> > Cell;
++    //   std::vector<Cell*> models;
++    //   ar & BOOST_SERIALIZATION_NVP(models);
++
++    //   long ll_volume = width*height*depth;
++    //   long index = 0;
++    //   for (int x = 0; x < width; x++) {
++    // 	for (int y = 0; y < height; y++) {
++    // 	  for (int z = 0; z < depth; z++) {
++    // 	    if (index < models.size())
++    // 	      cellspace.add( models[index++], x, y, z );
++    // 	  }
++    // 	}
++    //   }
++    // }
++
++}   // namespace adevs
++
++#endif	// ifndef ADEVS_ADEVS_CEREAL_HPP
+diff -Naur adevs-3.3/include/adevs_digraph.h adevs-3.3~patched/include/adevs_digraph.h
+--- adevs-3.3/include/adevs_digraph.h	2018-01-10 15:28:49.000000000 -0500
++++ adevs-3.3~patched/include/adevs_digraph.h	2017-12-10 22:05:28.000000000 -0500
+@@ -94,7 +94,38 @@
+ 		typedef PortValue<VALUE,PORT> IO_Type;
+ 		/// A component of the Digraph model
+ 		typedef Devs<IO_Type,T> Component;
+-
++  		/// A smart pointer to a component of the Digraph model
++                typedef std::shared_ptr<Devs<IO_Type,T> > ComponentPtr;
++		// A node in the coupling graph
++		struct nodeplus
++		{
++			nodeplus():
++			model(),
++			port()
++			{
++			}
++			nodeplus(const ComponentPtr& model, PORT port):
++			model(model),
++			port(port)
++			{
++			}
++			const nodeplus& operator=(const nodeplus& src)
++			{
++				model = src.model;
++				port = src.port;
++				return *this;
++			}
++			ComponentPtr model;
++			PORT port;
++		
++			// Comparison for STL map
++			bool operator<(const nodeplus& other) const
++			{
++			        if (model.get() == other.model.get()) return port < other.port;
++				return model < other.model;
++			}
++		};
++ 
+ 		/// Construct a network with no components.
+ 		Digraph():
+ 		Network<IO_Type,T>()
+@@ -102,19 +133,27 @@
+ 		}
+ 		/// Add a model to the network.
+ 		void add(Component* model);
++                void add(const ComponentPtr& model);
+ 		/// Couple the source model to the destination model.  
+ 		void couple(Component* src, PORT srcPort, 
+ 		Component* dst, PORT dstPort);
++		/// returns a smart pointer for the specified component
++	        ComponentPtr getComponent(Component* model);
++		ComponentPtr getComponent(Component* model) const;
+ 		/// Puts the network's components into to c
+ 		void getComponents(Set<Component*>& c);
+-		/// Route an event based on the coupling information.
++  		void getComponents(Set<Component*>& c) const;
++  		/// Puts the networks coupling information into g
++                void getGraph(std::map<nodeplus,std::set<nodeplus> >&g);
++                void getGraph(std::map<nodeplus,std::set<nodeplus> >&g) const;
++ 		/// Route an event based on the coupling information.
+ 		void route(const IO_Type& x, Component* model, 
+ 		Bag<Event<IO_Type,T> >& r);
+ 		/// Destructor.  Destroys all of the component models.
+ 		~Digraph();
+ 
+-	private:	
+-		// A node in the coupling graph
++	private:
++    		// A node in the coupling graph
+ 		struct node
+ 		{
+ 			node():
+@@ -143,8 +182,11 @@
+ 				return model < other.model;
+ 			}
+ 		};
++
+ 		// Component model set
+ 		Set<Component*> models;
++		// Component model map to smart pointers
++		std::map<Component*,std::shared_ptr<Component> > modelMap;
+ 		// Coupling information
+ 		std::map<node,Bag<node> > graph;
+ };
+@@ -155,6 +197,20 @@
+ 	assert(model != this);
+ 	models.insert(model);
+ 	model->setParent(this);
++
++	if ( modelMap.find(model) == modelMap.end() )
++		modelMap[model] = std::shared_ptr<Component>(model);
++}
++
++template <class VALUE, class PORT, class T>
++void Digraph<VALUE,PORT,T>::add(const ComponentPtr& model)
++{
++        assert(model.get() != this);
++	models.insert(model.get());
++	model->setParent(this);
++
++	if ( modelMap.find(model.get()) == modelMap.end() )
++	        modelMap[model.get()] = model;
+ }
+ 
+ template <class VALUE, class PORT, class T>
+@@ -169,12 +225,89 @@
+ }
+ 
+ template <class VALUE, class PORT, class T>
++typename std::shared_ptr<Devs<PortValue<VALUE,PORT>,T> >
++Digraph<VALUE,PORT,T>::getComponent(Component* model)
++{
++	if (modelMap.find(model) == modelMap.end())
++		return nullptr;
++
++	return modelMap[model];
++}
++
++template <class VALUE, class PORT, class T>
++typename std::shared_ptr<Devs<PortValue<VALUE,PORT>,T> >
++Digraph<VALUE,PORT,T>::getComponent(Component* model) const
++{
++ 	try {
++	  	ComponentPtr lCp_devs = modelMap.at(model);
++	  	return lCp_devs;
++	}
++	catch(std::out_of_range lC_excp) {
++		// need to handle const map access
++		return nullptr;
++	}
++}
++
++template <class VALUE, class PORT, class T>
+ void Digraph<VALUE,PORT,T>::getComponents(Set<Component*>& c)
+ {
+ 	c = models;
+ }
+ 
+ template <class VALUE, class PORT, class T>
++void Digraph<VALUE,PORT,T>::getComponents(Set<Component*>& c) const
++{
++	c.clear();
++	typename Set<Component*>::iterator i;
++	for (i = models.begin(); i != models.end(); i++)
++	{
++		c.insert(*i);
++	}
++}
++
++template <class VALUE, class PORT, class T>
++void Digraph<VALUE,PORT,T>::getGraph(std::map< typename Digraph<VALUE,PORT,T>::nodeplus,std::set<typename Digraph<VALUE,PORT,T>::nodeplus> >& g)
++{
++        typename std::map<node,Bag<node> >::iterator graph_iter;
++	for (graph_iter = graph.begin();
++	     graph_iter != graph.end(); graph_iter++) {
++	     nodeplus src_node(getComponent( (*graph_iter).first.model ),
++			       (*graph_iter).first.port );
++	     src_node.model = getComponent( (*graph_iter).first.model );
++	     src_node.port = (*graph_iter).first.port;
++	    
++	     typename Bag<node>::iterator node_iter;
++	     for (node_iter = (*graph_iter).second.begin();
++		     node_iter != (*graph_iter).second.end(); node_iter++) {
++		    nodeplus dst_node(getComponent( (*node_iter).model ),
++				      (*node_iter).port);
++		    g[src_node].insert(dst_node);
++	     }		  
++	}
++}
++
++template <class VALUE, class PORT, class T>
++void Digraph<VALUE,PORT,T>::getGraph(std::map<typename Digraph<VALUE,PORT,T>::nodeplus,std::set<typename  Digraph<VALUE,PORT,T>::nodeplus> >& g) const
++{
++        typename std::map<node,Bag<node> >::const_iterator graph_iter;
++	for (graph_iter = graph.begin();
++	     graph_iter != graph.end(); graph_iter++) {
++	     nodeplus src_node(getComponent( (*graph_iter).first.model ),
++			       (*graph_iter).first.port );
++	     src_node.model = getComponent( (*graph_iter).first.model );
++	     src_node.port = (*graph_iter).first.port;
++	    
++	     typename Bag<node>::iterator node_iter;
++	     for (node_iter = (*graph_iter).second.begin();
++		     node_iter != (*graph_iter).second.end(); node_iter++) {
++		    nodeplus dst_node(getComponent( (*node_iter).model ),
++				      (*node_iter).port);
++		    g[src_node].insert(dst_node);
++	     }		  
++	}
++}
++
++template <class VALUE, class PORT, class T>
+ void Digraph<VALUE,PORT,T>::
+ route(const IO_Type& x, Component* model, 
+ Bag<Event<IO_Type,T> >& r)
+@@ -203,7 +336,8 @@
+ 	typename Set<Component*>::iterator i;
+ 	for (i = models.begin(); i != models.end(); i++)
+ 	{
+-		delete *i;
++		// using smart pointers
++		//delete *i;
+ 	}
+ }
+ 
+diff -Naur adevs-3.3/include/adevs_digraph.h~orig adevs-3.3~patched/include/adevs_digraph.h~orig
+--- adevs-3.3/include/adevs_digraph.h~orig	1969-12-31 19:00:00.000000000 -0500
++++ adevs-3.3~patched/include/adevs_digraph.h~orig	2018-01-10 15:28:49.000000000 -0500
+@@ -0,0 +1,212 @@
++/**
++ * Copyright (c) 2013, James Nutaro
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met: 
++ *
++ * 1. Redistributions of source code must retain the above copyright notice, this
++ *    list of conditions and the following disclaimer. 
++ * 2. Redistributions in binary form must reproduce the above copyright notice,
++ *    this list of conditions and the following disclaimer in the documentation
++ *    and/or other materials provided with the distribution. 
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
++ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
++ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
++ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
++ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ *
++ * The views and conclusions contained in the software and documentation are those
++ * of the authors and should not be interpreted as representing official policies, 
++ * either expressed or implied, of the FreeBSD Project.
++ *
++ * Bugs, comments, and questions can be sent to nutaro@gmail.com
++ */
++#ifndef __adevs_digraph_h_
++#define __adevs_digraph_h_
++#include "adevs.h"
++#include <cassert>
++#include <map>
++#include <set>
++#include <cstdlib>
++
++namespace adevs
++{
++
++/**
++ * The components of a digraph model must use PortValue objects
++ * as their basic I/O type: the port and value types are template
++ * arguments. The default port type is an integer.
++ */
++template <class VALUE, class PORT=int> class PortValue
++{
++	public:
++		/// Constructor
++		PortValue():
++		port(),
++		value()
++		{
++		}
++		/// Copy constructor
++		PortValue(const PortValue& src):
++		port(src.port),
++		value(src.value)
++		{
++		}
++		/// Create an object with the specified port and value
++		PortValue(PORT port, const VALUE& value):
++		port(port),
++		value(value)
++		{
++		}
++		/// Assignment operator
++		const PortValue<VALUE,PORT>& operator=(const PortValue<VALUE,PORT>& src)
++		{
++			port = src.port;
++			value = src.value;
++			return *this;
++		}
++		/// Destructor
++		~PortValue()
++		{
++		}
++		/// The port on which the value appears
++		PORT port;
++		/// The value appearing on the port
++		VALUE value;
++};
++
++/**
++ * The digraph model is used to build block-diagrams from network and atomic components.
++ * Its components must have PortValue objects as their input/output type.
++ */
++template <class VALUE, class PORT=int, class T = double> class Digraph: 
++public Network<PortValue<VALUE,PORT>,T>
++{
++	public:
++		/// An input or output to a component model
++		typedef PortValue<VALUE,PORT> IO_Type;
++		/// A component of the Digraph model
++		typedef Devs<IO_Type,T> Component;
++
++		/// Construct a network with no components.
++		Digraph():
++		Network<IO_Type,T>()
++		{
++		}
++		/// Add a model to the network.
++		void add(Component* model);
++		/// Couple the source model to the destination model.  
++		void couple(Component* src, PORT srcPort, 
++		Component* dst, PORT dstPort);
++		/// Puts the network's components into to c
++		void getComponents(Set<Component*>& c);
++		/// Route an event based on the coupling information.
++		void route(const IO_Type& x, Component* model, 
++		Bag<Event<IO_Type,T> >& r);
++		/// Destructor.  Destroys all of the component models.
++		~Digraph();
++
++	private:	
++		// A node in the coupling graph
++		struct node
++		{
++			node():
++			model(NULL),
++			port()
++			{
++			}
++			node(Component* model, PORT port):
++			model(model),
++			port(port)
++			{
++			}
++			const node& operator=(const node& src)
++			{
++				model = src.model;
++				port = src.port;
++				return *this;
++			}
++			Component* model;
++			PORT port;
++		
++			// Comparison for STL map
++			bool operator<(const node& other) const
++			{
++				if (model == other.model) return port < other.port;
++				return model < other.model;
++			}
++		};
++		// Component model set
++		Set<Component*> models;
++		// Coupling information
++		std::map<node,Bag<node> > graph;
++};
++
++template <class VALUE, class PORT, class T>
++void Digraph<VALUE,PORT,T>::add(Component* model)
++{
++	assert(model != this);
++	models.insert(model);
++	model->setParent(this);
++}
++
++template <class VALUE, class PORT, class T>
++void Digraph<VALUE,PORT,T>::couple(Component* src, PORT srcPort, 
++Component* dst, PORT dstPort)
++{
++	if (src != this) add(src);
++	if (dst != this) add(dst);
++	node src_node(src,srcPort);
++	node dst_node(dst,dstPort);
++	graph[src_node].insert(dst_node);
++}
++
++template <class VALUE, class PORT, class T>
++void Digraph<VALUE,PORT,T>::getComponents(Set<Component*>& c)
++{
++	c = models;
++}
++
++template <class VALUE, class PORT, class T>
++void Digraph<VALUE,PORT,T>::
++route(const IO_Type& x, Component* model, 
++Bag<Event<IO_Type,T> >& r)
++{
++	// Find the list of target models and ports
++	node src_node(model,x.port);
++	typename std::map<node,Bag<node> >::iterator graph_iter;
++	graph_iter = graph.find(src_node);
++	// If no target, just return
++	if (graph_iter == graph.end()) return;
++	// Otherwise, add the targets to the event bag
++	Event<IO_Type,T> event;
++	typename Bag<node>::iterator node_iter;
++	for (node_iter = (*graph_iter).second.begin();
++	node_iter != (*graph_iter).second.end(); node_iter++)
++	{
++		event.model = (*node_iter).model;
++		event.value.port = (*node_iter).port;
++		event.value.value = x.value;
++		r.insert(event);
++	}
++}
++template <class VALUE, class PORT, class T>
++Digraph<VALUE,PORT,T>::~Digraph()
++{ 
++	typename Set<Component*>::iterator i;
++	for (i = models.begin(); i != models.end(); i++)
++	{
++		delete *i;
++	}
++}
++
++} // end of namespace 
++
++#endif
+diff -Naur adevs-3.3/include/adevs_serialization.hpp adevs-3.3~patched/include/adevs_serialization.hpp
+--- adevs-3.3/include/adevs_serialization.hpp	1969-12-31 19:00:00.000000000 -0500
++++ adevs-3.3~patched/include/adevs_serialization.hpp	2018-04-08 20:14:30.000000000 -0400
+@@ -0,0 +1,445 @@
++// __COPYRIGHT_START__
++// Package Name : efscape
++// File Name : adevs_serialization.hh
++// Copyright (C) 2006-2009 by Jon C. Cline
++//
++// This library is free software; you can redistribute it and/or
++// modify it under the terms of the GNU Lesser General Public
++// License as published by the Free Software Foundation; either
++// version 2 of the License, or (at your option) any later version.
++//
++// This library is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++// Lesser General Public License for more details.
++//
++// You should have received a copy of the GNU Lesser General Public
++// License along with this library; if not, write to the Free Software
++// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++//
++// Bugs, comments, and questions can be sent to clinej@stanfordalumni.org
++// __COPYRIGHT_END__
++#ifndef ADEVS_ADEVS_SERIALIZATION_HH
++#define ADEVS_ADEVS_SERIALIZATION_HH
++
++#include <adevs.h>
++
++#include <boost/serialization/base_object.hpp>
++#include <boost/serialization/nvp.hpp>
++#include <boost/serialization/split_free.hpp>
++#include <boost/serialization/vector.hpp>
++#include <boost/serialization/set.hpp>
++#include <boost/serialization/map.hpp>
++#include <boost/serialization/version.hpp>
++#include <boost/serialization/wrapper.hpp>
++
++namespace boost {
++
++  namespace serialization {
++
++    /**
++     * Free function for serialization of the adevs::Devs<X> class.
++     *
++     * @param ar reference to archive type
++     * @param devs reference to DEVS model
++     * @param version version number
++     */
++    template<class Archive, class X>
++    void serialize(Archive & ar, adevs::Devs<X>& devs,
++		   const unsigned int version)
++    {
++    }
++
++    /**    
++     * Free function for serialization of the adevs::Atomic<X> class.
++     *
++     * @param ar reference to archive type
++     * @param atomic reference to ATOMIC model
++     * @param version version number
++     */
++    template<class Archive, class X>
++    void serialize(Archive & ar, adevs::Atomic<X>& atomic,
++		   const unsigned int version)
++    {
++      // invoke serialization of the parent class
++      ar & boost::serialization::make_nvp("Devs",
++					  boost::serialization::base_object<adevs::Devs<X> >(atomic) );
++    }
++
++    /**
++     * Free function for serialization save of the adevs::ModelWrapper<X,Y>
++     * class.
++     *
++     * @param ar reference to archive type
++     * @param wrapper reference to ModelWrapper model
++     * @param version version number
++     */
++    template<class Archive, class ExternalType, class InternalType>
++    void save(Archive & ar,
++	      const adevs::ModelWrapper<ExternalType,InternalType>& wrapper,
++	      const unsigned int version)
++    {
++      // invoke serialization save of the parent class
++      ar & boost::serialization::make_nvp("Atomic",
++					  boost::serialization::base_object<adevs::Atomic<ExternalType> >(wrapper) );
++
++      // invoke serialization save of tL for wrapped model
++      double tL = wrapper.getTime();
++      ar & boost::serialization::make_nvp("tL", tL);
++
++      // leave serialization of wrapped model to derived classes
++    }
++
++    /**
++     * Free function for serialization load of the adevs::ModelWrapper<X,Y>
++     * class.
++     *
++     * @param ar reference to archive type
++     * @param wrapper reference to ModelWrapper model
++     * @param version version number
++     */
++    template<class Archive, class ExternalType, class InternalType>
++    void load(Archive & ar,
++	      adevs::ModelWrapper<ExternalType,InternalType>& wrapper,
++	      const unsigned int version)
++    {
++      // invoke serialization load of the parent class
++      ar & boost::serialization::make_nvp("Atomic",
++					  boost::serialization::base_object<adevs::Atomic<ExternalType> >(wrapper) );
++
++      // invoke serialization load of tL for wrapped model
++      double tL;
++      ar & boost::serialization::make_nvp("tL", tL);
++      wrapper.setTime(tL);
++
++      // leave serialization of wrapped model to derived classes
++    }
++
++    /**
++     * Free function for serialization save of the adevs::Network<X> class.
++     *
++     * @param ar reference to archive type
++     * @param network reference to NETWORK model
++     * @param version version number
++     */
++    template<class Archive, class X>
++    void serialize(Archive & ar, adevs::Network<X>& network,
++		   const unsigned int version)
++    {
++      // invoke serialization of the parent class
++      ar & boost::serialization::make_nvp("Devs",
++					  boost::serialization::base_object<adevs::Devs<X> >(network) );
++    }
++
++    /**
++     * Free function for serialization save of class SimpleDigraph<X>.
++     *
++     * @param ar reference to archive type
++     * @param digraph reference to SimpleDigraph model
++     * @param version version number
++     */
++    template<class Archive, class X>
++    void save(Archive & ar, const adevs::SimpleDigraph<X>& digraph,
++	      const unsigned int version)
++    {
++      // 1) invoke serialization of the parent class
++      ar & boost::serialization::make_nvp("NetworkModel",
++					  boost::serialization::base_object<adevs::Network<X> >(digraph) );
++
++      //-------------------
++      // 2) save sub models
++      //-------------------
++      // get digraph components
++      typedef adevs::Devs<X> COMPONENT;
++      typedef std::shared_ptr<COMPONENT> ComponentPtr;
++      typedef adevs::Set<const COMPONENT*> ComponentSet;
++
++      ComponentSet lCCp_models;
++      digraph.getComponents(lCCp_models);
++
++      // copy adevs::Set<> to std::set<>
++      typedef std::set<ComponentPtr> ComponentStlSet;
++      ComponentStlSet models;
++      for (typename ComponentSet::iterator iter = lCCp_models.begin();
++	   iter != lCCp_models.end();
++	   iter++)
++	models.insert(digraph.getComponent(*iter) );
++
++      // save component models
++      ar & BOOST_SERIALIZATION_NVP(models);
++
++      //--------------------
++      // 3) save model graph
++      //--------------------
++      // get graph
++      typedef std::map< ComponentPtr, std::set<ComponentPtr> > GRAPH;
++      GRAPH graph;
++      digraph.getGraph(graph);
++
++      // save graph
++      ar & BOOST_SERIALIZATION_NVP(graph);
++
++    } // serialization save of class SimpleDigraph<X>
++
++    /**
++     * Free function for serialization load of class SimpleDigraph<X>.
++     *
++     * @param ar reference to archive type
++     * @param digraph reference to SimpleDigraph model
++     * @param version version number
++     */
++    template<class Archive, class X>
++    void load(Archive & ar, adevs::SimpleDigraph<X>& digraph,
++	      const unsigned int version)
++    {
++      // 1) invoke serialization of the parent class
++      ar & boost::serialization::make_nvp("NetworkModel",
++					  boost::serialization::base_object<adevs::Network<X> >(digraph) );
++
++      typedef adevs::Devs<X> COMPONENT;
++      typedef std::shared_ptr<COMPONENT> ComponentPtr;
++      typedef std::set<ComponentPtr> ComponentStlSet;
++      ComponentStlSet models;
++      typedef std::map< ComponentPtr, std::set<ComponentPtr> > GRAPH;
++      GRAPH graph;
++
++      ar & BOOST_SERIALIZATION_NVP(models);
++      ar & BOOST_SERIALIZATION_NVP(graph);
++
++      // 2 add component models to digraph (note: adding shared pointers)
++      for (typename ComponentStlSet::iterator iter = models.begin();
++    	   iter != models.end();
++    	   iter++)
++    	digraph.add(*iter);
++
++      // 3) add model couplings
++      for (typename GRAPH::iterator graph_iter = graph.begin();
++    	   graph_iter != graph.end(); graph_iter++) {
++    	for (typename std::set<COMPONENT*>::iterator model_iter =
++    	       graph_iter->second.begin();
++    	     model_iter != graph_iter->second.end();
++    	     model_iter++) {
++      
++    	  digraph.couple(graph_iter->first.get(), (*model_iter).get() );
++	} // for (typename std::set...
++      }	  // for (typename GRAPH::iterator...
++
++    } // serialization load of class SimpleDigraph<X>
++
++    /**
++     * Free function for serialization of the DIGRAPH::node struct.
++     *
++     * @param ar reference to archive type
++     * @param node reference to graph node
++     * @param version version number
++     */
++    template<class Archive, class X, class PORT>
++    void serialize(Archive & ar, typename adevs::Digraph<X,PORT>::nodeplus& node,
++		   const unsigned int version)
++    {
++      ar & BOOST_SERIALIZATION_NVP(node.model); // serialize model
++      ar & BOOST_SERIALIZATION_NVP(node.port); // serialize port
++    }
++
++    /**
++     * Free function for serialization save of the Digraph class.
++     *
++     * @param ar reference to archive type
++     * @param digraph reference to Digraph model
++     * @param version version number
++     */
++    template<class Archive, class X, class PORT>
++    void save(Archive & ar, const adevs::Digraph<X,PORT>& digraph,
++	      const unsigned int version)
++    {
++      // 1) invoke serialization of the parent class
++      typedef adevs::PortValue<X,PORT> IO_Type;
++      ar & boost::serialization::make_nvp("NetworkModel",
++					  boost::serialization::base_object<adevs::Network<IO_Type> >(digraph) );
++
++      //-------------------
++      // 2) save sub models
++      //-------------------
++      // get digraph components
++      // * Need to convert to std containers and smart pointers for cereal
++      typedef adevs::PortValue<X,PORT> IO_Type;
++      typedef adevs::Devs<IO_Type> COMPONENT;
++      typedef std::shared_ptr<COMPONENT> ComponentPtr;
++      typedef adevs::Set<COMPONENT*> ComponentSet;
++
++      ComponentSet lCCp_models;
++      digraph.getComponents(lCCp_models);
++
++      // copy adevs::Set<> to std::set<>
++      typedef std::set<ComponentPtr> ComponentStlSet;
++      ComponentStlSet models;
++      for (typename ComponentSet::iterator iter = lCCp_models.begin();
++	   iter != lCCp_models.end();
++	   iter++) {
++	ComponentPtr lCp_devs = digraph.getComponent(*iter);
++	models.insert(lCp_devs);
++      }
++
++      // save component models
++      ar & BOOST_SERIALIZATION_NVP(models);
++
++      //--------------------
++      // 3) save model graph
++      //--------------------
++      // get graph
++      typedef typename adevs::Digraph<X,PORT>::nodeplus NODE;
++      typedef std::map< NODE, std::set<NODE> > GRAPH;
++      GRAPH graph;
++      digraph.getGraph(graph);
++      
++      // save graph
++      ar & BOOST_SERIALIZATION_NVP(graph);
++
++    } // serialization save of class Digraph<X,Port>
++
++    /**
++     * Free function for serialization load of the Digraph class.
++     *
++     * @param ar reference to archive type
++     * @param digraph reference to Digraph model
++     * @param version version number
++     */
++    template<class Archive, class X, class PORT>
++    void load(Archive & ar, adevs::Digraph<X,PORT>& digraph,
++	      const unsigned int version)
++    {
++      // 1) invoke serialization of the parent class
++      typedef adevs::PortValue<X,PORT> IO_Type;
++      ar & boost::serialization::make_nvp("NetworkModel",
++					  boost::serialization::base_object<adevs::Network<IO_Type> >(digraph) );
++      
++      // 2 add component models to digraph (note: adding shared pointers)
++      typedef adevs::PortValue<X,PORT> IO_Type;
++      typedef adevs::Devs<IO_Type> COMPONENT;
++      typedef std::shared_ptr<COMPONENT> ComponentPtr;
++      typedef std::set<ComponentPtr> ComponentStlSet;
++      ComponentStlSet models;
++
++      ar & BOOST_SERIALIZATION_NVP(models);
++      
++      for (typename ComponentStlSet::iterator iter = models.begin();
++	   iter != models.end();
++	   iter++)
++	digraph.add(*iter);
++      
++      // 3) add model couplings
++      typedef typename adevs::Digraph<X,PORT>::nodeplus NODE;
++      typedef std::map< NODE, std::set<NODE> > GRAPH;
++      GRAPH graph;
++
++      ar & BOOST_SERIALIZATION_NVP(graph);
++
++      for (typename GRAPH::iterator graph_iter = graph.begin() ;
++	   graph_iter != graph.end(); graph_iter++) {
++	for (typename std::set<NODE>::iterator node_iter =
++	       graph_iter->second.begin();
++	     node_iter != graph_iter->second.end();
++	     node_iter++) {
++
++	  digraph.couple(graph_iter->first.model.get(), graph_iter->first.port,
++			 node_iter->model.get(), node_iter->port);
++	} // for (typename std::set<Node>
++      }	// for (typename Graph::iterator = ...
++
++    } // serialization load of class Digraph<X,Port>
++
++    /**
++     * Free function for serialization save of the Cellspace class.
++     *
++     * @param ar reference to archive type
++     * @param cellspace reference to Cellspace model
++     * @param version version number
++     */
++    template<class Archive, class X>
++    void save(Archive & ar, const adevs::CellSpace<X>& cellspace,
++	      const unsigned int version)
++    {
++      // 1) invoke serialization of the parent class
++      ar & boost::serialization::make_nvp("NetworkModel",
++					  boost::serialization::base_object<adevs::Network<adevs::CellEvent<X> > >(cellspace) );
++
++      // 2) save the dimensions of the cell space
++      long width = cellspace.getWidth();
++      ar & BOOST_SERIALIZATION_NVP(width);
++
++      long height = cellspace.getHeight();
++      ar & BOOST_SERIALIZATION_NVP(height);
++
++      long depth = cellspace.getDepth();
++      ar & BOOST_SERIALIZATION_NVP(depth);
++
++      //-------------------
++      // 3) save sub models
++      //-------------------
++      // get cellspace components
++      typedef adevs::Devs<adevs::CellEvent<X> > Cell;
++      std::vector<const Cell*> models;
++
++      long ll_volume = width*height*depth;
++      for (int x = 0; x < width; x++) {
++	for (int y = 0; y < height; y++) {
++	  for (int z = 0; z < depth; z++) {
++	    models.push_back(cellspace.getModel(x,y,z));
++	  }
++	}
++      }
++
++      // save component models
++      ar & BOOST_SERIALIZATION_NVP(models);
++
++    }
++
++    /**
++     * Free function for serialization save of the Cellspace class.
++     *
++     * @param ar reference to archive type
++     * @param cellspace reference to Cellspace model
++     * @param version version number
++     */
++    template<class Archive, class X>
++    void load(Archive & ar, adevs::CellSpace<X>& cellspace,
++	      const unsigned int version)
++    {
++      // 1) invoke serialization of the parent class
++      ar & boost::serialization::make_nvp("NetworkModel",
++					  boost::serialization::base_object<adevs::Network<adevs::CellEvent<X> > >(cellspace) );
++
++      // 2) load the dimensions of the cell space and initialize
++      long width;
++      ar & BOOST_SERIALIZATION_NVP(width);
++
++      long height;
++      ar & BOOST_SERIALIZATION_NVP(height);
++
++      long depth;
++      ar & BOOST_SERIALIZATION_NVP(depth);
++
++      cellspace.createSpace(width,height,depth);
++
++      // 3) load component models
++      typedef adevs::Devs<adevs::CellEvent<X> > Cell;
++      std::vector<Cell*> models;
++      ar & BOOST_SERIALIZATION_NVP(models);
++
++      long ll_volume = width*height*depth;
++      long index = 0;
++      for (int x = 0; x < width; x++) {
++	for (int y = 0; y < height; y++) {
++	  for (int z = 0; z < depth; z++) {
++	    if (index < models.size())
++	      cellspace.add( models[index++], x, y, z );
++	  }
++	}
++      }
++    }
++
++  } // namespace serialization
++
++}   // namespace boost
++
++#endif	// ifndef EFSCAPE_IMPL_ADEVS_SERIALIZATION_HH
+diff -Naur adevs-3.3/include/adevs_simpledigraph.h adevs-3.3~patched/include/adevs_simpledigraph.h
+--- adevs-3.3/include/adevs_simpledigraph.h	2018-01-10 15:28:49.000000000 -0500
++++ adevs-3.3~patched/include/adevs_simpledigraph.h	2017-12-10 22:05:29.000000000 -0500
+@@ -50,6 +50,10 @@
+ 		/// A component of the SimpleDigraph model
+ 		typedef Devs<VALUE,T> Component;
+ 
++                /// smart pointers to a component of the SimpleDigraph model
++                typedef std::shared_ptr<Devs<VALUE,T> > ComponentPtr;
++                typedef std::shared_ptr<const Devs<VALUE,T> > ConstComponentPtr;
++
+ 		/// Construct a network without components.
+ 		SimpleDigraph():
+ 		Network<VALUE,T>()
+@@ -57,10 +61,18 @@
+ 		}
+ 		/// Add a model to the network.
+ 		void add(Component* model);
++                void add(const ComponentPtr& model);
+ 		/// Couple the source model to the destination model.  
+ 		void couple(Component* src, Component* dst);
++  		/// returns a smart pointer for the specified component
++		ComponentPtr getComponent(Component* model);
++		ComponentPtr getComponent(Component* model) const;
+ 		/// Puts the network's set of components into c
+ 		void getComponents(Set<Component*>& c);
++		void getComponents(Set<Component*>& c) const;
++ 		/// Assigns the coupling information to g
++                void getGraph(std::map<ComponentPtr,std::set<ComponentPtr> >&g);
++                void getGraph(std::map<ComponentPtr,std::set<ComponentPtr> >&g) const;
+ 		/// Route an event according to the network's couplings
+ 		void route(const VALUE& x, Component* model, 
+ 		Bag<Event<VALUE,T> >& r);
+@@ -70,6 +82,8 @@
+ 	private:	
+ 		// The set of components
+ 		Set<Component*> models;
++  		// Component model map to smart pointers
++		std::map<const Component*,std::shared_ptr<Component> > modelMap;
+ 		// Coupling information
+ 		std::map<Component*,Bag<Component*> > graph;
+ };
+@@ -80,6 +94,20 @@
+ 	assert(model != this);
+ 	models.insert(model);
+ 	model->setParent(this);
++
++	if ( modelMap.find(model) == modelMap.end() )
++		modelMap[model] = std::shared_ptr<Component>(model);
++}
++
++template <class VALUE, class T>
++void SimpleDigraph<VALUE,T>::add(const ComponentPtr& model)
++{
++        assert(model.get() != this);
++	models.insert(model.get());
++	model->setParent(this);
++
++	if ( modelMap.find(model.get()) == modelMap.end() )
++	        modelMap[model.get()] = model;
+ }
+ 
+ template <class VALUE, class T>
+@@ -91,12 +119,77 @@
+ }
+ 
+ template <class VALUE, class T>
++std::shared_ptr<Devs<VALUE,T> >
++SimpleDigraph<VALUE,T>::getComponent(Component* model)
++{
++	if (modelMap.find(model) == modelMap.end())
++		return nullptr;
++
++	return modelMap[model];
++}
++
++template <class VALUE, class T>
++std::shared_ptr<Devs<VALUE,T> >
++SimpleDigraph<VALUE,T>::getComponent(Component* model) const
++{
++ 	try {
++	  	ComponentPtr lCp_devs = modelMap.at(model);
++	  	return lCp_devs;
++	}
++	catch(std::out_of_range lC_excp) {
++		// need to handle const map access
++		return nullptr;
++	}
++ }
++
++template <class VALUE, class T>
+ void SimpleDigraph<VALUE,T>::getComponents(Set<Component*>& c)
+ {
+ 	c = models;
+ }
+ 
+ template <class VALUE, class T>
++void SimpleDigraph<VALUE,T>::getComponents(Set<Component*>& c) const
++{
++	c.clear();
++	typename Set<Component*>::iterator i;
++	for (i = models.begin(); i != models.end(); i++)
++	{
++		c.insert(*i);
++	}
++}
++
++template <class VALUE, class T>
++void SimpleDigraph<VALUE, T>::getGraph(std::map<ComponentPtr,std::set<ComponentPtr> >& g)
++{
++	typename std::map<Component*,Bag<Component*> >::iterator graph_iter;
++	for (graph_iter = graph.begin(); graph_iter != graph.end(); graph_iter++) {
++		ComponentPtr src_model( getComponent((*graph_iter).first ) );
++		typename Bag<Component*>::iterator node_iter;
++		for (node_iter = (*graph_iter).second.begin();
++		     node_iter != (*graph_iter).second.end(); node_iter++) {
++		  ComponentPtr dst_model( getComponent( *node_iter ) );
++		  g[src_model].insert( dst_model);
++		}
++	}
++}
++
++template <class VALUE, class T>
++void SimpleDigraph<VALUE,T>::getGraph(std::map<ComponentPtr,std::set<ComponentPtr> >& g) const
++{
++	typename std::map<Component*,Bag<Component*> >::iterator graph_iter;
++	for (graph_iter = graph.begin(); graph_iter != graph.end(); graph_iter++) {
++		ComponentPtr src_model( getComponent((*graph_iter).first ) );
++		typename Bag<Component*>::iterator node_iter;
++		for (node_iter = (*graph_iter).second.begin();
++		     node_iter != (*graph_iter).second.end(); node_iter++) {
++		  ComponentPtr dst_model( getComponent( *node_iter ) );
++		  g[src_model].insert( dst_model);
++		}
++	}
++}
++
++template <class VALUE, class T>
+ void SimpleDigraph<VALUE,T>::
+ route(const VALUE& x, Component* model, 
+ Bag<Event<VALUE,T> >& r)
+@@ -124,7 +217,8 @@
+ 	typename Set<Component*>::iterator i;
+ 	for (i = models.begin(); i != models.end(); i++)
+ 	{
+-		delete *i;
++		// using smart pointers
++		//delete *i;
+ 	}
+ }
+ 
+diff -Naur adevs-3.3/include/adevs_simpledigraph.h~orig adevs-3.3~patched/include/adevs_simpledigraph.h~orig
+--- adevs-3.3/include/adevs_simpledigraph.h~orig	1969-12-31 19:00:00.000000000 -0500
++++ adevs-3.3~patched/include/adevs_simpledigraph.h~orig	2018-01-10 15:28:49.000000000 -0500
+@@ -0,0 +1,133 @@
++/**
++ * Copyright (c) 2013, James Nutaro
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met: 
++ *
++ * 1. Redistributions of source code must retain the above copyright notice, this
++ *    list of conditions and the following disclaimer. 
++ * 2. Redistributions in binary form must reproduce the above copyright notice,
++ *    this list of conditions and the following disclaimer in the documentation
++ *    and/or other materials provided with the distribution. 
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
++ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
++ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
++ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
++ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ *
++ * The views and conclusions contained in the software and documentation are those
++ * of the authors and should not be interpreted as representing official policies, 
++ * either expressed or implied, of the FreeBSD Project.
++ *
++ * Bugs, comments, and questions can be sent to nutaro@gmail.com
++ */
++#ifndef __adevs_simpledigraph_h_
++#define __adevs_simpledigraph_h_
++#include "adevs.h"
++#include <map>
++#include <set>
++#include <cstdlib>
++
++namespace adevs
++{
++
++/**
++ * This is a very simple digraph model for connecting single input/single
++ * output systems. Output generated by a component model is sent to all
++ * components connected to it.
++ */
++template <class VALUE, class T = double> class SimpleDigraph: 
++public Network<VALUE,T>
++{
++	public:
++		/// A component of the SimpleDigraph model
++		typedef Devs<VALUE,T> Component;
++
++		/// Construct a network without components.
++		SimpleDigraph():
++		Network<VALUE,T>()
++		{
++		}
++		/// Add a model to the network.
++		void add(Component* model);
++		/// Couple the source model to the destination model.  
++		void couple(Component* src, Component* dst);
++		/// Puts the network's set of components into c
++		void getComponents(Set<Component*>& c);
++		/// Route an event according to the network's couplings
++		void route(const VALUE& x, Component* model, 
++		Bag<Event<VALUE,T> >& r);
++		/// Destructor.  Destroys all of the component models.
++		~SimpleDigraph();
++
++	private:	
++		// The set of components
++		Set<Component*> models;
++		// Coupling information
++		std::map<Component*,Bag<Component*> > graph;
++};
++
++template <class VALUE, class T>
++void SimpleDigraph<VALUE,T>::add(Component* model)
++{
++	assert(model != this);
++	models.insert(model);
++	model->setParent(this);
++}
++
++template <class VALUE, class T>
++void SimpleDigraph<VALUE,T>::couple(Component* src, Component* dst) 
++{
++	if (src != this) add(src);
++	if (dst != this) add(dst);
++	graph[src].insert(dst);
++}
++
++template <class VALUE, class T>
++void SimpleDigraph<VALUE,T>::getComponents(Set<Component*>& c)
++{
++	c = models;
++}
++
++template <class VALUE, class T>
++void SimpleDigraph<VALUE,T>::
++route(const VALUE& x, Component* model, 
++Bag<Event<VALUE,T> >& r)
++{
++	// Find the list of target models and ports
++	typename std::map<Component*,Bag<Component*> >::iterator graph_iter;
++	graph_iter = graph.find(model);
++	// If no target, just return
++	if (graph_iter == graph.end()) return;
++	// Otherwise, add the targets to the event bag
++	Event<VALUE,T> event;
++	typename Bag<Component*>::iterator node_iter;
++	for (node_iter = (*graph_iter).second.begin();
++	node_iter != (*graph_iter).second.end(); node_iter++)
++	{
++		event.model = *node_iter;
++		event.value = x;
++		r.insert(event);
++	}
++}
++
++template <class VALUE, class T>
++SimpleDigraph<VALUE,T>::~SimpleDigraph()
++{ 
++	typename Set<Component*>::iterator i;
++	for (i = models.begin(); i != models.end(); i++)
++	{
++		delete *i;
++	}
++}
++
++} // end of namespace 
++
++#endif
+diff -Naur adevs-3.3/include/adevs_wrapper.h adevs-3.3~patched/include/adevs_wrapper.h
+--- adevs-3.3/include/adevs_wrapper.h	2018-01-10 15:28:49.000000000 -0500
++++ adevs-3.3~patched/include/adevs_wrapper.h	2017-12-10 22:05:29.000000000 -0500
+@@ -57,6 +57,10 @@
+ 	{
+ 		public:
+ 			/**
++			 * Default constructor -- model to be wrapped to be specified later. 
++			 */
++			ModelWrapper();
++			/**
+ 			 * Create a wrapper for the specified model. The ModelWrapper takes
+ 			 * ownership of the supplied model and will delete it when the
+ 			 * ModelWrapper is deleted.
+@@ -90,7 +94,17 @@
+ 			 */
+ 			virtual void gc_input(Bag<Event<InternalType,T> >& g) = 0;
+ 			/// Get the model that is wrapped by this object
+-			Devs<InternalType,T>* getWrappedModel() { return model; }
++	                std::shared_ptr<Devs<InternalType,T> > getWrappedModel() { return model; }
++	                std::shared_ptr<Devs<InternalType,T> > getWrappedModel() const { return model; }
++			/// Set the model that is wrapped by this object
++	                void setWrappedModel(const std::shared_ptr<Devs<InternalType,T> >& model);
++
++			/// Adds an event listener to wrapped simulation
++		        void addEventListener(EventListener<InternalType,T>* listnerer);
++			/// Set tL for the wrapped model
++			void setTime(double t) { tL = t; }
++			/// Get tL for the wrapped model
++			double getTime() const { return tL; }
+ 			/// Atomic internal transition function
+ 			void delta_int();
+ 			/// Atomic external transition function
+@@ -106,7 +120,6 @@
+ 			/// Destructor. This destroys the wrapped model too.
+ 			~ModelWrapper();
+ 		private:
+-			ModelWrapper(){}
+ 			ModelWrapper(const ModelWrapper&){}
+ 			void operator=(const ModelWrapper&){}
+ 			// Bag of events created by the input translation method 
+@@ -114,7 +127,7 @@
+ 			// Output from the wrapped model
+ 			Bag<Event<InternalType,T> > output;
+ 			// The wrapped model
+-			Devs<InternalType,T>* model;
++	                std::shared_ptr<Devs<InternalType,T> > model;
+ 			// Simulator for driving the wrapped model
+ 			Simulator<InternalType,T>* sim;
+ 			// Last event time
+@@ -122,13 +135,23 @@
+ 	};
+ 
+ template <typename ExternalType, typename InternalType, class T> 
+-ModelWrapper<ExternalType,InternalType,T>::ModelWrapper(Devs<InternalType,T>* model):
++ModelWrapper<ExternalType,InternalType,T>::ModelWrapper():
++	Atomic<ExternalType,T>(),
++	EventListener<InternalType,T>(),
++	model(nullptr),
++	sim(NULL),
++	tL(adevs_zero<T>())
++{
++}
++
++template <typename ExternalType, typename InternalType, class T> 
++ModelWrapper<ExternalType,InternalType,T>::ModelWrapper(Devs<InternalType,T>* model2):
+ 	Atomic<ExternalType,T>(),
+ 	EventListener<InternalType,T>(),
+-	model(model),
++	model(model2),
+ 	tL(adevs_zero<T>())
+ {
+-	sim = new Simulator<InternalType,T>(model);
++        sim = new Simulator<InternalType,T>(model.get());
+ 	sim->addEventListener(this);
+ }
+ 
+@@ -198,8 +221,24 @@
+ template <typename ExternalType, typename InternalType, class T> 
+ ModelWrapper<ExternalType,InternalType,T>::~ModelWrapper()
+ {
+-	delete sim;
+-	delete model;
++        if (sim) delete sim;
++	//if (model) delete model;
++}
++
++template <typename ExternalType, typename InternalType, class T> 
++void ModelWrapper<ExternalType,InternalType,T>::setWrappedModel(const std::shared_ptr<Devs<InternalType,T> >& model2)
++{
++        if (sim) delete sim;
++	//if (model) delete model;
++	model = model2;
++	sim = new Simulator<InternalType,T>(model.get());
++	sim->addEventListener(this);
++}
++
++template <typename ExternalType, typename InternalType, class T> 
++void ModelWrapper<ExternalType,InternalType,T>::addEventListener(EventListener<InternalType,T>* listener)
++{
++	sim->addEventListener(listener);
+ }
+ 
+ } // end of namespace
+diff -Naur adevs-3.3/include/adevs_wrapper.h~orig adevs-3.3~patched/include/adevs_wrapper.h~orig
+--- adevs-3.3/include/adevs_wrapper.h~orig	1969-12-31 19:00:00.000000000 -0500
++++ adevs-3.3~patched/include/adevs_wrapper.h~orig	2018-01-10 15:28:49.000000000 -0500
+@@ -0,0 +1,207 @@
++/**
++ * Copyright (c) 2013, James Nutaro
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met: 
++ *
++ * 1. Redistributions of source code must retain the above copyright notice, this
++ *    list of conditions and the following disclaimer. 
++ * 2. Redistributions in binary form must reproduce the above copyright notice,
++ *    this list of conditions and the following disclaimer in the documentation
++ *    and/or other materials provided with the distribution. 
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
++ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
++ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
++ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
++ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ *
++ * The views and conclusions contained in the software and documentation are those
++ * of the authors and should not be interpreted as representing official policies, 
++ * either expressed or implied, of the FreeBSD Project.
++ *
++ * Bugs, comments, and questions can be sent to nutaro@gmail.com
++ */
++#ifndef __adevs_wrapper_h_
++#define __adevs_wrapper_h_
++#include "adevs_models.h"
++
++namespace adevs
++{
++	/**
++	 * <p>This class wraps a Network or Atomic model with interface type InternalType in an
++	 * Atomic model with interface type ExternalType. Input to the ModelWrapper is passed
++	 * through a user provided input translation method before being handed off
++	 * to the wrapped model for processing. Output from the wrapped model is
++	 * passed through a user provided output translation method before emerging
++	 * as output from the ModelWrapper. If the wrapped model is a Network, the input
++	 * translation method can create inputs for any of its components. Similarly
++	 * the output translation method is provided with every output produced by
++	 * every component in the Network. If the wrapped model is Atomic then there
++	 * is, of course, only one possible destination for incoming events and only
++	 * one source of outgoing events.
++	 * <p>You will need to implement the usual gc_output event for outputs
++	 * produced by the ModelWrapper. You will also need to implement
++	 * gcInputEvents method to clean up events that are created during
++	 * the input translation process.
++	 */
++	template <typename ExternalType, typename InternalType, class T = double> class ModelWrapper:
++		public Atomic<ExternalType,T>,
++		public EventListener<InternalType,T>
++	{
++		public:
++			/**
++			 * Create a wrapper for the specified model. The ModelWrapper takes
++			 * ownership of the supplied model and will delete it when the
++			 * ModelWrapper is deleted.
++			 */
++			ModelWrapper(Devs<InternalType,T>* model);
++			/**
++			 * This method is used to translate incoming input objects into
++			 * input objects that the wrapped model can process. The supplied
++			 * internal_input bag should be filled with Events that contain the targeted
++			 * internal models and the values to supply to them. The external_input
++			 * bag contains the input values supplied to the wrapper's external or
++			 * confluent transition function.
++			 */
++			virtual void translateInput(const Bag<ExternalType>& external_input,
++					Bag<Event<InternalType,T> >& internal_input) = 0;
++			/**
++			 * This method is used to translate outgoing output objects
++			 * into objects that the ModelWrapper can produce. The 
++			 * internal_output bag contains all of the output events that the
++			 * were produced by the wrapped model. The external_output bag
++			 * should be filled with objects of type ExternalType that
++			 * will be produced as output by the ModelWrapper.
++			 */
++			virtual void translateOutput(const Bag<Event<InternalType,T> >& internal_output,
++					Bag<ExternalType>& external_output) = 0;
++			/**
++			 * This is the garbage collection method for internal input events.
++			 * It will be called when the wrapper is done with a set of events
++			 * that you created with the translateInput method. The supplied bag
++			 * is the same one that you filled out in the translateInput method.
++			 */
++			virtual void gc_input(Bag<Event<InternalType,T> >& g) = 0;
++			/// Get the model that is wrapped by this object
++			Devs<InternalType,T>* getWrappedModel() { return model; }
++			/// Atomic internal transition function
++			void delta_int();
++			/// Atomic external transition function
++			void delta_ext(T e, const Bag<ExternalType>& xb);
++			/// Atomic confluent transition function
++			void delta_conf(const Bag<ExternalType>& xb);
++			/// Atomic output function
++			void output_func(Bag<ExternalType>& yb);
++			/// Atomic time advance function
++			T ta();
++			/// EventListener outputEvent method
++			void outputEvent(Event<InternalType,T> y, T t);
++			/// Destructor. This destroys the wrapped model too.
++			~ModelWrapper();
++		private:
++			ModelWrapper(){}
++			ModelWrapper(const ModelWrapper&){}
++			void operator=(const ModelWrapper&){}
++			// Bag of events created by the input translation method 
++			Bag<Event<InternalType,T> > input;
++			// Output from the wrapped model
++			Bag<Event<InternalType,T> > output;
++			// The wrapped model
++			Devs<InternalType,T>* model;
++			// Simulator for driving the wrapped model
++			Simulator<InternalType,T>* sim;
++			// Last event time
++			T tL;
++	};
++
++template <typename ExternalType, typename InternalType, class T> 
++ModelWrapper<ExternalType,InternalType,T>::ModelWrapper(Devs<InternalType,T>* model):
++	Atomic<ExternalType,T>(),
++	EventListener<InternalType,T>(),
++	model(model),
++	tL(adevs_zero<T>())
++{
++	sim = new Simulator<InternalType,T>(model);
++	sim->addEventListener(this);
++}
++
++template <typename ExternalType, typename InternalType, class T> 
++void ModelWrapper<ExternalType,InternalType,T>::delta_int()
++{
++	// Update the internal clock
++	tL = sim->nextEventTime();
++	// Execute the next autonomous event for the wrapped model
++	sim->execNextEvent();
++}
++
++template <typename ExternalType, typename InternalType, class T> 
++void ModelWrapper<ExternalType,InternalType,T>::delta_ext(T e, const Bag<ExternalType>& xb)
++{
++	// Update the internal clock
++	tL += e;
++	// Convert the external inputs to internal inputs
++	translateInput(xb,input);
++	// Apply the input
++	sim->computeNextState(input,tL);
++	// Clean up 
++	gc_input(input);
++	input.clear();
++}
++
++template <typename ExternalType, typename InternalType, class T> 
++void ModelWrapper<ExternalType,InternalType,T>::delta_conf(const Bag<ExternalType>& xb)
++{
++	// Update the internal clock
++	tL = sim->nextEventTime();
++	// Convert the external inputs to internal inputs
++	translateInput(xb,input);
++	// Apply the input
++	sim->computeNextState(input,tL);
++	// Clean up 
++	gc_input(input);
++	input.clear();
++}
++
++template <typename ExternalType, typename InternalType, class T> 
++T ModelWrapper<ExternalType,InternalType,T>::ta()
++{
++	if (sim->nextEventTime() < adevs_inf<T>()) return sim->nextEventTime()-tL;
++	else return adevs_inf<T>();
++}
++
++template <typename ExternalType, typename InternalType, class T> 
++void ModelWrapper<ExternalType,InternalType,T>::output_func(Bag<ExternalType>& yb)
++{
++	// Compute the model's output events; this causes the outputEvent method to be called
++	sim->computeNextOutput();
++	// Translate the output events to external output events
++	translateOutput(output,yb);
++	// Clean up; the contents of the output bag are deleted by the wrapped model's 
++	// gc_output method
++	output.clear();
++}
++
++template <typename ExternalType, typename InternalType, class T> 
++void ModelWrapper<ExternalType,InternalType,T>::outputEvent(Event<InternalType,T> y, T t)
++{
++	// Just save the events for processing by the output_func
++	output.insert(y);
++}
++
++template <typename ExternalType, typename InternalType, class T> 
++ModelWrapper<ExternalType,InternalType,T>::~ModelWrapper()
++{
++	delete sim;
++	delete model;
++}
++
++} // end of namespace
++
++#endif
+diff -Naur adevs-3.3/pkgconfig/adevs.pc.in adevs-3.3~patched/pkgconfig/adevs.pc.in
+--- adevs-3.3/pkgconfig/adevs.pc.in	1969-12-31 19:00:00.000000000 -0500
++++ adevs-3.3~patched/pkgconfig/adevs.pc.in	2018-04-08 20:14:30.000000000 -0400
+@@ -0,0 +1,10 @@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++includedir=@includedir@
++
++Name: adevs
++Description: A C++ DEVS simulation library
++Version: @VERSION@
++Libs: -L${libdir} -ladevs
++Cflags: -I${includedir}/adevs
+diff -Naur adevs-3.3/src/Makefile adevs-3.3~patched/src/Makefile
+--- adevs-3.3/src/Makefile	2018-01-10 15:28:49.000000000 -0500
++++ adevs-3.3~patched/src/Makefile	1969-12-31 19:00:00.000000000 -0500
+@@ -1,93 +0,0 @@
+-#
+-# Makefile for the GNU g++ compiler. There are three make targets.
+-#
+-# 1) java_adevs
+-#
+-# This target builds the java language bindings to the adevs simulator.
+-# Point this at your java installation if you want to build the Java bindings.
+-JAVA_HOME = /usr/local/jdk1.8.0_151
+-java_adevs: CFLAGS += -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux 
+-
+-#
+-# 2) adevs
+-#
+-# This builds the vanilla adevs library against which to link your c++ 
+-# simulations.
+-#
+-
+-#
+-# 3) adevs_qemu
+-# 
+-# This builds the vanilla library and the extensions for using qemu
+-# to insert a simulated computer into your model.
+-# 
+-
+-# These are generic options for the GNU C++ compiler.
+-
+-# Use OpenMP? Do not use this with Java.
+-# You probably don't want it at all unless your
+-# model has lots of simulatenous events or several
+-# very expensive to compute simultaneous events.
+-OMP = 
+-# Compiler flags
+-CFLAGS += ${OMP} -fPIC -Wall -I../include -I./ -I./qemu
+-# Best bet for GNU compiler
+-CXX = g++
+-CC = gcc
+-OPTFLAG = -O3 
+-
+-#
+-# SHOULD NOT NEED TO EDIT BELOW THIS LINE
+-#
+-
+-ADEVS_OBJS = \
+-	rv.o \
+-	poly.o 
+-
+-JAVA_OBJS = \
+-	adevs_jni/JavaAtomic.o \
+-	adevs_jni/JavaDevs.o \
+-	adevs_jni/JavaEventListenerManager.o \
+-	adevs_jni/JavaNetwork.o \
+-	adevs_jni/JavaSimulator.o
+-
+-QEMU_OBJS = \
+-	qemu/computer.o \
+-	qemu/device_model.o \
+-	qemu/nic.o \
+-	qemu/serial_port.o \
+-	qemu/ucsim_serial_port.o \
+-	qemu/qqq_rpc.o \
+-	qemu/ucsim_rpc.o
+-
+-.SUFFIXES: .cpp .c
+-.cpp.o:
+-	${CXX} ${CFLAGS} ${OPTFLAG} -o $@ -c $<
+-.c.o:
+-	${CC} ${CFLAGS} ${OPTFLAG} -o $@ -c $<
+-
+-# This builds the static link library libadevs.a for linking
+-# to C++ simulations
+-adevs: ${ADEVS_OBJS} 
+-	ar -r libadevs.a ${ADEVS_OBJS}
+-	${CXX} -shared -Wl,-soname,libadevs.so.3 -o libadevs.so.3.0 ${ADEVS_OBJS}
+-
+-# This builds the Java bindings to the simulator
+-java_adevs: ${JAVA_OBJS}
+-	${CXX} ${OMP} ${OPTFLAG} -shared -Wl,-soname,java_adevs -o libjava_adevs.so ${JAVA_OBJS}
+-	javac adevs_jni/adevs/*.java
+-	cd adevs_jni ; jar cfv ../adevs.jar adevs/*.class
+-
+-# This builds a static library with the qemu extensions
+-adevs_qemu: ${ADEVS_OBJS} ${QEMU_OBJS}
+-	ar -r libadevs.a ${ADEVS_OBJS} ${QEMU_OBJS}
+-	${CXX} -shared -Wl,-soname,libadevs.so.3 -o libadevs.so.3.0 ${ADEVS_OBJS} ${QEMU_OBJS}
+-
+-install:
+-	mkdir -p "${DESTDIR}"
+-	install -m 755 -p libadevs.so.3.0 "${DESTDIR}"
+-	ln -f -s libadevs.so.3.0 "${DESTDIR}/libadevs.so.3"
+-	ln -f -s libadevs.so.3.0 "${DESTDIR}/libadevs.so"
+-
+-clean:
+-	rm -f *.o core *.a *.so qemu/*.o adevs_jni/*.o adevs_jni/adevs/*.class *.jar rm libadevs.so.* 
+diff -Naur adevs-3.3/src/Makefile.am adevs-3.3~patched/src/Makefile.am
+--- adevs-3.3/src/Makefile.am	1969-12-31 19:00:00.000000000 -0500
++++ adevs-3.3~patched/src/Makefile.am	2018-04-08 20:34:39.000000000 -0400
+@@ -0,0 +1,125 @@
++## Source directory
++
++#
++# Makefile for the GNU g++ compiler. There are three make targets.
++#
++# 1) java_adevs
++#
++# This target builds the java language bindings to the adevs simulator.
++# Point this at your java installation if you want to build the Java bindings.
++#JAVA_HOME = /usr/local/jdk1.8.0_60
++#java_adevs: CFLAGS += -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux
++#java_adevs: CFLAGS += -I${JAVA_HOME}/include -I${JAVA_HOME}/include/darwin 
++
++JAVA_HOME = /Library/Java/Home
++
++#
++# 2) adevs
++#
++# This builds the vanilla adevs library against which to link your c++ 
++# simulations.
++#
++
++#
++# 3) adevs_qemu
++# 
++# This builds the vanilla library and the extensions for using qemu
++# to insert a simulated computer into your model.
++# 
++
++# These are generic options for the GNU C++ compiler.
++
++# Use OpenMP? 
++#OMP = 
++# Compiler flags
++#CFLAGS += ${OMP} -fPIC -Wall -I../include -I./ -I./qemu
++# Best bet for GNU compiler
++#CXX = g++
++#CC = gcc
++#OPTFLAG = -O3
++
++#
++# SHOULD NOT NEED TO EDIT BELOW THIS LINE
++#
++
++adevs_inc_dir=../include
++
++libadevs_la_include_HEADERS = $(adevs_inc_dir)/adevs.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_abstract_simulator.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_bag.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_cereal.hpp
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_cellspace.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_corrected_euler.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_digraph.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_event_listener.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_event_locators.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_exception.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_fmi.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_hybrid.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_models.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_msg_manager.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_poly.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_qemu.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_rand.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_rk_45.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_sched.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_serialization.hpp
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_set.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_simpledigraph.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_simulator.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_time.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_wrapper.h
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/object_pool.h
++
++libadevs_la_include_HEADERS += $(adevs_inc_dir)/adevs_serialization.hpp 
++ADEVS_OBJS = rv.cpp
++ADEVS_OBJS += poly.cpp
++
++# need to enable sub-dir object
++AUTOMAKE_OPTIONS = subdir-objects
++
++JAVA_OBJS = adevs_jni/JavaAtomic.cpp
++JAVA_OBJS += adevs_jni/JavaDevs.cpp
++JAVA_OBJS += adevs_jni/JavaEventListenerManager.cpp
++JAVA_OBJS += adevs_jni/JavaNetwork.cpp
++JAVA_OBJS += adevs_jni/JavaSimulator.cpp
++
++QEMU_OBJS = \
++	qemu/computer.cpp \
++	qemu/device_model.cpp \
++	qemu/nic.cpp \
++	qemu/serial_port.cpp \
++	qemu/ucsim_serial_port.cpp \
++	qemu/qqq_rpc.cpp \
++	qemu/ucsim_rpc.cpp
++
++AM_CPPFLAGS = -I$(adevs_inc_dir)
++AM_CPPFLAGS += -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin
++
++# shared libraries
++lib_LTLIBRARIES = libadevs.la
++lib_LTLIBRARIES += libjava_adevs.la
++
++libadevs_la_SOURCES= $(libadevs_la_include_HEADERS) $(ADEVS_OBJS)
++# This builds the library with QEMU extensions
++#libadevs_la_SOURCES= $(libadevs_la_include_HEADERS) $(ADEVS_OBJS)
++
++libadevs_la_includedir=$(includedir)/adevs
++
++libjava_adevs_la_SOURCES= $(JAVA_OBJS)
++
++MAJOR_VERSION = 3
++MINOR_VERSION = 3
++SUB_VERSION = 0
++
++VERSION = $(MAJOR_VERSION).$(MINOR_VERSION).$(SUB_VERSION)
++
++libadevs_la_LDFLAGS= -release $(VERSION)
++libjava_adevs_la_LDFLAGS= -release $(VERSION)
++
++jar:
++	javac adevs_jni/adevs/*.java
++	cd adevs_jni ; jar cfv ../adevs.jar adevs/*.class
++
++clean-generic:
++	rm -f adevs_jni/adevs/*.class *.jar
+diff -Naur adevs-3.3/src/Makefile~orig adevs-3.3~patched/src/Makefile~orig
+--- adevs-3.3/src/Makefile~orig	1969-12-31 19:00:00.000000000 -0500
++++ adevs-3.3~patched/src/Makefile~orig	2018-01-10 15:28:49.000000000 -0500
+@@ -0,0 +1,93 @@
++#
++# Makefile for the GNU g++ compiler. There are three make targets.
++#
++# 1) java_adevs
++#
++# This target builds the java language bindings to the adevs simulator.
++# Point this at your java installation if you want to build the Java bindings.
++JAVA_HOME = /usr/local/jdk1.8.0_151
++java_adevs: CFLAGS += -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux 
++
++#
++# 2) adevs
++#
++# This builds the vanilla adevs library against which to link your c++ 
++# simulations.
++#
++
++#
++# 3) adevs_qemu
++# 
++# This builds the vanilla library and the extensions for using qemu
++# to insert a simulated computer into your model.
++# 
++
++# These are generic options for the GNU C++ compiler.
++
++# Use OpenMP? Do not use this with Java.
++# You probably don't want it at all unless your
++# model has lots of simulatenous events or several
++# very expensive to compute simultaneous events.
++OMP = 
++# Compiler flags
++CFLAGS += ${OMP} -fPIC -Wall -I../include -I./ -I./qemu
++# Best bet for GNU compiler
++CXX = g++
++CC = gcc
++OPTFLAG = -O3 
++
++#
++# SHOULD NOT NEED TO EDIT BELOW THIS LINE
++#
++
++ADEVS_OBJS = \
++	rv.o \
++	poly.o 
++
++JAVA_OBJS = \
++	adevs_jni/JavaAtomic.o \
++	adevs_jni/JavaDevs.o \
++	adevs_jni/JavaEventListenerManager.o \
++	adevs_jni/JavaNetwork.o \
++	adevs_jni/JavaSimulator.o
++
++QEMU_OBJS = \
++	qemu/computer.o \
++	qemu/device_model.o \
++	qemu/nic.o \
++	qemu/serial_port.o \
++	qemu/ucsim_serial_port.o \
++	qemu/qqq_rpc.o \
++	qemu/ucsim_rpc.o
++
++.SUFFIXES: .cpp .c
++.cpp.o:
++	${CXX} ${CFLAGS} ${OPTFLAG} -o $@ -c $<
++.c.o:
++	${CC} ${CFLAGS} ${OPTFLAG} -o $@ -c $<
++
++# This builds the static link library libadevs.a for linking
++# to C++ simulations
++adevs: ${ADEVS_OBJS} 
++	ar -r libadevs.a ${ADEVS_OBJS}
++	${CXX} -shared -Wl,-soname,libadevs.so.3 -o libadevs.so.3.0 ${ADEVS_OBJS}
++
++# This builds the Java bindings to the simulator
++java_adevs: ${JAVA_OBJS}
++	${CXX} ${OMP} ${OPTFLAG} -shared -Wl,-soname,java_adevs -o libjava_adevs.so ${JAVA_OBJS}
++	javac adevs_jni/adevs/*.java
++	cd adevs_jni ; jar cfv ../adevs.jar adevs/*.class
++
++# This builds a static library with the qemu extensions
++adevs_qemu: ${ADEVS_OBJS} ${QEMU_OBJS}
++	ar -r libadevs.a ${ADEVS_OBJS} ${QEMU_OBJS}
++	${CXX} -shared -Wl,-soname,libadevs.so.3 -o libadevs.so.3.0 ${ADEVS_OBJS} ${QEMU_OBJS}
++
++install:
++	mkdir -p "${DESTDIR}"
++	install -m 755 -p libadevs.so.3.0 "${DESTDIR}"
++	ln -f -s libadevs.so.3.0 "${DESTDIR}/libadevs.so.3"
++	ln -f -s libadevs.so.3.0 "${DESTDIR}/libadevs.so"
++
++clean:
++	rm -f *.o core *.a *.so qemu/*.o adevs_jni/*.o adevs_jni/adevs/*.class *.jar rm libadevs.so.* 
+diff -Naur adevs-3.3/src/adevs_jni/JavaNetwork.cpp adevs-3.3~patched/src/adevs_jni/JavaNetwork.cpp
+--- adevs-3.3/src/adevs_jni/JavaNetwork.cpp	2018-01-10 15:28:49.000000000 -0500
++++ adevs-3.3~patched/src/adevs_jni/JavaNetwork.cpp	2018-04-08 20:14:30.000000000 -0400
+@@ -3,7 +3,7 @@
+ using namespace std;
+ 
+ JavaNetwork::JavaNetwork(jobject jmodel_loc_ref, JavaSimulator& owner):
+-	Network<java_io>(),
++  Network<java_io, double>(),
+ 	JavaDevs(jmodel_loc_ref,owner)
+ {
+ 	set_peer(this);
+diff -Naur adevs-3.3/src/adevs_jni/JavaNetwork.cpp~orig adevs-3.3~patched/src/adevs_jni/JavaNetwork.cpp~orig
+--- adevs-3.3/src/adevs_jni/JavaNetwork.cpp~orig	1969-12-31 19:00:00.000000000 -0500
++++ adevs-3.3~patched/src/adevs_jni/JavaNetwork.cpp~orig	2018-01-10 15:28:49.000000000 -0500
+@@ -0,0 +1,94 @@
++#include "adevs_jni.h"
++using namespace adevs;
++using namespace std;
++
++JavaNetwork::JavaNetwork(jobject jmodel_loc_ref, JavaSimulator& owner):
++	Network<java_io>(),
++	JavaDevs(jmodel_loc_ref,owner)
++{
++	set_peer(this);
++	// Add us to the membership list
++	owner.models.insert(this);
++}
++
++void JavaNetwork::getComponents(Set<Devs<java_io>*>& c)
++{
++	// Call the getComponents function using the shared collection
++	CALL_AND_THROW(owner.jenv->CallVoidMethod(getJavaObjRef(),owner.jnetwork_get_components,
++		owner.jsimulator_shared_collection),owner.jenv)
++	// Copy the components into c
++	owner.jenv->PushLocalFrame(16);
++	jobject iter = owner.jenv->NewGlobalRef(
++		owner.jenv->CallObjectMethod(
++		owner.jsimulator_shared_collection,owner.jcollection_iterator));
++	assert(iter != NULL);
++	while (owner.jenv->CallBooleanMethod(iter,owner.jiterator_hasNext) == JNI_TRUE)
++	{
++		owner.jenv->PushLocalFrame(16);
++		// Create a global reference to the output value and put it into the output bag.
++		// The global references are deleted in the gc_output method
++		jobject java_model = owner.jenv->CallObjectMethod(iter,owner.jiterator_next);
++		// Make sure this is a legitimate object
++		if (java_model == NULL) return;
++		// If it is, put it into the set of components
++		Devs<java_io>* cpp_peer = (Devs<java_io>*)(owner.jenv->GetLongField(java_model,owner.jdevs_cpp_peer));
++		if (cpp_peer == NULL)
++		{
++			if (owner.jenv->GetBooleanField(java_model,owner.jdevs_is_atomic) == JNI_TRUE)
++				cpp_peer = new JavaAtomic(java_model,owner);
++			else cpp_peer = new JavaNetwork(java_model,owner);
++		}
++		assert(cpp_peer != NULL);
++		cpp_peer->setParent(this);
++		c.insert(cpp_peer);
++		owner.jenv->PopLocalFrame(NULL);
++	}
++	// Clear the collection
++	owner.jenv->CallVoidMethod(owner.jsimulator_shared_collection,owner.jcollection_clear);
++	owner.jenv->DeleteGlobalRef(iter);
++	owner.jenv->PopLocalFrame(NULL);
++}
++
++void JavaNetwork::route(const java_io& x, Devs<java_io>* model, Bag<Event<java_io> >& r)
++{
++	JavaDevs* cpp_peer = dynamic_cast<JavaDevs*>(model);
++	// Call the java implementation of the route method
++	CALL_AND_THROW(owner.jenv->CallVoidMethod(getJavaObjRef(),owner.jnetwork_route,
++			x,cpp_peer->getJavaObjRef(),owner.jsimulator_shared_collection),
++			owner.jenv)
++	// Copy the values into yb
++	owner.jenv->PushLocalFrame(16);
++	jobject iter = 
++		owner.jenv->NewGlobalRef(
++		owner.jenv->CallObjectMethod(
++		owner.jsimulator_shared_collection,owner.jcollection_iterator));
++	assert(iter != NULL);
++	while (owner.jenv->CallBooleanMethod(iter,owner.jiterator_hasNext) == JNI_TRUE)
++	{
++		owner.jenv->PushLocalFrame(16);
++		jobject the_event = owner.jenv->CallObjectMethod(iter,owner.jiterator_next);
++		jobject event_value = owner.jenv->NewGlobalRef(
++			owner.jenv->GetObjectField(the_event,owner.jevent_value));
++		assert(event_value != NULL);
++		jobject event_target = owner.jenv->GetObjectField(the_event,owner.jevent_model);
++		assert(event_target != NULL);
++		jlong cpp_peer_id = owner.jenv->GetLongField(event_target,owner.jdevs_cpp_peer);
++		r.insert(Event<java_io>((Devs<java_io>*)cpp_peer_id,event_value));
++		owner.routed_events.push_back(event_value);
++		owner.jenv->PopLocalFrame(NULL);
++	}
++	owner.jenv->CallVoidMethod(owner.jsimulator_shared_collection,owner.jcollection_clear);
++	owner.jenv->DeleteGlobalRef(iter);
++	owner.jenv->PopLocalFrame(NULL);
++}
++
++bool JavaNetwork::model_transition()
++{
++	CALL_AND_THROW(return (owner.jenv->CallBooleanMethod(getJavaObjRef(),
++		owner.jdevs_model_transition) == JNI_TRUE),owner.jenv)
++}
++
++JavaNetwork::~JavaNetwork()
++{
++	owner.models.erase(this);
++}

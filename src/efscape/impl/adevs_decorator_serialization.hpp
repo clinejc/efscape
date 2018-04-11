@@ -9,7 +9,7 @@
 
 #include <efscape/impl/adevs_config.hpp>
 
-#include <adevs/adevs_serialization.hpp>
+#include <adevs_serialization.hpp>
 
 namespace boost {
   namespace serialization {

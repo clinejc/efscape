@@ -23,7 +23,7 @@ PROJECT_NAME           = efscape
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 1
+PROJECT_NUMBER         = 3
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -459,11 +459,13 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = /Users/jcc/local/src/efscape/src/ogis/impl \
-		         /Users/jcc/local/src/efscape/src/efscape/random \
-		         /Users/jcc/local/src/efscape/src/efscape/gis \
-		         /Users/jcc/local/src/efscape/src/efscape/impl \
-		         /Users/jcc/local/src/efscape/src/efscape/server \
+INPUT                  = README.md \
+		         src/efscapes \
+		         src/efscape/utils \
+		         src/efscape/impl \
+		         src/efscape/server
+
+USE_MDFILE_AS_MAINPAGE = README.md
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 

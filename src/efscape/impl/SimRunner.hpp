@@ -25,7 +25,7 @@
 #include <efscape/utils/type.hpp>
 
 #include <json/json.h>
-#include <adevs/adevs_exception.h>
+#include <adevs_exception.h>
 
 namespace efscape {
 

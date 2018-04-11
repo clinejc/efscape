@@ -14,7 +14,7 @@
 #include <boost/serialization/assume_abstract.hpp>
 
 // class boost serialization export definitions
-#include <adevs/adevs_serialization.hpp>
+#include <adevs_serialization.hpp>
 #include <efscape/impl/adevs_decorator_serialization.hpp>
 
 #include <efscape/impl/SimRunner.hpp>
