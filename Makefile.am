@@ -1,6 +1,7 @@
 ## top directory
 
 ACLOCAL_AMFLAGS= -I m4
+AUTOMAKE_OPTIONS = foreign
 
 #Build in these directories:
 SUBDIRS= src examples
