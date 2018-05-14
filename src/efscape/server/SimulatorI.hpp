@@ -42,29 +42,29 @@ namespace efscape {
     public:
 
       SimulatorI();
-      SimulatorI(const ::efscape::ModelPrx& aCp_model);
+      SimulatorI(::std::shared_ptr<ModelPrx> aCp_model);
       ~SimulatorI();
 
-      virtual bool start(const Ice::Current&);
+      virtual bool start(const Ice::Current&) override;
 
-      virtual ::Ice::Double nextEventTime(const Ice::Current&);
+      virtual double nextEventTime(const Ice::Current&) override;
 
-      virtual void execNextEvent(const Ice::Current&);
+      virtual void execNextEvent(const Ice::Current&) override;
 
-      virtual void computeNextOutput(const Ice::Current&);
+      virtual void computeNextOutput(const Ice::Current&) override;
 
       virtual void computeNextState(::Ice::Double,
-				    const ::efscape::Message&,
-				    const Ice::Current&);
+				    ::efscape::Message,
+				    const Ice::Current&) override;
 
-      virtual bool halt(const Ice::Current&);
+      virtual bool halt(const Ice::Current&) override;
 
-      virtual void destroy(const Ice::Current&);
+      virtual void destroy(const Ice::Current&) override;
 
     private:
 
       /** handle to model */
-      ::efscape::ModelPrx mCp_model;
+      ::std::shared_ptr<ModelPrx> mCp_model;
 
     };				// class SimulatorI
 

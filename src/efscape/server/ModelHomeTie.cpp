@@ -37,8 +37,8 @@ namespace efscape {
      * @param current method invocation
      * @returns ::efscape::Model proxy
      */
-    ::efscape::ModelPrx
-    ModelHomeTie::create(const ::std::string& name,
+    ::std::shared_ptr<ModelPrx>
+    ModelHomeTie::create(::std::string name,
 			 const Ice::Current& current)
     {
       // attempt create the model
@@ -46,22 +46,21 @@ namespace efscape {
 	impl::Singleton<impl::ModelHomeI>::Instance().createModel(name);
 
       if (lCp_model != nullptr) {
-	// wrap the model
-	ModelTie* lCp_ModelTie = new ModelTie(lCp_model);
-
-	// activate the model
-	efscape::ModelPtr lCp_model = lCp_ModelTie;
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		      "Model <" << lCp_model->getName() << "> found...");
-	efscape::ModelPrx lCp_ModelPrx =
-	  efscape::ModelPrx::uncheckedCast(current.adapter
-					     ->addWithUUID( lCp_model ) );
-	return lCp_ModelPrx;
+	// wrap and activate the model
+        LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "Model <" << name << "> found...");
+        auto modelI =
+	  Ice::uncheckedCast<::efscape::ModelPrx>(current.adapter
+						  ->addWithUUID(::std::make_shared<ModelTie>(lCp_model)));
+  
+	return modelI;
       }
 
       LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		    "Model not found...");
-      return 0;
+		    "Model <"
+		    << name << "> not found...");
+
+      return nullptr;
 
     } // ModelHomeTie::create(...)
 
@@ -72,20 +71,21 @@ namespace efscape {
      * @param current method invocation
      * @returns ::efscape::Model proxy
      */
-    ::efscape::ModelPrx
-    ModelHomeTie::createFromXML(const ::std::wstring& configuration,
+    ::std::shared_ptr<ModelPrx>
+    ModelHomeTie::createFromXML(::std::wstring configuration,
 				 const Ice::Current& current)
     {
-      efscape::ModelPtr lCp_model = 0;
-
       try {
 	// attempt create the model
 	efscape::impl::DEVSPtr lCp_modelI =
 	  impl::Singleton<impl::ModelHomeI>::Instance().createModelFromXML(configuration);
 
 	if (lCp_modelI != nullptr) {
-	  // tie the model
-	  lCp_model = new ModelTie(lCp_modelI);
+	  // wrap and activate the model
+          auto modelI = Ice::uncheckedCast<::efscape::ModelPrx>(current.adapter
+								->addWithUUID(::std::make_shared<ModelTie>(lCp_modelI)));
+  
+	  return modelI;
 	}
 	else {
 	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -98,22 +98,7 @@ namespace efscape {
 		      << exp.what() );
       }
 
-      if (lCp_model) {
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		      "Model <" << lCp_model->getName() << "> found...");
-
-	efscape::ModelPrx lCp_ModelPrx =
-	  efscape::ModelPrx::uncheckedCast(current.adapter
-					   ->addWithUUID( lCp_model ) );
-	return lCp_ModelPrx;
-
-      }
-
-      LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		    "efscape::server::ModelHomeTie::createFromXML(): "
-
-		    "Model not found...");
-      return 0;
+      return nullptr;
 
     } // ModelHomeTie::createFromXML(...)
 
@@ -124,20 +109,20 @@ namespace efscape {
      * @param current method invocation
      * @returns ::efscape::Model proxy
      */
-    ::efscape::ModelPrx
-    ModelHomeTie::createFromJSON(const ::std::string& configuration,
+    ::std::shared_ptr<ModelPrx>
+    ModelHomeTie::createFromJSON(::std::string configuration,
 				 const Ice::Current& current)
     {
-      efscape::ModelPtr lCp_model = 0;
-
       try {
 	// attempt create the model
 	efscape::impl::DEVSPtr lCp_modelI =
 	  impl::Singleton<impl::ModelHomeI>::Instance().createModelFromJSON(configuration);
 
 	if (lCp_modelI != nullptr) {
-	  // tie the model
-	  lCp_model = new ModelTie(lCp_modelI);
+          auto modelI = Ice::uncheckedCast<::efscape::ModelPrx>(current.adapter
+								->addWithUUID(::std::make_shared<ModelTie>(lCp_modelI)));
+  
+	  return modelI;
 	}
 	else {
 	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -150,22 +135,11 @@ namespace efscape {
 		      << exp.what() );
       }
 
-      if (lCp_model) {
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		      "Model <" << lCp_model->getName() << "> found...");
-
-	efscape::ModelPrx lCp_ModelPrx =
-	  efscape::ModelPrx::uncheckedCast(current.adapter
-					   ->addWithUUID( lCp_model ) );
-	return lCp_ModelPrx;
-
-      }
-
       LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
 		    "efscape::server::ModelHomeTie::createFromJSON(): "
 
 		    "Model not found...");
-      return 0;
+      return nullptr;
 
     } // ModelHomeTie::createFromJSON(...)
 
@@ -177,12 +151,10 @@ namespace efscape {
      * @param current method invocation
      * @returns ::efscape::Model proxy
      */
-    ::efscape::ModelPrx
-    ModelHomeTie::createFromParameters(const ::std::string& parameters,
+    ::std::shared_ptr<ModelPrx>
+    ModelHomeTie::createFromParameters(::std::string parameters,
 				       const Ice::Current& current)
     {
-      efscape::ModelPtr lCp_model = 0;
-
       try {
 	// attempt create the model
 	efscape::impl::DEVSPtr lCp_modelI =
@@ -190,7 +162,10 @@ namespace efscape {
 
 	if (lCp_modelI != nullptr) {
 	  // tie the model
-	  lCp_model = new ModelTie(lCp_modelI);
+          auto modelI = Ice::uncheckedCast<::efscape::ModelPrx>(current.adapter
+								->addWithUUID(::std::make_shared<ModelTie>(lCp_modelI)));
+  
+	  return modelI;
 	}
 	else {
 	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -203,21 +178,9 @@ namespace efscape {
 		      << exp.what() );
       }
 
-      if (lCp_model) {
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		      "efscape::server::ModelHomeTie::createModelFromParameters(): "
-		      "Model <" << lCp_model->getName() << "> found...");
-
-	efscape::ModelPrx lCp_ModelPrx =
-	  efscape::ModelPrx::uncheckedCast(current.adapter
-					   ->addWithUUID( lCp_model ) );
-	return lCp_ModelPrx;
-
-      }
-
       LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
 		    "Model not found...");
-      return 0;
+      return nullptr;
 
     }
 
@@ -254,7 +217,7 @@ namespace efscape {
      * @param current method invocation
      * @returns info about the specified model in a JSON string
      */
-    ::std::string ModelHomeTie::getModelInfo(const ::std::string& aC_name,
+    ::std::string ModelHomeTie::getModelInfo(::std::string aC_name,
 					     const Ice::Current& current)
     {
       Json::Value lC_ModelInfo =
@@ -284,16 +247,15 @@ namespace efscape {
      * @param current method invocation
      * @returns ::efscape::Simulator proxy
      */
-    ::efscape::SimulatorPrx
-    ModelHomeTie::createSim(const ::efscape::ModelPrx& rootModel,
+    ::std::shared_ptr<SimulatorPrx>
+    ModelHomeTie::createSim(::std::shared_ptr<ModelPrx> rootModel,
 			  const Ice::Current& current)
     {
-      SimulatorIPtr lCp_simulator = new SimulatorI(rootModel);
-
-      ::efscape::SimulatorPrx lCp_SimulatorPrx =
-	  ::efscape::SimulatorPrx::uncheckedCast(current.adapter
-						 ->addWithUUID( lCp_simulator ) );
-      return lCp_SimulatorPrx;
+      auto simulatorI =
+	Ice::uncheckedCast<::efscape::SimulatorPrx>(current.adapter
+						    ->addWithUUID(::std::make_shared<SimulatorI>(rootModel)));
+  
+      return simulatorI;
     }
 
     //--------------------------------------------------------------------------

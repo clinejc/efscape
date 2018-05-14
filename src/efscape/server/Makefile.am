@@ -10,21 +10,22 @@ cc_sources += SimulatorI.cpp
 cc_sources += ModelTie.cpp
 cc_sources += RunServer.cpp
 
+# cpp flags
+AM_CPPFLAGS = -DICE_CPP11_MAPPING # needed for ZeroC Ice c++ mappings
+AM_CPPFLAGS += -I$(top_srcdir)/src
+AM_CPPFLAGS += $(BOOST_CPPFLAGS)
+AM_CPPFLAGS += $(DEPS_CFLAGS)
+
 # library
 lib_LTLIBRARIES = libefscape-ice.la
 
-AM_CPPFLAGS = -I$(top_srcdir)/src
-AM_CPPFLAGS += -I$(top_srcdir)/src/efscape/utils
-AM_CPPFLAGS += $(BOOST_CPPFLAGS)
-AM_CPPFLAGS += $(DEPS_CFLAGS)
-#AM_CPPFLAGS += $(ICE_CFLAGS)
-#libefscape_ice_la_LIBADD = $(ICE_LIBS)
-libefscape_ice_la_LIBADD = $(DEPS_LIBS)
+libefscape_ice_la_LIBADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 libefscape_ice_la_LIBADD += $(top_srcdir)/src/efscape/libefscape-idl.la
-libefscape_ice_la_LIBADD += $(top_srcdir)/src/efscape/impl/libefscape-impl.la
+libefscape_ice_la_LIBADD += $(DEPS_LIBS)
+
 libefscape_ice_la_SOURCES=  $(hh_sources) $(cc_sources)
 
-#library_includedir = $(includedir)/$(GENERIC_LIBRARY_NAME)/server
+library_includedir = $(includedir)/$(GENERIC_LIBRARY_NAME)/server
 library_includedir = $(includedir)/efscape/server
 library_include_HEADERS = $(hh_sources)
 
@@ -34,6 +35,7 @@ bin_PROGRAMS += efclient
 
 # efserver: ICE server for efscape simulator
 efserver_SOURCES = $(top_srcdir)/src/efscape/impl/driver.cpp
+
 efserver_LDADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 efserver_LDADD += libefscape-ice.la
 efserver_LDADD += $(BOOST_MPI_LIBS)
@@ -43,7 +45,9 @@ efserver_LDADD += $(NETCDF_CXX_LIBS)
 
 # efclient: ICE client for efscape simulator
 efclient_SOURCES = Client.cpp
-efclient_LDADD = libefscape-ice.la
+efclient_LDADD = $(top_srcdir)/src/efscape/libefscape-idl.la
+efclient_LDADD += $(BOOST_FILESYSTEM_LIBS)
+efclient_LDADD += $(BOOST_SYSTEM_LIBS)
 efclient_LDADD += $(DEPS_LIBS)
 
 copyright:

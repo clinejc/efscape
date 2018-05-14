@@ -48,28 +48,29 @@ namespace efscape {
       //
       // ICE interface efscape::Entity
       //
-      virtual ::std::string getName(const Ice::Current&) const;
+      virtual ::std::string getName(const Ice::Current&) const override;
 
       //
       // ICE interface efscape::Model
       //
-      virtual bool initialize(const Ice::Current&);
-      virtual ::Ice::Double timeAdvance(const Ice::Current&);
-      virtual bool internalTransition(const Ice::Current&);
-      virtual bool externalTransition(::Ice::Double,
-				      const ::efscape::Message&,
-				      const Ice::Current&);
-      virtual bool confluentTransition(const ::efscape::Message&,
-				       const Ice::Current&);
-      virtual ::efscape::Message outputFunction(const Ice::Current&);
+      virtual bool initialize(const Ice::Current&) override;
+      virtual double timeAdvance(const Ice::Current&) override;
+      virtual bool internalTransition(const Ice::Current&) override;
+      virtual bool externalTransition(double,
+                                      ::efscape::Message,
+                                      const Ice::Current&) override;
+      virtual bool confluentTransition(::efscape::Message,
+                                       const Ice::Current&) override;
 
-      virtual ::std::string getType(const Ice::Current&) const;
-      virtual void setName(const std::string&,
-			   const Ice::Current&);
+      virtual ::efscape::Message outputFunction(const Ice::Current&) override;
 
-      virtual ::std::string saveJSON(const Ice::Current&);
+      virtual ::std::string getType(const Ice::Current&) const override;
+      virtual void setName(::std::string,
+                            const Ice::Current&) override;
 
-      virtual void destroy(const Ice::Current&);
+      virtual ::std::string saveJSON(const Ice::Current&) override;
+
+      virtual void destroy(const Ice::Current&) override;
 
       //
       // local (server-side) interfaces
@@ -78,7 +79,7 @@ namespace efscape {
       //---------------------------
       // adevs EventListener method
       //---------------------------
-      void outputEvent(adevs::Event<efscape::impl::IO_Type> x, double t);
+      virtual void outputEvent(adevs::Event<efscape::impl::IO_Type> x, double t) override;
 
       /**
        * Sets the associated model.

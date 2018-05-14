@@ -39,28 +39,31 @@ namespace efscape {
       // ICE interface ::efscape::ModelHome
       //
       virtual
-      ::efscape::ModelPrx create(const ::std::string&,
-				 const Ice::Current&);
+      ::std::shared_ptr<ModelPrx> create(::std::string,
+					 const Ice::Current&) override;
 
       virtual
-      ::efscape::ModelPrx createFromXML(const ::std::wstring&,
-   				const Ice::Current&);
+      ::std::shared_ptr<ModelPrx> createFromXML(::std::wstring,
+						const Ice::Current&) override;
 
       virtual
-      ::efscape::ModelPrx createFromJSON(const ::std::string&,
-					 const Ice::Current&);
+      ::std::shared_ptr<ModelPrx> createFromJSON(::std::string,
+						 const Ice::Current&) override;
 
       virtual
-      ::efscape::ModelPrx createFromParameters(const ::std::string&,
-					       const Ice::Current&);
+      ::std::shared_ptr<ModelPrx>
+      createFromParameters(::std::string,
+			   const Ice::Current&) override;
 
-      virtual ::efscape::ModelNameList getModelList(const Ice::Current&);
+      virtual
+      ::efscape::ModelNameList getModelList(const Ice::Current&) override;
 
-      virtual ::std::string getModelInfo(const ::std::string&,
-					 const Ice::Current&);
+      virtual ::std::string getModelInfo(::std::string,
+					 const Ice::Current&) override;
 
-      virtual ::efscape::SimulatorPrx createSim(const ::efscape::ModelPrx&,
-						const Ice::Current&);
+      virtual
+      ::std::shared_ptr<SimulatorPrx> createSim(::std::shared_ptr<ModelPrx>,
+						const Ice::Current&) override;
       //
       // local (server-side) methods
       //

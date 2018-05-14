@@ -16,6 +16,9 @@
 
 #include <efscape/server/RunServer.hpp>
 
+#include <Ice/Ice.h> // need Ice definitions
+
+// ModelHome servant definition
 #include <efscape/server/ModelHomeTie.hpp>
 
 // definitions for accessing the model factory
@@ -29,7 +32,7 @@ namespace efscape {
     // class variables
     const char* RunServer::mScp_program_name = "efserver";
     const char* RunServer::mScp_program_version =
-      "version 1.0.0 (2014/09/23)";
+      "version 1.1.0 (2018/05/12)";
 
     /** default constructor */
     RunServer::RunServer() {
@@ -192,20 +195,11 @@ namespace efscape {
      */
     int RunServer::run(int argc, char* argv[])
     {
-      Ice::ObjectAdapterPtr adapter =
-	communicator()->createObjectAdapter("ModelHome");
-
-      efscape::server::ModelHomeTie* lCp_ModelHomeTie =
-	new efscape::server::ModelHomeTie();
-
-      efscape::ModelHomePtr lCp_ModelHome = lCp_ModelHomeTie;
-
-      adapter->add(lCp_ModelHome,
-		   Ice::stringToIdentity("ModelHome"));
-
-      adapter->activate();
-
-      communicator()->waitForShutdown();
+      auto adapter = communicator()->createObjectAdapter("ModelHome");
+  auto servant = make_shared<ModelHomeTie>();
+  adapter->add(servant, Ice::stringToIdentity("ModelHome"));
+  adapter->activate();
+  communicator()->waitForShutdown();
 
       return EXIT_SUCCESS;
     }

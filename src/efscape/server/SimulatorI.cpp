@@ -21,7 +21,7 @@ namespace efscape {
 
     /** default constructor */
     SimulatorI::SimulatorI() :
-      mCp_model(0)
+      mCp_model(nullptr)
     {}
 
     /**
@@ -29,7 +29,7 @@ namespace efscape {
      *
      * @param aCp_model
      */
-    SimulatorI::SimulatorI(const ::efscape::ModelPrx& aCp_model) :
+    SimulatorI::SimulatorI(::std::shared_ptr<ModelPrx> aCp_model) :
       mCp_model(aCp_model)
     {}
 
@@ -104,7 +104,7 @@ namespace efscape {
      */
      void
     SimulatorI::computeNextState(::Ice::Double elapsedTime,
-				 const ::efscape::Message& msg,
+				::efscape::Message msg,
 				 const Ice::Current& current)
     {
     }

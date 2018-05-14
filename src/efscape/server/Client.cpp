@@ -107,12 +107,13 @@ EfscapeClient::run(int argc, char* argv[])
   try {
 
     // get handle to model home (factory)
-    efscape::ModelHomePrx lCp_ModelHome
-      = efscape::ModelHomePrx::checkedCast(communicator()
-					   ->propertyToProxy("ModelHome.Proxy")
-					   ->ice_twoway()
-					   ->ice_timeout(-1)
-					   ->ice_secure(false));
+    auto lCp_ModelHome =
+      Ice::checkedCast<efscape::ModelHomePrx>(communicator()
+					      ->propertyToProxy("ModelHome.Proxy")
+					      ->ice_twoway()
+					      ->ice_timeout(-1)
+					      ->ice_secure(false));
+    
     if (!lCp_ModelHome)
       throw "Invalid ModelHome proxy";
 
@@ -134,15 +135,12 @@ EfscapeClient::run(int argc, char* argv[])
 		<< lC_ModelInfo
 		<< "\n";
     }
-
-    return 0;
     
-    efscape::ModelPrx lCp_Model;
-
     // try to load the parameter file
     std::ifstream parmFile(lC_ParmName.c_str());
 
     // if file can be opened
+    std::shared_ptr<efscape::ModelPrx> lCp_Model;
     if ( parmFile ) {
       boost::filesystem::path p =
 	boost::filesystem::path(lC_ParmName.c_str());
@@ -154,7 +152,7 @@ EfscapeClient::run(int argc, char* argv[])
 		    << p.extension()
 		    << ">");
 
-      // convert file to a string
+      // convert file to a string      
       if (p.extension().string() == ".json") {
 	std::ostringstream buf;
 	char ch;
@@ -170,7 +168,7 @@ EfscapeClient::run(int argc, char* argv[])
       throw "Unable to open parameter file\n";
     }
 
-    if (!lCp_Model) {
+    if (lCp_Model == nullptr) {
       throw "Invalid Model proxy";
     }
 
@@ -178,7 +176,7 @@ EfscapeClient::run(int argc, char* argv[])
 		  "Model created!");
 
     // get a simulator for the model
-    efscape::SimulatorPrx lCp_Simulator =
+    auto lCp_Simulator =
       lCp_ModelHome->createSim(lCp_Model);
 
     if (!lCp_Simulator)

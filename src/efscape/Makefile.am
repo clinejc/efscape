@@ -10,18 +10,19 @@ cc_idl_sources = efscape.cpp
 
 impl_sources = efscapeI.h efscapeI.cpp
 
-library_includedir = $(includedir)/$(PACKAGE)
-library_include_HEADERS = $(idl_sources) $(hh_idl_sources) $(hh_sources)
+#library_includedir = $(includedir)/$(PACKAGE)
+#library_include_HEADERS = $(idl_sources) $(hh_idl_sources) $(hh_sources)
 
-AM_CPPFLAGS = -I$(top_srcdir)/src
-AM_CPPFLAGS += -I$(top_srcdir)/src/$(PACKAGE)/utils
+AM_CPPFLAGS = -DICE_CPP11_MAPPING
+AM_CPPFLAGS += -I$(top_srcdir)/src
+#AM_CPPFLAGS += -I$(top_srcdir)/src/$(PACKAGE)/utils
 AM_CPPFLAGS += $(DEPS_CFLAGS)
 
 noinst_LTLIBRARIES = libefscape-idl.la
 libefscape_idl_la_SOURCES= $(hh_idl_sources) $(cc_idl_sources)
 
 %.h %.cpp: %.ice
-	slice2cpp -I$(top_srcdir)/src --impl-c++98 --include-dir efscape $<
+	slice2cpp -I$(top_srcdir)/src --impl-c++11 --include-dir efscape $<
 
 clean-source:
 	rm -f $(impl_sources)

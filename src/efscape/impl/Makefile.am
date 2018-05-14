@@ -32,7 +32,8 @@ cc_sources += export.cpp
 # library
 lib_LTLIBRARIES = libefscape-impl.la
 
-AM_CPPFLAGS = -I$(top_srcdir)/src
+AM_CPPFLAGS = -DICE_CPP11_MAPPING # needed for ZeroC Ice c++ mappings
+AM_CPPFLAGS += -I$(top_srcdir)/src
 AM_CPPFLAGS += $(DEPS_CFLAGS)
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 

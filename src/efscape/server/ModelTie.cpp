@@ -190,7 +190,7 @@ namespace efscape {
      * @returns status of call
      */
     bool ModelTie::externalTransition(::Ice::Double elapsedTime,
-				      const ::efscape::Message& msg,
+				      ::efscape::Message msg,
 				      const Ice::Current& current)
     {
       // convert incoming message into an acceptable form
@@ -211,7 +211,7 @@ namespace efscape {
      * @param current method invocation
      * @returns status of call
      */
-    bool ModelTie::confluentTransition(const ::efscape::Message& msg,
+    bool ModelTie::confluentTransition(::efscape::Message msg,
 				       const Ice::Current& current)
     {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -284,7 +284,7 @@ namespace efscape {
      * @returns model type
      */
     void
-    ModelTie::setName(const std::string& aCr_name,
+    ModelTie::setName(std::string aCr_name,
 		      const Ice::Current& current)
     {
       mC_name = aCr_name;
