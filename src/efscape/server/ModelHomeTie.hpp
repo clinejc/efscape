@@ -20,61 +20,57 @@
 #include <Ice/Ice.h>
 #include <efscape/efscape.h>
 
-namespace efscape {
+/**
+ * Implements the ICE efscape::ModelHome interface, a factory for simulation
+ * models. It replaces the ModelRepository interface.
+ *
+ * @author Jon Cline <clinej@stanfordalumni.org>
+ * @version 3.1.1 created 24 Dec 2006, revised 18 May 2018
+ */
+class ModelHomeTie : virtual public efscape::ModelHome
+{
+public:
 
-  namespace server {
+  //
+  // ICE interface ::efscape::ModelHome
+  //
+  virtual
+  std::shared_ptr<efscape::ModelPrx>
+  create(std::string,
+	 const Ice::Current&) override;
 
-    /**
-     * Implements the ICE efscape::ModelHome interface, a factory for simulation
-     * models. It replaces the ModelRepository interface.
-     *
-     * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 3.1.0 created 24 Dec 2006, revised 20 Aug 2017
-     */
-    class ModelHomeTie : virtual public ::efscape::ModelHome
-    {
-    public:
+  virtual
+  std::shared_ptr<efscape::ModelPrx>
+  createFromXML(std::wstring,
+		const Ice::Current&) override;
 
-      //
-      // ICE interface ::efscape::ModelHome
-      //
-      virtual
-      ::std::shared_ptr<ModelPrx> create(::std::string,
-					 const Ice::Current&) override;
+  virtual
+  std::shared_ptr<efscape::ModelPrx>
+  createFromJSON(::std::string,
+		 const Ice::Current&) override;
 
-      virtual
-      ::std::shared_ptr<ModelPrx> createFromXML(::std::wstring,
-						const Ice::Current&) override;
+  virtual
+  std::shared_ptr<::efscape::ModelPrx>
+  createFromParameters(std::string,
+		       const Ice::Current&) override;
 
-      virtual
-      ::std::shared_ptr<ModelPrx> createFromJSON(::std::string,
-						 const Ice::Current&) override;
+  virtual
+  efscape::ModelNameList getModelList(const Ice::Current&) override;
 
-      virtual
-      ::std::shared_ptr<ModelPrx>
-      createFromParameters(::std::string,
-			   const Ice::Current&) override;
+  virtual std::string getModelInfo(std::string,
+				   const Ice::Current&) override;
 
-      virtual
-      ::efscape::ModelNameList getModelList(const Ice::Current&) override;
+  virtual
+  std::shared_ptr<efscape::SimulatorPrx>
+  createSim(std::shared_ptr<efscape::ModelPrx>,
+	    const Ice::Current&) override;
+  //
+  // local (server-side) methods
+  //
 
-      virtual ::std::string getModelInfo(::std::string,
-					 const Ice::Current&) override;
+  ModelHomeTie();
+  virtual ~ModelHomeTie();
 
-      virtual
-      ::std::shared_ptr<SimulatorPrx> createSim(::std::shared_ptr<ModelPrx>,
-						const Ice::Current&) override;
-      //
-      // local (server-side) methods
-      //
-
-      ModelHomeTie();
-      virtual ~ModelHomeTie();
-
-    };				// class ModelHomeTie
-
-  } // namespace server
-
-} // namespace efscape
+};				// class ModelHomeTie
 
 #endif	// #ifndef EFSCAPE_SERVER_MODELHOMETIE_HPP

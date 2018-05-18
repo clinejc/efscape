@@ -18,59 +18,46 @@
 
 #include <Ice/Ice.h>
 #include <efscape/efscape.h>
-#include <IceUtil/Handle.h>
 
-namespace efscape {
+// forward declarations
+class SimulatorI;
 
-  namespace server {
+/**
+ * This class implements the Simulator interface
+ *
+ * @author Jon Cline <clinej@stanfordalumni.org>
+ * @version 1.0.0 created 26 Aug 2007, revised 18 May 2018
+ */
+class SimulatorI : virtual public efscape::Simulator
+{
+public:
 
-    // forward declarations
-    class SimulatorI;
+  SimulatorI();
+  SimulatorI(std::shared_ptr<efscape::ModelPrx> aCp_model);
+  ~SimulatorI();
 
-    // typedefs
-    typedef IceUtil::Handle<SimulatorI> SimulatorIPtr;
+  virtual bool start(const Ice::Current&) override;
 
-    /**
-     * This class implements the Simulator interface
-     *
-     * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 1.0.0 created 26 Aug 2007, revised 11 Mar 2009
-     */
-    class SimulatorI : virtual public ::efscape::Simulator,
-		       public IceUtil::Mutex
-    {
-    public:
+  virtual double nextEventTime(const Ice::Current&) override;
 
-      SimulatorI();
-      SimulatorI(::std::shared_ptr<ModelPrx> aCp_model);
-      ~SimulatorI();
+  virtual void execNextEvent(const Ice::Current&) override;
 
-      virtual bool start(const Ice::Current&) override;
+  virtual void computeNextOutput(const Ice::Current&) override;
 
-      virtual double nextEventTime(const Ice::Current&) override;
+  virtual void computeNextState(Ice::Double,
+				efscape::Message,
+				const Ice::Current&) override;
 
-      virtual void execNextEvent(const Ice::Current&) override;
+  virtual bool halt(const Ice::Current&) override;
 
-      virtual void computeNextOutput(const Ice::Current&) override;
+  virtual void destroy(const Ice::Current&) override;
 
-      virtual void computeNextState(::Ice::Double,
-				    ::efscape::Message,
-				    const Ice::Current&) override;
+private:
 
-      virtual bool halt(const Ice::Current&) override;
+  /** handle to model */
+  std::shared_ptr<efscape::ModelPrx> mCp_model;
 
-      virtual void destroy(const Ice::Current&) override;
-
-    private:
-
-      /** handle to model */
-      ::std::shared_ptr<ModelPrx> mCp_model;
-
-    };				// class SimulatorI
-
-  } // namespace server
-
-} // namespace efscape
+};				// class SimulatorI
 
 #endif	// #define EFSCAPE_SERVER_SIMULATOR_I_HPP
 

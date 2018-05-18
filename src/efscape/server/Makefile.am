@@ -12,6 +12,7 @@ cc_sources += RunServer.cpp
 
 # cpp flags
 AM_CPPFLAGS = -DICE_CPP11_MAPPING # needed for ZeroC Ice c++ mappings
+AM_CPPFLAGS += -I.
 AM_CPPFLAGS += -I$(top_srcdir)/src
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 AM_CPPFLAGS += $(DEPS_CFLAGS)

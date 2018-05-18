@@ -23,111 +23,103 @@
 #include <efscape/impl/adevs_config.hpp>
 #include <efscape/impl/ClockI.hpp>
 
-namespace efscape {
+/**
+ * Implements the ICE interface efscape::Model and provides an abstract
+ * interface for server-side models.
+ *
+ * @author Jon Cline <clinej@stanfordalumni.org>
+ * @version 1.1.1 created 18 Oct 2008, revised 18 May 2018
+ */
+class ModelTie : virtual public efscape::Model,
+		 public adevs::EventListener<efscape::impl::IO_Type>
+{
+public:
 
-  namespace server {
+  ModelTie();
+  ModelTie(const efscape::impl::DEVSPtr& aCp_model);
+  ModelTie(const efscape::impl::DEVSPtr& aCp_model,
+	   const char* acp_name);
+  ~ModelTie();
 
-    /**
-     * Implements the ICE interface ::efscape::Model and provides an abstract
-     * interface for server-side models.
-     *
-     * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 1.1.0 created 18 Oct 2008, revised 20 Aug 2017
-     */
-    class ModelTie : virtual public ::efscape::Model,
-		     public adevs::EventListener<efscape::impl::IO_Type>
-    {
-    public:
+  //
+  // ICE interface efscape::Entity
+  //
+  virtual std::string getName(const Ice::Current&) const override;
 
-      ModelTie();
-      ModelTie(const efscape::impl::DEVSPtr& aCp_model);
-      ModelTie(const efscape::impl::DEVSPtr& aCp_model,
-	       const char* acp_name);
-      ~ModelTie();
+  //
+  // ICE interface efscape::Model
+  //
+  virtual bool initialize(const Ice::Current&) override;
+  virtual double timeAdvance(const Ice::Current&) override;
+  virtual bool internalTransition(const Ice::Current&) override;
+  virtual bool externalTransition(double,
+				  efscape::Message,
+				  const Ice::Current&) override;
+  virtual bool confluentTransition(efscape::Message,
+				   const Ice::Current&) override;
 
-      //
-      // ICE interface efscape::Entity
-      //
-      virtual ::std::string getName(const Ice::Current&) const override;
+  virtual efscape::Message outputFunction(const Ice::Current&) override;
 
-      //
-      // ICE interface efscape::Model
-      //
-      virtual bool initialize(const Ice::Current&) override;
-      virtual double timeAdvance(const Ice::Current&) override;
-      virtual bool internalTransition(const Ice::Current&) override;
-      virtual bool externalTransition(double,
-                                      ::efscape::Message,
-                                      const Ice::Current&) override;
-      virtual bool confluentTransition(::efscape::Message,
-                                       const Ice::Current&) override;
+  virtual std::string getType(const Ice::Current&) const override;
+  virtual void setName(std::string,
+		       const Ice::Current&) override;
 
-      virtual ::efscape::Message outputFunction(const Ice::Current&) override;
+  virtual std::string saveJSON(const Ice::Current&) override;
 
-      virtual ::std::string getType(const Ice::Current&) const override;
-      virtual void setName(::std::string,
-                            const Ice::Current&) override;
+  virtual void destroy(const Ice::Current&) override;
 
-      virtual ::std::string saveJSON(const Ice::Current&) override;
+  //
+  // local (server-side) interfaces
+  //
 
-      virtual void destroy(const Ice::Current&) override;
+  //---------------------------
+  // adevs EventListener method
+  //---------------------------
+  virtual void outputEvent(adevs::Event<efscape::impl::IO_Type> x, double t) override;
 
-      //
-      // local (server-side) interfaces
-      //
+  /**
+   * Sets the associated model.
+   *
+   * @param aCp_model handle to adevs::devs object
+   */
+  void setWrappedModel(const efscape::impl::DEVSPtr& aCp_model) {
+    mCp_WrappedModel = aCp_model;
+  }
 
-      //---------------------------
-      // adevs EventListener method
-      //---------------------------
-      virtual void outputEvent(adevs::Event<efscape::impl::IO_Type> x, double t) override;
+  /** @returns handle to associated model */
+  efscape::impl::DEVSPtr getWrappedModel() {
+    return mCp_WrappedModel;
+  }
 
-      /**
-       * Sets the associated model.
-       *
-       * @param aCp_model handle to adevs::devs object
-       */
-      void setWrappedModel(const efscape::impl::DEVSPtr& aCp_model) {
-	mCp_WrappedModel = aCp_model;
-      }
+protected:
 
-      /** @returns handle to associated model */
-      efscape::impl::DEVSPtr getWrappedModel() {
-	return mCp_WrappedModel;
-      }
+  virtual
+  void translateOutput(const Ice::Current& aCr_current,
+		       efscape::Message& aCr_external_output);
+  virtual
+  void translateInput(const Ice::Current& aCr_current,
+		      const efscape::Message& aCr_external_input,
+		      adevs::Bag<adevs::Event<efscape::impl::IO_Type> >&
+		      aCr_internal_input);
 
-    protected:
+  /** handle to simulator */
+  std::unique_ptr< adevs::Simulator<efscape::impl::IO_Type> >
+  mCp_simulator;
 
-      virtual
-      void translateOutput(const Ice::Current& aCr_current,
-			   ::efscape::Message& aCr_external_output);
-      virtual
-      void translateInput(const Ice::Current& aCr_current,
-			  const ::efscape::Message& aCr_external_input,
-			  adevs::Bag<adevs::Event<efscape::impl::IO_Type> >&
-			  aCr_internal_input);
+  /** handle to model */
+  efscape::impl::DEVSPtr mCp_WrappedModel;
 
-      /** handle to simulator */
-      std::unique_ptr< adevs::Simulator<efscape::impl::IO_Type> >
-      mCp_simulator;
+  /** output buffer */
+  adevs::Bag< adevs::Event<efscape::impl::IO_Type> > mCC_OutputBuffer;
 
-      /** handle to model */
-      efscape::impl::DEVSPtr mCp_WrappedModel;
+  /** simulation clock (implementation) */
+  efscape::impl::ClockIPtr mCp_clock;
 
-      /** output buffer */
-      adevs::Bag< adevs::Event<efscape::impl::IO_Type> > mCC_OutputBuffer;
+private:
 
-      /** simulation clock (implementation) */
-      ::efscape::impl::ClockIPtr mCp_clock;
+  /** model name */
+  std::string mC_name;
 
-    private:
-
-      /** model name */
-      std::string mC_name;
-
-    };				// class ModelTie
-
-  } // namespace server
-
-} // namespace efscape
+};				// class ModelTie
 
 #endif	// #ifndef EFSCAPE_SERVER_MODELTIE_HPP
