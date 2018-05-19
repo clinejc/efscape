@@ -14,12 +14,12 @@
 // PERFORMANCE OF THIS SOFTWARE.
 // __COPYRIGHT_END__
 
-#include <efscape/server/RunServer.hpp>
+#include "RunServer.hpp"
 
 #include <Ice/Ice.h> // need Ice definitions
 
 // ModelHome servant definition
-#include <efscape/server/ModelHomeTie.hpp>
+#include "ModelHomeTie.hpp"
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>

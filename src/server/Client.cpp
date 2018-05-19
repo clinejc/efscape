@@ -162,7 +162,12 @@ EfscapeClient::run(int argc, char* argv[])
 		      "JSON buffer=>");
 	LOG4CXX_DEBUG(logger,
 		      buf.str() );
+
+	// first try to create model from JSON ser
 	lCp_Model = lCp_ModelHome->createFromJSON(buf.str());
+	if (lCp_Model == nullptr) {
+	  lCp_Model = lCp_ModelHome->createFromParameters(buf.str());
+	}	
       }
     } else {
       throw "Unable to open parameter file\n";

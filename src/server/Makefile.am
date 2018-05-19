@@ -13,6 +13,7 @@ cc_sources += RunServer.cpp
 # cpp flags
 AM_CPPFLAGS = -DICE_CPP11_MAPPING # needed for ZeroC Ice c++ mappings
 AM_CPPFLAGS += -I.
+AM_CPPFLAGS += -I$(top_srcdir)/src/slice
 AM_CPPFLAGS += -I$(top_srcdir)/src
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 AM_CPPFLAGS += $(DEPS_CFLAGS)
@@ -21,14 +22,14 @@ AM_CPPFLAGS += $(DEPS_CFLAGS)
 lib_LTLIBRARIES = libefscape-ice.la
 
 libefscape_ice_la_LIBADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
-libefscape_ice_la_LIBADD += $(top_srcdir)/src/efscape/libefscape-idl.la
+libefscape_ice_la_LIBADD += $(top_srcdir)/src/slice/efscape/libefscape-idl.la
 libefscape_ice_la_LIBADD += $(DEPS_LIBS)
 
 libefscape_ice_la_SOURCES=  $(hh_sources) $(cc_sources)
 
-library_includedir = $(includedir)/$(GENERIC_LIBRARY_NAME)/server
-library_includedir = $(includedir)/efscape/server
-library_include_HEADERS = $(hh_sources)
+#library_includedir = $(includedir)/$(GENERIC_LIBRARY_NAME)/server
+#library_includedir = $(includedir)/efscape/server
+#library_include_HEADERS = $(hh_sources)
 
 # programs
 bin_PROGRAMS = efserver
@@ -46,7 +47,7 @@ efserver_LDADD += $(NETCDF_CXX_LIBS)
 
 # efclient: ICE client for efscape simulator
 efclient_SOURCES = Client.cpp
-efclient_LDADD = $(top_srcdir)/src/efscape/libefscape-idl.la
+efclient_LDADD = $(top_srcdir)/src/slice/efscape/libefscape-idl.la
 efclient_LDADD += $(BOOST_FILESYSTEM_LIBS)
 efclient_LDADD += $(BOOST_SYSTEM_LIBS)
 efclient_LDADD += $(DEPS_LIBS)

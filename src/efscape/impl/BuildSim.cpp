@@ -22,6 +22,9 @@
 
 #include <cereal/archives/json.hpp>
 
+#include <boost/filesystem/operations.hpp>
+#include <fstream>
+#include <sstream>
 #include <iostream>
 
 namespace po = boost::program_options;
@@ -32,7 +35,7 @@ namespace efscape {
     // class variables
     const char* BuildSim::mScp_program_name = "efbuilder";
     const char* BuildSim::mScp_program_version =
-      "version 0.0.1 (2017-07-08)";
+      "version 1.0.0 (2018-05-19)";
 
     BuildSim::BuildSim() :
       efscape::utils::CommandOpt(),
@@ -68,7 +71,7 @@ namespace efscape {
       		      "Loading libraries");
       	Singleton<ModelHomeI>::Instance().LoadLibraries();
 
-      	// check model type name
+      	// check if model type name
       	if (mC_modelTypeName == "") {
 	  std::cerr << "*** Error: modelTypeName not specified! ***"
 		    << std::endl;
@@ -76,30 +79,27 @@ namespace efscape {
 
       	  return EXIT_FAILURE;
       	}
-
-      	// attempt to load model
-      	DEVSPtr lCp_model;
-
-      	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-      		      "Retrieving the model from the factory");
-        	lCp_model.reset(
-  	  Singleton<ModelHomeI>::Instance()
-  	  .getModelFactory()
-  	  .createObject( mC_modelTypeName, Json::Value() ) );
-
-      	if (lCp_model == nullptr) {
-      	  std::string lC_message = "Unable to create model <" + mC_modelName
-      	    + ">";
-      	  throw std::logic_error(lC_message.c_str());
-      	}
+	std::set<std::string> lC1_ModelNames =
+	  Singleton<ModelHomeI>::Instance().getModelFactory().getTypeIDs();
+	if (lC1_ModelNames.find(mC_modelTypeName) == lC1_ModelNames.end()) {
+	  std::cerr << "*** Error: modelTypeName <"
+		    << mC_modelTypeName
+		    << "> missing from model repository! ***"
+		    << std::endl;
+	  return EXIT_FAILURE;
+	}
 
 	// retrieve metadata
+	Json::Value lC_ModelInfo =
+	  Singleton<ModelHomeI>::Instance().getModelFactory().
+	  getProperties(mC_modelTypeName.c_str());
 
-
-	// run model
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		      "Running simulation of model...\n");
-      	// efscape::impl::runSim(lCp_model.get());
+	if (this->out_file() !="") {
+	  std::ofstream lC_outFile(out_file().c_str());
+	  lC_outFile << lC_ModelInfo << "\n";
+	}
+	else
+	  std::cout << lC_ModelInfo << "\n";
 
       }
       catch(std::logic_error lC_excp) {
@@ -120,21 +120,21 @@ namespace efscape {
       mC_extended_description.add_options()
 	("modelName", po::value<std::string>(), "model name");
 
-      int li_status =
-	efscape::utils::CommandOpt::parse_options(argc,argv);	// parent method
-      if (li_status != 0) {
-	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		      "Illegal options!");
-	return li_status;
+      int li_status = EXIT_SUCCESS;
+      try {
+	li_status =
+	  efscape::utils::CommandOpt::parse_options(argc,argv);	// parent method
+      }
+      catch(po::error e) {
+	std::cerr << e.what() << std::endl;
+        return EXIT_FAILURE;
       }
 
-
       if (mC_variable_map.count("modelTypeName")) {
-	mC_modelName = mC_variable_map["modelTypeName"].as<std::string>();
+	mC_modelTypeName = mC_variable_map["modelTypeName"].as<std::string>();
       }
       if (mC_variable_map.count("modelName")) {
 	mC_modelName = mC_variable_map["modelName"].as<std::string>();
-	std::cout << "model name = <" << mC_modelName << ">\n";
       }
 
       return li_status;
@@ -145,11 +145,10 @@ namespace efscape {
       std::cerr << "usage:\n"
 		<< program_name() << " "
 		<< "where [] indicates optional option:\n\n"
-		<< mC_description
-		<< "examples:\n\t\t"
-		<< program_name() << " --modelTypeName model_type_name [--modelName model_name]\n\t\t"
-		<< program_name() << " param_name\n\t\t"
-		<< program_name() << " -d -o output_name param_name\n\n";
+		<< mC_description << "\n"
+		<< "example:\n\t"
+		<< program_name() << "[-d] --modelTypeName model_type_name [--modelName model_name] [-o output_name]\n\n"
+		<< "note: input files are ignored\n\n";
 
       exit( exit_value );
     }

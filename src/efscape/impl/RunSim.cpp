@@ -125,6 +125,13 @@ namespace efscape {
 	    lCp_model =
 	      Singleton<ModelHomeI>::Instance().
 	      createModelFromJSON(buf.str());
+	    
+	    if (lCp_model == nullptr) {
+	      lCp_model =
+		Singleton<ModelHomeI>::Instance().
+		createModelFromParameters(buf.str());
+	    }
+
 	  }
 	}
 
@@ -144,25 +151,14 @@ namespace efscape {
       		      "Attempt to create simulation model successful!"
       		      << "...Initializing simulation...");
 
-      // 	if (!initializeModel(lCp_model.get()) ) // initialize model
-      // 	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			// "Unable to initialize model using InitObject interface...");
-      //
-      // 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-      // 		      "Running simulation...");
-
 	// initialize the simulation clock
 	double ld_timeMax = adevs_inf<double>();
 	ClockIPtr lCp_clock;
-	// AdevsModel* lCp_RootModel = // note: root model derived from model
-	//   dynamic_cast<AdevsModel*>(lCp_model.get());
+
 	SimRunner* lCp_SimRunner = // note: alternative root model
 	  dynamic_cast<SimRunner*>(lCp_model.get());
 
-	// if (lCp_RootModel) {
-	//   lCp_clock = lCp_RootModel->getClockIPtr();
-	// }
-	/*else*/ if (lCp_SimRunner) {
+	if (lCp_SimRunner) {
 	  lCp_clock = lCp_SimRunner->getClockIPtr();
 	}
 
@@ -181,7 +177,7 @@ namespace efscape {
       	// simulate model until time max
 	double ld_time = 0.;
       	while ( (ld_time = lCp_simulator.nextEventTime())
-      		<= ld_timeMax ) {
+      		< ld_timeMax ) {
       	  lCp_simulator.execNextEvent();
       	}
       }

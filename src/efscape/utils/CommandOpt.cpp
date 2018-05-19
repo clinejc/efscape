@@ -100,14 +100,12 @@ namespace efscape {
 
       // set input files
       if (mC_variable_map.count("input-file")) {
-	std::cout << "--input-file,-i found: input file(s)\n";
 	mC_file_names =
 	  mC_variable_map["input-file"].as< std::vector<std::string> >();
       }
 
       // set output file
       if (mC_variable_map.count("output-file")) {
-	std::cout << "-output-file,-o found: output file\n";
 	mC_out_file = mC_variable_map["output-file"].as<std::string>();
       }
  

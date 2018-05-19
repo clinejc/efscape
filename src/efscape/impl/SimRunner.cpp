@@ -20,7 +20,6 @@
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
 #include <efscape/impl/ModelType.hpp>
-// #include <efscape/impl/adevs_json.hpp>
 
 #include <sstream>
 
@@ -50,12 +49,12 @@ namespace efscape {
       mCp_ClockI.reset(new ClockI);
       mCp_ClockI->timeMax() = DBL_MAX;
 
-      // retrieve <modelTypeName>
+      // retrieve <typeName>
       //
-      Json::Value lC_modelTypeNameValue = aC_parameters["modelTypeName"];
+      Json::Value lC_modelTypeNameValue = aC_parameters["typeName"];
       if (!lC_modelTypeNameValue.isString()) {
 	LOG4CXX_ERROR(ModelHomeI::getLogger(),
-		      "Missing <modelTypeName>");
+		      "Missing <typeName>");
 	return;
       }
 

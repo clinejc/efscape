@@ -12,11 +12,8 @@ AM_INIT_AUTOMAKE
 AM_INIT_AUTOMAKE([subdir-objects])
 LT_INIT
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_SRCDIR([src/efscape/efscape.ice])
+AC_CONFIG_SRCDIR([src/slice/efscape/efscape.ice])
 #AC_CONFIG_HEADER([config.h])
-
-# required for libraries built by this package
-AC_PROG_RANLIB
 
 dnl -----------------------------------------------
 dnl Adds configure options
@@ -83,7 +80,9 @@ AC_CONFIG_FILES([Makefile
 		 src/efscape/Makefile
 		 src/efscape/utils/Makefile
 		 src/efscape/impl/Makefile
-		 src/efscape/server/Makefile
+		 src/slice/Makefile
+		 src/slice/efscape/Makefile
+		 src/server/Makefile
 		 examples/Makefile
 		 examples/gpt/Makefile])
 AC_OUTPUT
