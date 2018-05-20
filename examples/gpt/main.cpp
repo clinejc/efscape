@@ -17,7 +17,7 @@
 
 using namespace std;
 
-#include <adevs/adevs_cereal.hpp>
+#include <adevs_cereal.hpp>
 #include <cereal/types/base_class.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/vector.hpp>

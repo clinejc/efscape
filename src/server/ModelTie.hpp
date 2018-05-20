@@ -18,7 +18,7 @@
 
 // parent class definitions
 #include <Ice/Ice.h>
-#include <efscape/efscape.h>
+#include <efscape/Model.h>
 
 #include <efscape/impl/adevs_config.hpp>
 #include <efscape/impl/ClockI.hpp>

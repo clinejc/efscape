@@ -18,7 +18,7 @@
 
 // parent class definition
 #include <Ice/Ice.h>
-#include <efscape/efscape.h>
+#include <efscape/ModelHome.h>
 
 /**
  * Implements the ICE efscape::ModelHome interface, a factory for simulation

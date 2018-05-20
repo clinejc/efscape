@@ -16,7 +16,9 @@
 //=============================================================================
 
 #include <Ice/Ice.h>
-#include <efscape/efscape.h>
+#include <efscape/ModelHome.h>
+#include <efscape/Model.h>
+#include <efscape/Simulator.h>
 #include <fstream>
 #include <sstream>
 #include <cfloat>

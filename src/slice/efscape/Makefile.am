@@ -1,12 +1,24 @@
 ## Source directory for efscape
 
-idl_sources = efscape.ice
+idl_sources = common.ice
+idl_sources += Model.ice
+idl_sources += Simulator.ice
+idl_sources += ModelHome.ice
 
-hh_idl_sources = efscape.h
+hh_idl_sources = common.h
+hh_idl_sources += Model.h
+hh_idl_sources += Simulator.h
+hh_idl_sources += ModelHome.h
 
-cc_idl_sources = efscape.cpp
+cc_idl_sources = common.cpp
+cc_idl_sources += Model.cpp
+cc_idl_sources += Simulator.cpp
+cc_idl_sources += ModelHome.cpp
 
-impl_sources = efscapeI.h efscapeI.cpp
+impl_sources = commonI.h commonI.cpp
+impl_sources += ModelI.h ModelI.cpp
+impl_sources += SimulatorI.h SimulatorI.cpp
+impl_sources += ModelHomeI.h ModelHomeI.cpp
 
 AM_CPPFLAGS = -DICE_CPP11_MAPPING
 AM_CPPFLAGS += -I$(top_srcdir)/src/slice

@@ -5,7 +5,7 @@
 #include <efscape/impl/ModelType.hpp>
 #include "job.hpp"
 
-#include <adevs/adevs_cereal.hpp>
+#include <adevs_cereal.hpp>
 #include <json/json.h>
 
 namespace gpt {

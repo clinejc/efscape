@@ -129,3 +129,12 @@ void SimulatorI::destroy(const Ice::Current& current)
     throw Ice::ObjectNotExistException(__FILE__, __LINE__);
   }
 }
+
+/**
+ * Returns handle to model associated with this simulator
+ *
+ * @returns handle to model
+ */
+std::shared_ptr<efscape::ModelPrx> SimulatorI::getModel(const Ice::Current&) {
+  return mCp_model;
+}

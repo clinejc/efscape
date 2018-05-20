@@ -7,7 +7,7 @@
 #include "job.hpp"
 
 // serialization definitions
-#include <adevs/adevs_cereal.hpp>
+#include <adevs_cereal.hpp>
 
 #include <cstdlib>
 

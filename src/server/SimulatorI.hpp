@@ -17,7 +17,7 @@
 #define EFSCAPE_SERVER_SIMULATOR_I_HPP
 
 #include <Ice/Ice.h>
-#include <efscape/efscape.h>
+#include <efscape/Simulator.h>
 
 // forward declarations
 class SimulatorI;
@@ -51,6 +51,8 @@ public:
   virtual bool halt(const Ice::Current&) override;
 
   virtual void destroy(const Ice::Current&) override;
+
+  virtual std::shared_ptr<efscape::ModelPrx> getModel(const Ice::Current&) override;
 
 private:
 
