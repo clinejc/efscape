@@ -12,7 +12,7 @@ AM_INIT_AUTOMAKE
 AM_INIT_AUTOMAKE([subdir-objects])
 LT_INIT
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_SRCDIR([src/slice/efscape/efscape.ice])
+AC_CONFIG_SRCDIR([src/efscape/impl/efscapelib.hpp])
 #AC_CONFIG_HEADER([config.h])
 
 dnl -----------------------------------------------

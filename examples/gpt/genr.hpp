@@ -1,7 +1,7 @@
 #ifndef _genr_hpp_
 #define _genr_hpp_
 
-#include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/efscapelib.hpp>
 #include <efscape/impl/ModelType.hpp>
 #include "job.hpp"
 

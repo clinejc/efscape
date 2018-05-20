@@ -1,6 +1,6 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : ModelTie.cpp
+// File Name : ModelI.cpp
 // Copyright (C) 2006-2018 Jon C. Cline
 // 
 // Permission to use, copy, modify, and/or distribute this software for any
@@ -13,7 +13,7 @@
 // LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR// OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 // PERFORMANCE OF THIS SOFTWARE.
 // __COPYRIGHT_END__
-#include "ModelTie.hpp"
+#include "ModelI.hpp"
 
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/SimRunner.hpp>
@@ -33,7 +33,7 @@
  * @returns the name of the entity
  */
 std::string
-ModelTie::getName(const Ice::Current& current) const
+ModelI::getName(const Ice::Current& current) const
 {
   return mC_name;
 }
@@ -44,7 +44,7 @@ ModelTie::getName(const Ice::Current& current) const
  * @param current method invocation
  * @returns status of call
  */
-bool ModelTie::initialize(const Ice::Current& current)
+bool ModelI::initialize(const Ice::Current& current)
 {
   if (!mCp_WrappedModel.get())
     return false;
@@ -145,7 +145,7 @@ bool ModelTie::initialize(const Ice::Current& current)
 
   return true;
 
-} // ModelTie::initialize(const Ice::Current&)
+} // ModelI::initialize(const Ice::Current&)
 
 /**
  * Time advance function.
@@ -153,7 +153,7 @@ bool ModelTie::initialize(const Ice::Current& current)
  * @param current method invocation
  * @returns the next time advance
  */
-Ice::Double ModelTie::timeAdvance(const Ice::Current& current)
+Ice::Double ModelI::timeAdvance(const Ice::Current& current)
 {
   return (mCp_clock->time() =
 	  mCp_simulator->nextEventTime());
@@ -165,7 +165,7 @@ Ice::Double ModelTie::timeAdvance(const Ice::Current& current)
  * @param current method invocation
  * @returns status of call
  */
-bool ModelTie::internalTransition(const Ice::Current& current)
+bool ModelI::internalTransition(const Ice::Current& current)
 {
   // clear message buffer (i.e. invert conversion bag)
   mCC_OutputBuffer.clear();
@@ -185,7 +185,7 @@ bool ModelTie::internalTransition(const Ice::Current& current)
  * @param current method invocation
  * @returns status of call
  */
-bool ModelTie::externalTransition(Ice::Double elapsedTime,
+bool ModelI::externalTransition(Ice::Double elapsedTime,
 				  efscape::Message msg,
 				  const Ice::Current& current)
 {
@@ -207,11 +207,11 @@ bool ModelTie::externalTransition(Ice::Double elapsedTime,
  * @param current method invocation
  * @returns status of call
  */
-bool ModelTie::confluentTransition(efscape::Message msg,
+bool ModelI::confluentTransition(efscape::Message msg,
 				   const Ice::Current& current)
 {
   LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		"ModelTie::confluentTransition:"
+		"ModelI::confluentTransition:"
 		<< "message length = " << msg.size() );
 
   //---------------------------
@@ -235,7 +235,7 @@ bool ModelTie::confluentTransition(efscape::Message msg,
  * @returns output message
  */
 efscape::Message
-ModelTie::outputFunction(const Ice::Current& current)
+ModelI::outputFunction(const Ice::Current& current)
 {
   efscape::Message lC_message;
 
@@ -267,7 +267,7 @@ ModelTie::outputFunction(const Ice::Current& current)
  * @returns model type
  */
 std::string
-ModelTie::getType(const Ice::Current& current) const
+ModelI::getType(const Ice::Current& current) const
 {
   return "";
 }
@@ -280,7 +280,7 @@ ModelTie::getType(const Ice::Current& current) const
  * @returns model type
  */
 void
-ModelTie::setName(std::string aCr_name,
+ModelI::setName(std::string aCr_name,
 		  const Ice::Current& current)
 {
   mC_name = aCr_name;
@@ -293,7 +293,7 @@ ModelTie::setName(std::string aCr_name,
  * @returns model configuration in JSON format
  */
 std::string
-ModelTie::saveJSON(const Ice::Current& current)
+ModelI::saveJSON(const Ice::Current& current)
 {
   std::string lC_config = "";
   return lC_config;
@@ -304,7 +304,7 @@ ModelTie::saveJSON(const Ice::Current& current)
  *
  * @param current method invocation
  */
-void ModelTie::destroy(const Ice::Current& current)
+void ModelI::destroy(const Ice::Current& current)
 {
   try {
     current.adapter->remove(current.id);
@@ -318,14 +318,14 @@ void ModelTie::destroy(const Ice::Current& current)
 //--------------------------------------------------------------------------
 
 /** default constructor */
-ModelTie::ModelTie() {}
+ModelI::ModelI() {}
 
 /**
  * constructor
  *
  * @param aCp_model handle to model to be tied
  */
-ModelTie::ModelTie(const efscape::impl::DEVSPtr& aCp_model)
+ModelI::ModelI(const efscape::impl::DEVSPtr& aCp_model)
 {
   if (aCp_model == nullptr)
     return;
@@ -343,7 +343,7 @@ ModelTie::ModelTie(const efscape::impl::DEVSPtr& aCp_model)
  * @param aCp_model handle to model to be tied
  * @param acp_name name of model
  */
-ModelTie::ModelTie(const efscape::impl::DEVSPtr& aCp_model,
+ModelI::ModelI(const efscape::impl::DEVSPtr& aCp_model,
 		   const char* acp_name)
 {
   if (aCp_model == nullptr)
@@ -354,7 +354,7 @@ ModelTie::ModelTie(const efscape::impl::DEVSPtr& aCp_model,
 }
 
 /** destructor */
-ModelTie::~ModelTie() {}
+ModelI::~ModelI() {}
 
 /**
  * Listen to output from the wrapped model when its
@@ -363,7 +363,7 @@ ModelTie::~ModelTie() {}
  * @param x event
  * @param t time
  */
-void ModelTie::outputEvent(adevs::Event<efscape::impl::IO_Type> x, double t)
+void ModelI::outputEvent(adevs::Event<efscape::impl::IO_Type> x, double t)
 {
   mCC_OutputBuffer.insert(x);
 } // end of AdevsModel::outputEvent(...)
@@ -376,7 +376,7 @@ void ModelTie::outputEvent(adevs::Event<efscape::impl::IO_Type> x, double t)
  * @param aCr_result converted input
  */
 void
-ModelTie::translateInput(const Ice::Current& aCr_current,
+ModelI::translateInput(const Ice::Current& aCr_current,
 			 const efscape::Message&
 			 aCr_external_input,
 			 adevs::Bag<adevs::Event<efscape::impl::IO_Type> >&
@@ -391,10 +391,10 @@ ModelTie::translateInput(const Ice::Current& aCr_current,
  * @param aCr_current current method invocation
  * @param aCr_external_output converted output
  */
-void ModelTie::translateOutput(const Ice::Current& aCr_current,
+void ModelI::translateOutput(const Ice::Current& aCr_current,
 			       efscape::Message& aCr_external_output)
 {
-  std::cout << "ModelTie::translateOutput(...): processing output...\n";
+  std::cout << "ModelI::translateOutput(...): processing output...\n";
   adevs::Bag< adevs::Event<efscape::impl::IO_Type> >::iterator
     i = mCC_OutputBuffer.begin();
   for ( ; i != mCC_OutputBuffer.end(); i++) {
@@ -423,4 +423,4 @@ void ModelTie::translateOutput(const Ice::Current& aCr_current,
 
   mCC_OutputBuffer.clear();
 
-} // ModelTie::translateOutput(...)
+} // ModelI::translateOutput(...)

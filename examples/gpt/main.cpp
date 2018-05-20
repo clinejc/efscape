@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include <iostream>
-#include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/efscapelib.hpp>
 #include <efscape/impl/SimRunner.hpp>
 
 #include "job.h"

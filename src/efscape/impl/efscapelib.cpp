@@ -1,6 +1,6 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : adevs_config.cpp
+// File Name : efscapelib.cpp
 // Copyright (C) 2006-2018 Jon C. Cline
 // 
 // Permission to use, copy, modify, and/or distribute this software for any
@@ -13,7 +13,7 @@
 // LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR// OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 // PERFORMANCE OF THIS SOFTWARE.
 // __COPYRIGHT_END__
-#include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/efscapelib.hpp>
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>

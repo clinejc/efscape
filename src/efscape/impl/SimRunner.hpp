@@ -26,7 +26,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 // parent class definition
-#include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/efscapelib.hpp>
 
 // data member definitions
 #include <efscape/impl/ClockI.hpp>

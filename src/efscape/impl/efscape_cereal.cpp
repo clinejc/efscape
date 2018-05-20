@@ -24,7 +24,7 @@
 #include <efscape/impl/efscape_cereal.hpp>
 
 // efscape adevs definitions
-#include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/efscapelib.hpp>
 #include <efscape/impl/SimRunner.hpp>
 
 // definitions for accessing the model home

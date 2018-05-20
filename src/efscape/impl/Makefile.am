@@ -1,6 +1,6 @@
 ## source directory for the DEVS simulator implementation classes
 
-hh_sources = adevs_config.hpp
+hh_sources = efscapelib.hpp
 hh_sources += adevs_json.hpp
 hh_sources += adevs_decorator.h
 hh_sources += adevs_decorator_serialization.hpp
@@ -16,7 +16,7 @@ hh_sources += RepastModelWrapper.hpp
 hh_sources += RepastModelWrapper.ipp
 hh_sources += SimRunner.hpp
 
-cc_sources = adevs_config.cpp
+cc_sources = efscapelib.cpp
 cc_sources += adevs_json.cpp
 cc_sources += ClockI.cpp
 cc_sources += efscape_cereal.cpp

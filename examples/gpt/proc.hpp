@@ -2,7 +2,7 @@
 #define __proc_hpp_
 
 // parent class and data member definitions
-#include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/efscapelib.hpp>
 #include <efscape/impl/ModelType.hpp>
 #include "job.hpp"
 

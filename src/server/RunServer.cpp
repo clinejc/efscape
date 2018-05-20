@@ -19,7 +19,7 @@
 #include <Ice/Ice.h> // need Ice definitions
 
 // ModelHome servant definition
-#include "ModelHomeTie.hpp"
+#include "ModelHomeI.hpp"
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>
@@ -196,7 +196,7 @@ namespace efscape {
     int RunServer::run(int argc, char* argv[])
     {
       auto adapter = communicator()->createObjectAdapter("ModelHome");
-  auto servant = make_shared<ModelHomeTie>();
+  auto servant = make_shared<ModelHomeI>();
   adapter->add(servant, Ice::stringToIdentity("ModelHome"));
   adapter->activate();
   communicator()->waitForShutdown();

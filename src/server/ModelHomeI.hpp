@@ -1,6 +1,6 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : ModelHomeTie.hpp
+// File Name : ModelHomeI.hpp
 // Copyright (C) 2006-2018 Jon C. Cline
 // 
 // Permission to use, copy, modify, and/or distribute this software for any
@@ -27,7 +27,7 @@
  * @author Jon Cline <clinej@stanfordalumni.org>
  * @version 3.1.1 created 24 Dec 2006, revised 18 May 2018
  */
-class ModelHomeTie : virtual public efscape::ModelHome
+class ModelHomeI : virtual public efscape::ModelHome
 {
 public:
 
@@ -68,9 +68,9 @@ public:
   // local (server-side) methods
   //
 
-  ModelHomeTie();
-  virtual ~ModelHomeTie();
+  ModelHomeI();
+  virtual ~ModelHomeI();
 
-};				// class ModelHomeTie
+};				// class ModelHomeI
 
 #endif	// #ifndef EFSCAPE_SERVER_MODELHOMETIE_HPP

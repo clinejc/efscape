@@ -1,6 +1,6 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : ModelHomeTie.cpp
+// File Name : ModelHomeI.cpp
 // Copyright (C) 2006-2018 Jon C. Cline
 // 
 // Permission to use, copy, modify, and/or distribute this software for any
@@ -13,9 +13,9 @@
 // LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR// OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 // PERFORMANCE OF THIS SOFTWARE.
 // __COPYRIGHT_END__
-#include "ModelHomeTie.hpp"
+#include "ModelHomeI.hpp"
 
-#include "ModelTie.hpp"
+#include "ModelI.hpp"
 #include "SimulatorI.hpp"
 
 // definitions for accessing the model factory
@@ -34,7 +34,7 @@
  * @returns std::shared_ptr<efscape::ModelPrx> proxy
  */
 std::shared_ptr<efscape::ModelPrx>
-ModelHomeTie::create(std::string name,
+ModelHomeI::create(std::string name,
 		     const Ice::Current& current)
 {
   // attempt create the model
@@ -47,7 +47,7 @@ ModelHomeTie::create(std::string name,
 		  "Model <" << name << "> found...");
     auto modelI =
       Ice::uncheckedCast<efscape::ModelPrx>(current.adapter
-					    ->addWithUUID(::std::make_shared<ModelTie>(lCp_model)));
+					    ->addWithUUID(::std::make_shared<ModelI>(lCp_model)));
   
     return modelI;
   }
@@ -58,7 +58,7 @@ ModelHomeTie::create(std::string name,
 
   return nullptr;
 
-} // ModelHomeTie::create(...)
+} // ModelHomeI::create(...)
 
 /**
  * Create a new efscape::Model proxy from the specified XML file.
@@ -68,7 +68,7 @@ ModelHomeTie::create(std::string name,
  * @returns efscape::Model proxy
  */
 std::shared_ptr<efscape::ModelPrx>
-ModelHomeTie::createFromXML(std::wstring configuration,
+ModelHomeI::createFromXML(std::wstring configuration,
 			    const Ice::Current& current)
 {
   try {
@@ -79,24 +79,24 @@ ModelHomeTie::createFromXML(std::wstring configuration,
     if (lCp_modelI != nullptr) {
       // wrap and activate the model
       auto modelI = Ice::uncheckedCast<efscape::ModelPrx>(current.adapter
-							    ->addWithUUID(std::make_shared<ModelTie>(lCp_modelI)));
+							    ->addWithUUID(std::make_shared<ModelI>(lCp_modelI)));
   
       return modelI;
     }
     else {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "efscape::server::ModelHomeTie::createFromXML(): model implementation not found!");
+		    "efscape::server::ModelHomeI::createFromXML(): model implementation not found!");
     }
   }
   catch (std::logic_error exp) {
     LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		  "efscape::server::ModelHomeTie::createFromXML(): "
+		  "efscape::server::ModelHomeI::createFromXML(): "
 		  << exp.what() );
   }
 
   return nullptr;
 
-} // ModelHomeTie::createFromXML(...)
+} // ModelHomeI::createFromXML(...)
 
 /**
  * Create a new efscape::Model proxy from the specified JSON file.
@@ -106,7 +106,7 @@ ModelHomeTie::createFromXML(std::wstring configuration,
  * @returns efscape::Model proxy
  */
 std::shared_ptr<efscape::ModelPrx>
-ModelHomeTie::createFromJSON(std::string configuration,
+ModelHomeI::createFromJSON(std::string configuration,
 			     const Ice::Current& current)
 {
   try {
@@ -116,28 +116,28 @@ ModelHomeTie::createFromJSON(std::string configuration,
 
     if (lCp_modelI != nullptr) {
       auto modelI = Ice::uncheckedCast<efscape::ModelPrx>(current.adapter
-							    ->addWithUUID(std::make_shared<ModelTie>(lCp_modelI)));
+							    ->addWithUUID(std::make_shared<ModelI>(lCp_modelI)));
   
       return modelI;
     }
     else {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "efscape::server::ModelHomeTie::createFromJSON(): model implementation not found!");
+		    "efscape::server::ModelHomeI::createFromJSON(): model implementation not found!");
     }
   }
   catch (std::logic_error exp) {
     LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		  "efscape::server::ModelHomeTie::createFromJSON(): "
+		  "efscape::server::ModelHomeI::createFromJSON(): "
 		  << exp.what() );
   }
 
   LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		"efscape::server::ModelHomeTie::createFromJSON(): "
+		"efscape::server::ModelHomeI::createFromJSON(): "
 
 		"Model not found...");
   return nullptr;
 
-} // ModelHomeTie::createFromJSON(...)
+} // ModelHomeI::createFromJSON(...)
 
 /**
  * Create a new efscape::Model proxy from the specified JSON parameter
@@ -148,7 +148,7 @@ ModelHomeTie::createFromJSON(std::string configuration,
  * @returns efscape::Model proxy
  */
 std::shared_ptr<efscape::ModelPrx>
-ModelHomeTie::createFromParameters(std::string parameters,
+ModelHomeI::createFromParameters(std::string parameters,
 				   const Ice::Current& current)
 {
   try {
@@ -159,18 +159,18 @@ ModelHomeTie::createFromParameters(std::string parameters,
     if (lCp_modelI != nullptr) {
       // tie the model
       auto modelI = Ice::uncheckedCast<efscape::ModelPrx>(current.adapter
-							    ->addWithUUID(std::make_shared<ModelTie>(lCp_modelI)));
+							    ->addWithUUID(std::make_shared<ModelI>(lCp_modelI)));
   
       return modelI;
     }
     else {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "efscape::server::ModelHomeTie::createModelFromParameters(): model implementation not found!");
+		    "efscape::server::ModelHomeI::createModelFromParameters(): model implementation not found!");
     }
   }
   catch (std::logic_error exp) {
     LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		  "efscape::server::ModelHomeTie::createModelFromParameters(): "
+		  "efscape::server::ModelHomeI::createModelFromParameters(): "
 		  << exp.what() );
   }
 
@@ -186,7 +186,7 @@ ModelHomeTie::createFromParameters(std::string parameters,
  * @param current method invocation
  * @returns list of available models
  */
-efscape::ModelNameList ModelHomeTie::getModelList(const Ice::Current& current)
+efscape::ModelNameList ModelHomeI::getModelList(const Ice::Current& current)
 {
   efscape::ModelNameList lC1_ModelNameList;
 
@@ -213,7 +213,7 @@ efscape::ModelNameList ModelHomeTie::getModelList(const Ice::Current& current)
  * @param current method invocation
  * @returns info about the specified model in a JSON string
  */
-std::string ModelHomeTie::getModelInfo(std::string aC_name,
+std::string ModelHomeI::getModelInfo(std::string aC_name,
 					 const Ice::Current& current)
 {
   Json::Value lC_ModelInfo =
@@ -244,7 +244,7 @@ std::string ModelHomeTie::getModelInfo(std::string aC_name,
  * @returns efscape::Simulator proxy
  */
 std::shared_ptr<efscape::SimulatorPrx>
-ModelHomeTie::createSim(std::shared_ptr<efscape::ModelPrx> rootModel,
+ModelHomeI::createSim(std::shared_ptr<efscape::ModelPrx> rootModel,
 			const Ice::Current& current)
 {
   auto simulatorI =
@@ -259,7 +259,7 @@ ModelHomeTie::createSim(std::shared_ptr<efscape::ModelPrx> rootModel,
 //--------------------------------------------------------------------------
 
 /** constructor */
-ModelHomeTie::ModelHomeTie()
+ModelHomeI::ModelHomeI()
 {
   try {
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -275,11 +275,11 @@ ModelHomeTie::ModelHomeTie()
 		  "A generic exception occurred");
   }
 
-} // ModelHomeTie::ModelHomeTie()
+} // ModelHomeI::ModelHomeI()
 
 
 /** destructor */
-ModelHomeTie::~ModelHomeTie() {
+ModelHomeI::~ModelHomeI() {
   LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		"Shutting down EFSCAPE ICE model repository...");
 }

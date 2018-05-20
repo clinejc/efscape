@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cstdlib>
 
-#include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/efscapelib.hpp>
 #include <efscape/impl/ModelType.hpp>
 
 #include "job.hpp"

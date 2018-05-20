@@ -1,6 +1,6 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
-// File Name : adevs_config.hpp
+// File Name : efscapelib.hpp
 // Copyright (C) 2006-2018 Jon C. Cline
 // 
 // Permission to use, copy, modify, and/or distribute this software for any

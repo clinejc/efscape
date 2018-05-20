@@ -20,7 +20,7 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/version.hpp>
 
-#include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/efscapelib.hpp>
 #include <repast_hpc/Properties.h>
 
 namespace efscape {

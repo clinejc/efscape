@@ -17,7 +17,7 @@
 #define EFSCAPE_IMPL_ADEVS_JSON_HPP
 
 // efscape definitions
-#include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/efscapelib.hpp>
 #include <json/json.h>
 #include <string>
 

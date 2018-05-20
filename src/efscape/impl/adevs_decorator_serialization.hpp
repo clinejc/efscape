@@ -16,7 +16,7 @@
 #ifndef __adevs_decorator_serialization_hpp_
 #define __adevs_decorator_serialization_hpp_
 
-#include <efscape/impl/adevs_config.hpp>
+#include <efscape/impl/efscapelib.hpp>
 
 #include <adevs_serialization.hpp>
 
