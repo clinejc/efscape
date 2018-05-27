@@ -18,13 +18,8 @@
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/SimRunner.hpp>
 #include <efscape/utils/type.hpp>
-#include <efscape/utils/boost_utils.ipp>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/optional.hpp>
-#include <boost/regex.hpp>
-
+#include <json/json.h>
 #include <fstream>
 
 /**
@@ -104,13 +99,10 @@ bool ModelI::initialize(const Ice::Current& current)
 	try {
 	  // if there is there is a property tree in the output,
 	  // attempt to extract time parameters for the simulation
-	  boost::property_tree::ptree pt =
-	    boost::any_cast<boost::property_tree::ptree>( (*i).value );
-	  boost::optional<int> lC_timeMax = pt.get_optional<int>("timeMax");
-	  if (lC_timeMax) {
-	    mCp_clock->timeMax() =
-	      ((double)lC_timeMax.get());
-
+	  Json::Value lC_value =
+	    boost::any_cast<Json::Value>( (*i).value );
+	  if (lC_value.isMember("timeMax")) {
+	    mCp_clock->timeMax() = lC_value["timeMax"].asDouble();
 	    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 			  "Setting the simulation stop time to "
 			  << mCp_clock->timeMax());
@@ -134,7 +126,7 @@ bool ModelI::initialize(const Ice::Current& current)
     catch(std::exception lC_exp) {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		    lC_exp.what()
-		    << ": unable to save initial simulation state in XML format -- "
+		    << ": unable to save initial simulation state in JSON format -- "
 		    << "continuing...");
     }
   }
@@ -240,17 +232,18 @@ ModelI::outputFunction(const Ice::Current& current)
   efscape::Message lC_message;
 
   // add content to message
-  std::map<std::string, std::string> lC_ClockAttributes;
-  lC_ClockAttributes["time_max"] =
-    boost::lexical_cast<std::string>(mCp_clock->timeMax());
-  boost::property_tree::ptree lC_pt =
-    efscape::utils::map_to_ptree<std::string,std::string>("clock",
-							    lC_ClockAttributes);
-  std::string lC_json_str = efscape::utils::ptree_to_json(lC_pt);
-
+  
+  // add clock (datetime) info
+  Json::Value lC_ClockAttributes;
+  lC_ClockAttributes["clock"]["time_max"] = mCp_clock->timeMax();
+  
   efscape::Content lC_content;
   lC_content.port = "clock_out";
-  lC_content.valueToJson = efscape::utils::ptree_to_json(lC_pt);
+
+  std::ostringstream lC_buffer_out;
+  lC_buffer_out << lC_ClockAttributes;
+  lC_content.valueToJson = lC_buffer_out.str();
+
   lC_message.push_back( lC_content );
 
   translateOutput(current, lC_message);
@@ -366,7 +359,7 @@ ModelI::~ModelI() {}
 void ModelI::outputEvent(adevs::Event<efscape::impl::IO_Type> x, double t)
 {
   mCC_OutputBuffer.insert(x);
-} // end of AdevsModel::outputEvent(...)
+} // end of ModelI::outputEvent(...)
 
 /**
  * Converts messages from the wrapped model for output.
@@ -382,7 +375,7 @@ ModelI::translateInput(const Ice::Current& aCr_current,
 			 adevs::Bag<adevs::Event<efscape::impl::IO_Type> >&
 			 aCr_internal_input)
 {
-  /** @todo Convert JSON inputs into boost::property_tree::ptree objects */
+  /** @todo Convert JSON inputs into Json::Value objects */
 }
 
 /**
@@ -398,26 +391,25 @@ void ModelI::translateOutput(const Ice::Current& aCr_current,
   adevs::Bag< adevs::Event<efscape::impl::IO_Type> >::iterator
     i = mCC_OutputBuffer.begin();
   for ( ; i != mCC_OutputBuffer.end(); i++) {
-    std::cout << "Processing event on port<"
-	      << (*i).value.port << ">...\n";
+    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		  "Processing event on port<"
+		  << (*i).value.port << ">...");
     try {
+      Json::Value lC_value =
+	boost::any_cast<Json::Value>( (*i).value.value );
 
-      // first try to extract a boost::property_tree::ptree
-      if (efscape::utils::is_type<boost::property_tree::ptree>((*i).value.value)) {
+      efscape::Content lC_content;
+      lC_content.port = (*i).value.port;
+	
+      std::ostringstream lC_buffer_out;
+      lC_buffer_out << lC_value;
+      lC_content.valueToJson = lC_buffer_out.str();
 
-	boost::property_tree::ptree pt =
-	  boost::any_cast<boost::property_tree::ptree>( (*i).value.value );
-
-	// generate JSON output from the ptree
-	efscape::Content lC_content;
-	lC_content.port = (*i).value.port;
-	lC_content.valueToJson = efscape::utils::ptree_to_json(pt);
-	aCr_external_output.push_back( lC_content );
-      }
-
+      aCr_external_output.push_back( lC_content );
     }
     catch (const boost::bad_any_cast &) {
-      std::cout << "Unable to translate output\n";
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "Unable to translate output");
     }
   }
 

@@ -25,6 +25,9 @@
 #include <stdexcept>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/algorithm/string.hpp>
+#include <json/json.h>
+
 #include <log4cxx/logger.h>
 #include <log4cxx/basicconfigurator.h>
 
@@ -88,22 +91,29 @@ main(int argc, char* argv[])
   return app.main(argc, argv, lC_config.c_str());
 }
 
+void menu();
+
 int
 EfscapeClient::run(int argc, char* argv[])
 {
   int li_status = EXIT_SUCCESS;
+  std::string lC_parmName = "";
 
-  std::string lC_ModelName = "";
-  std::string lC_ParmName = "";
-  
-  // server requires either:
-  //   - a single parameter: an xml file containing the parameters, or
-  if (argc != 2) {
+  //----------------------------------------------------------------------------
+  // server has a single optional command, the name of a model parameter:
+  //     1. Model parameter for in JSON format (see model metadata)
+  //     2. Cereal serialization JSON format
+  //
+  // If an input file is not specified, the user will be prompted to
+  // select one of the available models, from which a valid parameter file
+  // will be generated.
+  //----------------------------------------------------------------------------
+  if (argc > 2) {
     std::cerr << argv[0] << " usage: " << argv[0]
-	      << " <parmfile>\n";
+	      << " [parmfile]\n";
     return EXIT_FAILURE;
-  } else {
-    lC_ParmName = argv[1];
+  } else if (argc == 2) {
+    lC_parmName = argv[1];
   }
 
   try {
@@ -122,34 +132,86 @@ EfscapeClient::run(int argc, char* argv[])
     LOG4CXX_DEBUG(logger,
 		  "ModelHome accessed successfully!");
 
-    efscape::ModelNameList lC1_ModelNameList =
-      lCp_ModelHome->getModelList();
+    // If no input file has been specified, display a list of all models
+    // currently loaded, and allow the user to select a model and output
+    // a default model parameter file.
+    if (lC_parmName == "") {
+      efscape::ModelNameList lC1_modelList =
+	lCp_ModelHome->getModelList();
 
-    std::cout << "Accessing list of available models\n";
+      std::cout << "** List of available models ***\n";
     
-    for (int i = 0; i < lC1_ModelNameList.size(); i++) {
-      std::cout << "mode #" << i << "=<"
-		<< lC1_ModelNameList[i]
-		<< ">\n";
-      std::string lC_ModelInfo =
-	lCp_ModelHome->getModelInfo(lC1_ModelNameList[i].c_str());
-      std::cout << "\tmodel info=>\n"
-		<< lC_ModelInfo
-		<< "\n";
+      for (int i = 0; i < lC1_modelList.size(); i++) {
+	std::cout << i << ": "
+		  << lC1_modelList[i]
+		  << "\n";
+
+      }
+
+      // menu options
+      std::cout << "\nEnter the number of the model (0 to exit)==> ";
+
+      // process user input
+      int li_userInput = 0;
+      std::string lC_parmString = "";
+      do {
+	std::cin >> li_userInput;
+	if (li_userInput > 0 && li_userInput <= lC1_modelList.size()) {
+	  std::string lC_modelName = lC1_modelList[li_userInput - 1];
+	  std::cout << "Selected model <"
+		    << lC_modelName << ">\n";
+
+	  lC_parmName =
+	    boost::replace_all_copy(lC_modelName,
+				    ":",
+				    "_");
+	  std::cout << "lC_parmName = <" << lC_parmName << ">\n";
+
+	  lC_parmString =
+	    lCp_ModelHome->getModelInfo(lC_modelName.c_str());
+	  
+	} else if ( li_userInput > lC1_modelList.size() ) {
+	  std::cout << "Model index <" << li_userInput << "> out of bounds\n";
+	  lC_parmName = "";
+	  lC_parmString = "";
+	}
+      } while(li_userInput > 0);
+
+      if (lC_parmName != "") {
+	// Write JSON string into a buffer and read the buffer into a JSON
+	// object so that an attribute may be added
+	std::stringstream lC_buffer(lC_parmString);
+	Json::Value lC_jsonParameters;
+	lC_buffer >> lC_jsonParameters;
+
+	// add a "modelName" attribute
+	lC_jsonParameters["modelName"] = lC_parmName;
+
+	// Write the JSON string back into the cleared buffer
+	lC_buffer.clear();
+	lC_buffer << lC_jsonParameters;
+	lC_parmString = lC_buffer.str(); // update the parm string
+	
+	// save the model parameter JSON string to a file
+	lC_parmName += ".json";
+	std::ofstream parmFile(lC_parmName.c_str());
+	parmFile << lC_parmString << std::endl;
+      }
+      return EXIT_SUCCESS;
     }
-    
+
     // try to load the parameter file
-    std::ifstream parmFile(lC_ParmName.c_str());
+    std::ifstream parmFile(lC_parmName.c_str());
 
     // if file can be opened
     std::shared_ptr<efscape::ModelPrx> lCp_Model;
     if ( parmFile ) {
       boost::filesystem::path p =
-	boost::filesystem::path(lC_ParmName.c_str());
+	boost::filesystem::path(lC_parmName.c_str());
 
       LOG4CXX_DEBUG(logger,
 		    "Using input parameter file <"
-		    << lC_ParmName
+		    << lC_parmName
 		    << "> with file extension <"
 		    << p.extension()
 		    << ">");
@@ -244,4 +306,9 @@ EfscapeClient::run(int argc, char* argv[])
   // Ice::collectGarbage();
 
   return li_status;
+}
+
+void menu() {
+  std::cout <<
+    "models:\n";
 }

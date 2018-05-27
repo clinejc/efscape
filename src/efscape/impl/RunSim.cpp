@@ -23,9 +23,13 @@
 // #include <efscape/impl/AdevsModel.hpp>
 #include <efscape/impl/SimRunner.hpp>
 
+// Include for handling JSON
+#include <json/json.h>
+
 #include <boost/filesystem/operations.hpp>
 #include <fstream>
 #include <sstream>
+#include <boost/algorithm/string.hpp>
 
 namespace efscape {
 
@@ -34,7 +38,7 @@ namespace efscape {
     // class variables
     const char* RunSim::mScp_program_name = "efdriver";
     const char* RunSim::mScp_program_version =
-      "version 0.0.4 (2015/06/01)";
+      "version 1.0.1 (2018/05/26)";
 
     /** default constructor */
     RunSim::RunSim() {
@@ -93,25 +97,93 @@ namespace efscape {
 		      "Loading libraries");
 	Singleton<ModelHomeI>::Instance().LoadLibraries();
 
-	// processing argument (should be only 1 input file)
-	std::shared_ptr<DEVS> lCp_model;
+	// processing argument (should be at most 1 input file)
+	std::string lC_parmName = "";
 
-	std::string lC_ParmName = (*this)[0];
+	// If no input file has been specified, display a list of all models
+	// currently loaded, and allow the user to select a model and output
+	// a default model parameter file.
+	if (files() == 0) {
+	  // Get a list of model type ids
+	  std::set<std::string> lC1_modelTypes =
+	    Singleton<ModelHomeI>::Instance().getModelFactory().getTypeIDs();
+
+	  // Show list of model ids and copy list to a vector
+	  std::set<std::string>::iterator iter;
+	  std::vector<std::string> lC1_modelList; // listing of model ids
+	  std::cout << "*** List of available models: ***\n";
+	  for (iter = lC1_modelTypes.begin(); iter != lC1_modelTypes.end();
+	       iter++) {
+	    lC1_modelList.push_back(*iter);
+	    std::cout << lC1_modelList.size()
+		      << ":"
+		      << *iter << std::endl;
+	  }
+
+	  // menu options
+	  std::cout << "Enter the number of the model (0 to exit)==> ";
+
+	  // process user input
+	  int li_userInput = 0;
+	  std::string lC_parmString = "";
+	  do {
+	    std::cin >> li_userInput;
+	    if (li_userInput > 0 && li_userInput <= lC1_modelTypes.size()) {
+	      std::string lC_modelName = lC1_modelList[li_userInput - 1];
+	      std::cout << "Selected model <"
+			<< lC_modelName << ">\n";
+
+	      lC_parmName =
+		boost::replace_all_copy(lC_modelName,
+					":",
+					"_");
+	      std::cout << "lC_parmName = <" << lC_parmName << ">\n";
+
+	      // get model info
+	      Json::Value lC_info =
+		Singleton<ModelHomeI>::Instance().getModelFactory().
+		getProperties(lC_modelName);
+	      lC_info["modelName"] = lC_parmName;
+
+	      std::ostringstream lC_buffer_out;
+	      lC_buffer_out << lC_info;
+	      lC_parmString = lC_buffer_out.str();
+	      std::cout << lC_parmString << std::endl;
+
+
+	    } else if ( li_userInput > lC1_modelTypes.size() ) {
+	      std::cout << "Model index <" << li_userInput << "> out of bounds\n";
+	      lC_parmName = "";
+	      lC_parmString = "";
+	    }
+	  } while(li_userInput > 0);
+
+	  if (lC_parmName != "") {
+	    // save the model parameter JSON string to a file
+	    lC_parmName += ".json";
+	    std::ofstream parmFile(lC_parmName.c_str());
+	    parmFile << lC_parmString << std::endl;
+	  }
+	  return EXIT_SUCCESS;
+	}
+
+	// At this point, there should be a single command line argment,
+	// which should be a valid parameter file name.
+	// Attempt to create model from the specified parameter file
+	std::shared_ptr<DEVS> lCp_model;
+	lC_parmName = (*this)[0];
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "Running with a single parameter <"
-		      << lC_ParmName << ">");
-
-	// attempt to create model from parameter file
+		      << lC_parmName << ">");
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		      "Loading file <" << lC_ParmName << ">");
+		      "Loading file <" << lC_parmName << ">");
 
 	boost::filesystem::path p =
-	  boost::filesystem::path(lC_ParmName.c_str());
-	if (p.extension().string() == ".xml") {
-	    lCp_model = DEVSPtr( loadAdevsFromXML(lC_ParmName.c_str()) );
-	} else if (p.extension().string() == ".json") {
+	  boost::filesystem::path(lC_parmName.c_str());
+	
+	if (p.extension().string() == ".json") {
 	  // try to load the parameter file
-	  std::ifstream parmFile(lC_ParmName.c_str());
+	  std::ifstream parmFile(lC_parmName.c_str());
 
 	  // if file can be opened
 	  if ( parmFile ) {
@@ -131,14 +203,16 @@ namespace efscape {
 		Singleton<ModelHomeI>::Instance().
 		createModelFromParameters(buf.str());
 	    }
-
 	  }
+	}
+	else if (p.extension().string() == ".xml") {
+	    lCp_model = DEVSPtr( loadAdevsFromXML(lC_parmName.c_str()) );
 	}
 
 	if (lCp_model == nullptr) {
 	  LOG4CXX_ERROR(ModelHomeI::getLogger(),
 			"Unable to create model from parameter file <"
-			<< lC_ParmName << ">");
+			<< lC_parmName << ">");
 	  return EXIT_FAILURE;
 	}
 
@@ -174,11 +248,40 @@ namespace efscape {
 
       	}
 
+	//
       	// simulate model until time max
+	//
+	
+	// select an output stream for simulation output 
+	std::streambuf * buf;
+	std::ofstream of;
+	if (out_file() != "") {
+	  of.open(out_file());
+	  buf = of.rdbuf();
+	} else {
+	  buf = std::cout.rdbuf();
+	}
+	std::ostream lC_out(buf);
+	
 	double ld_time = 0.;
       	while ( (ld_time = lCp_simulator.nextEventTime())
       		< ld_timeMax ) {
       	  lCp_simulator.execNextEvent();
+
+	  // 
+	  adevs::Bag<IO_Type> xb;
+	  get_output(xb, lCp_model.get());
+	  adevs::Bag<IO_Type>::iterator i = xb.begin();
+	  for (; i != xb.end(); i++) {
+	    try {
+	      Json::Value lC_messages =
+		boost::any_cast<Json::Value>( (*i).value );
+	      lC_out << lC_messages << std::endl;
+	    }
+	    catch(const boost::bad_any_cast &) {
+	      ;
+	    }
+	  }
       	}
       }
       catch(std::logic_error lC_excp) {
@@ -202,7 +305,7 @@ namespace efscape {
     } // RunSim::execute()
 
     /**
-     * Parses the command line arguements and initializes the command
+     * Parses the command line arguments and initializes the command
      * configuration.
      *
      * @param argc number of command line arguments
@@ -215,7 +318,7 @@ namespace efscape {
       if (li_status != 0)
 	return li_status;
 
-      if (files() < 1 || files() > 2) {
+      if (files() > 2) {
 	usage();
 	return 1;
       }
@@ -232,15 +335,18 @@ namespace efscape {
     {
       std::cerr << "usage:\n"
 		<< program_name() << " "
-		<< "[-d] [-h] [-v] \n\t"
-		<< "[[-i] input_files] (currently ignored)\n\t"
+		<< "[-d] [-h] [-v]\n\t"
+		<< "[[-i] [input_file]]\n\t"
 		<< "[-o output_file]\n\t"
 		<< "param_name\n\n"
 		<< "where [] indicates optional option:\n\n"
 		<< mC_description
 		<< "examples:\n\t\t"
 		<< program_name() << " param_name\n\t\t"
-		<< program_name() << " -d -o output_name param_name\n\n";
+		<< program_name() << " -d -o output_name param_name\n\n"
+		<< "If an input file is not specified, the user will be prompted"
+		<< " to select one of the available models, from which a valid"
+		<< " parameter file will be generated.\n";
 
       exit( exit_value );
     }

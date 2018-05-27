@@ -460,10 +460,10 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = README.md \
-		         src/efscapes \
 		         src/efscape/utils \
 		         src/efscape/impl \
-		         src/efscape/server
+                         src/slice/efscape \
+		         src/src/server
 
 USE_MDFILE_AS_MAINPAGE = README.md
 

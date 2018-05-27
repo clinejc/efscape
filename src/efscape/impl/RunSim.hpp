@@ -23,17 +23,21 @@ namespace efscape {
   namespace impl {
 
     /**
-     * Implements a simple interactive model builder for the efscape modeling
+     * Implements a simple model simulation runner for the efscape modeling
      * framework. It provides a command-line interface derived from the
-     * CommandOpt class.
+     * CommandOpt class. The command 'efdriver' takes a parameter file name
+     * as input. There are 3 different types of valid input files:\n
      *
-     * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.04 created 01 Feb 2008, revised 01 Jun 2015
+     *   1. Model parameter for in JSON format (see model metadata)
+     *   2. Cereal serialization JSON format
+     *   3. Boost serialiation XML format
      *
-     * ChangeLog:
-     *   - 2015-06-01 Added support for loading model configurations from JSON
-     *   - 2014-07-14 Implementation pared down to bare essentials.
-     *   - 2008-02-01 Created class RunSim.
+     * If an input file is not specified, the user will be prompted to
+     * select one of the available models, from which a valid parameter file
+     * will be generated.
+     *
+     * @author Jon Cline <jon.c.cline@gmail.com>
+     * @version 1.0.1 created 01 Feb 2008, revised 26 May 2018
      */
     class RunSim : public efscape::utils::CommandOpt
     {
@@ -55,7 +59,7 @@ namespace efscape {
       void usage( int exit_value = 0 );
 
     private:
-
+      
       /** program name */
       static const char* mScp_program_name;
 
