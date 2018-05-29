@@ -15,6 +15,7 @@
 // __COPYRIGHT_END__
 
 #include <efscape/impl/ModelType.hpp>
+#include <efscape/impl/efscapelib.hpp>
 
 namespace efscape {
   namespace impl {
@@ -95,6 +96,7 @@ namespace efscape {
       lC_attributes["typeName"] = mC_typeName;
       lC_attributes["description"] = mC_description;
       lC_attributes["libraryName"] = mC_libraryName;
+      lC_attributes["url"] = gcp_liburl;
       lC_attributes["version"] = mi_version;
 
       lC_attributes["ports"]["inputs"] = mC_inputPorts;

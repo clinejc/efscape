@@ -27,6 +27,7 @@ namespace efscape {
   namespace impl {
 
     char const gcp_libname[] = "libefscape-impl";
+    char const gcp_liburl[] = "https://github.com/clinejc/efscape.git";
 
     /**
      * Helper function for injecting a bag events into a model.

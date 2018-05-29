@@ -34,6 +34,7 @@ namespace efscape {
   namespace impl {
 
     extern char const gcp_libname[]; // library name
+    extern char const gcp_liburl[];  // library url
 
     // define the base adevs io type and cell event for the efscape library
     typedef std::string PortType;
