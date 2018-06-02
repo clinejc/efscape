@@ -23,13 +23,11 @@ lib_LTLIBRARIES = libefscape-ice.la
 
 libefscape_ice_la_LIBADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 libefscape_ice_la_LIBADD += $(top_srcdir)/src/slice/efscape/libefscape-idl.la
+#libefscape_ice_la_LIBADD += $(RHPC_LIBS)
+libefscape_ice_la_LIBADD += $(ICE_LIBS)
 libefscape_ice_la_LIBADD += $(DEPS_LIBS)
 
 libefscape_ice_la_SOURCES=  $(hh_sources) $(cc_sources)
-
-#library_includedir = $(includedir)/$(GENERIC_LIBRARY_NAME)/server
-#library_includedir = $(includedir)/efscape/server
-#library_include_HEADERS = $(hh_sources)
 
 # programs
 bin_PROGRAMS = efserver
@@ -40,6 +38,7 @@ efserver_SOURCES = $(top_srcdir)/src/efscape/impl/driver.cpp
 
 efserver_LDADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 efserver_LDADD += libefscape-ice.la
+efserver_LDADD += $(ICE_LIBS)
 efserver_LDADD += $(BOOST_MPI_LIBS)
 efserver_LDADD += $(BOOST_REGEX_LIBS)
 efserver_LDADD += $(DEPS_LIBS)
@@ -48,6 +47,7 @@ efserver_LDADD += $(NETCDF_CXX_LIBS)
 # efclient: ICE client for efscape simulator
 efclient_SOURCES = Client.cpp
 efclient_LDADD = $(top_srcdir)/src/slice/efscape/libefscape-idl.la
+efclient_LDADD += $(ICE_LIBS)
 efclient_LDADD += $(BOOST_FILESYSTEM_LIBS)
 efclient_LDADD += $(BOOST_SYSTEM_LIBS)
 efclient_LDADD += $(DEPS_LIBS)

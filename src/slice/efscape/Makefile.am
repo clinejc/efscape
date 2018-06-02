@@ -22,6 +22,7 @@ impl_sources += ModelHomeI.h ModelHomeI.cpp
 
 AM_CPPFLAGS = -DICE_CPP11_MAPPING
 AM_CPPFLAGS += -I$(top_srcdir)/src/slice
+AM_CPPFLAGS += $(ICE_CFLAGS)
 AM_CPPFLAGS += $(DEPS_CFLAGS)
 
 noinst_LTLIBRARIES = libefscape-idl.la

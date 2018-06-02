@@ -32,19 +32,20 @@ lib_LTLIBRARIES = libefscape-impl.la
 
 AM_CPPFLAGS = -DICE_CPP11_MAPPING # needed for ZeroC Ice c++ mappings
 AM_CPPFLAGS += -I$(top_srcdir)/src
+AM_CPPFLAGS += $(RHPC_CFLAGS)
 AM_CPPFLAGS += $(DEPS_CFLAGS)
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 libefscape_impl_la_LDFLAGS = $(BOOST_SERIALIZATION_LDFLAGS)
 
 libefscape_impl_la_LIBADD = $(top_srcdir)/src/efscape/utils/libefscape-utils.la
+libefscape_impl_la_LIBADD += $(RHPC_LIBS)
 libefscape_impl_la_LIBADD += $(BOOST_SERIALIZATION_LIBS)
 libefscape_impl_la_LIBADD += $(BOOST_MPI_LIBS)
 libefscape_impl_la_LIBADD += $(BOOST_FILESYSTEM_LIBS)
 libefscape_impl_la_LIBADD += $(BOOST_SYSTEM_LIBS)
 libefscape_impl_la_LIBADD += $(BOOST_PROGRAM_OPTIONS_LIBS)
 libefscape_impl_la_LIBADD += $(BOOST_DATE_TIME_LIBS)
-libefscape_impl_la_LIBADD += $(NETCDF_CXX_LIBS)
 libefscape_impl_la_LIBADD += $(DEPS_LIBS)
 libefscape_impl_la_LIBADD += -lltdl
 
