@@ -25,36 +25,18 @@ This project is derived from earlier efforts by this author to design and deply 
     * Added patch to support interactive execution of simulations
 and simulation (ABMS) toolkit for high performance distributed computing platforms
 + [ZeroC Ice (Interconnect Connection Engine)](https://zeroc.com/) (>=3.7) -- Comprehensive RPC framework
-+ [cereal](https://uscilab.github.io/cereal/) () -- C++11 library for serialization
++ [cereal](https://uscilab.github.io/cereal/) (>=1.2) -- C++11 library for serialization
 
 ## Installation
-First patch and install adevs:
+To install efscape along with patched versions of adevs and Repast HPC:
 ```
-$ cd adevs-3.3
-$ patch -p1 -i ../efscape/ext/adevs-3.3.patch
-$ chmod +x autogen.sh
-$ ./autogen.sh
-$ ./configure --prefix=[PREFIX]
-$ make install
+$ ./install.sh all [PREFIX]
 ```
-
-Next, patch and install repast_hpc
-```
-$ cd ../repast_hpc-2.2.0
-$ patch -p1 -i ../efscape/ext/repast_hpc-2.2.0.patch
-$ cp -p pkgconfig/repast.pc [PREFIX]/lib/pkgconfig
-```
-
-The current version of efscape uses autoconf, so the standard autoconf install
-instructions apply. For initial set-up of the configure, run
-
-```
-$ ./autogen.sh
-$ ./configure --prefix=[PREFIX]
-$ make install
-```
+See *./install.sh help* for more details.
 
 ### Key environment variables:
++ ICE_HOME: install prefix for ZeroC Ice
++ RHPC_HOME: install prefix for Repast HPC
 + EFSCAPE_PATH: path of the source
 + EFSCAPE_REPOSITORY: libdir path for all efscape model libraries (default location: PREFIX/lib/efscape)
 + EFSCAPE_HOME: efscape server home
