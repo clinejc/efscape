@@ -39,8 +39,8 @@ dnl -----------------------------------------------
 PKG_CHECK_MODULES(DEPS,
 	adevs >= 3.0
 	jsoncpp >= 1.8.0
-	liblog4cxx > 0.1)
-#	repast >= 2.0)
+	liblog4cxx > 0.1
+	repast_hpc >= 2.0)
 
 BOOST_REQUIRE([1.60])
 
@@ -58,15 +58,9 @@ BOOST_PROGRAM_OPTIONS()
 BOOST_DATE_TIME()
 BOOST_REGEX()
 
-# Repast HPC
-RHPC_CFLAGS="-I$RHPC_HOME/include"
-RHPC_LIBS="-L$RHPC_HOME/lib -lrepast_hpc-2.2.0 -lrelogo-2.2.0"
-AC_SUBST(RHPC_CFLAGS)
-AC_SUBST(RHPC_LIBS)
-
 # Zeroc Ice
-ICE_CFLAGS="-I$ICE_HOME"
-ICE_LIBS="-L$ICE_HOME/include -lGlacier2 -lIce++11 -lIceBox++11 -lIceGrid++11 -lIcePatch2 -lIceSSL++11 -lIceStorm++11"
+ICE_CFLAGS="-I$ICE_HOME/include"
+ICE_LIBS="-L$ICE_HOME/lib -lGlacier2 -lIce++11 -lIceBox++11 -lIceGrid++11 -lIcePatch2 -lIceSSL++11 -lIceStorm++11"
 AC_SUBST(ICE_CFLAGS)
 AC_SUBST(ICE_LIBS)
 

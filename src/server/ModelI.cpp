@@ -57,61 +57,20 @@ bool ModelI::initialize(const Ice::Current& current)
     ( new adevs::Simulator<efscape::impl::IO_Type>(lCp_model) );
   mCp_simulator->addEventListener(this);
 
-  // initialize the simulation clock
-  mCp_clock.reset(new efscape::impl::ClockI);
-
-  efscape::impl::SimRunner* lCp_RootModel =
-    dynamic_cast<efscape::impl::SimRunner*>(lCp_model);
-  std::string lC_ParmName("efscape.json"); // model parameter file
-  if (lCp_RootModel) {
-    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		  "Setting simulation environment from root model attributes");
-    mCp_clock = lCp_RootModel->getClockIPtr();
-    // lC_ParmName =
-    //   lCp_RootModel->getWorkDir() + "/" +
-    //   lCp_RootModel->name() + ".xml";
-  }
+  std::string lC_ParmName; // model parameter file
+  lC_ParmName = mC_name + ".json";
+     
   LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		"Setting the simulation clock");
 
   try {
     // compute the initial state of the model
-
-    // if (!efscape::impl::initializeModel(lCp_model) )
-    //   // initialize wrapped model
-    //   LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-    // 		"Unable to initialize DEVS model -- continuing anyway")
-
     while ( mCp_simulator->nextEventTime() == 0) {
       mCp_simulator->execNextEvent();
     }
     if ( mCp_simulator->nextEventTime() < DBL_MAX) {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		    "The simulation model is ready to run!");
-
-      // now check if there is initial output from the model
-      adevs::Bag< efscape::impl::IO_Type > yb;
-      efscape::impl::get_output( yb,
-				 mCp_WrappedModel.get() );
-      adevs::Bag< efscape::impl::IO_Type >::iterator
-	i = yb.begin();
-      for ( ; i != yb.end(); i++) {
-	try {
-	  // if there is there is a property tree in the output,
-	  // attempt to extract time parameters for the simulation
-	  Json::Value lC_value =
-	    boost::any_cast<Json::Value>( (*i).value );
-	  if (lC_value.isMember("timeMax")) {
-	    mCp_clock->timeMax() = lC_value["timeMax"].asDouble();
-	    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-			  "Setting the simulation stop time to "
-			  << mCp_clock->timeMax());
-	  }
-	}
-	catch (const boost::bad_any_cast &) {
-	  ;
-	}
-      } // for ( ; i != yb.end(); i++ )
     }
     else
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -147,8 +106,7 @@ bool ModelI::initialize(const Ice::Current& current)
  */
 Ice::Double ModelI::timeAdvance(const Ice::Current& current)
 {
-  return (mCp_clock->time() =
-	  mCp_simulator->nextEventTime());
+  return ( mCp_simulator->nextEventTime() );
 }
 
 /**
@@ -232,20 +190,6 @@ ModelI::outputFunction(const Ice::Current& current)
   efscape::Message lC_message;
 
   // add content to message
-  
-  // add clock (datetime) info
-  Json::Value lC_ClockAttributes;
-  lC_ClockAttributes["clock"]["time_max"] = mCp_clock->timeMax();
-  
-  efscape::Content lC_content;
-  lC_content.port = "clock_out";
-
-  std::ostringstream lC_buffer_out;
-  lC_buffer_out << lC_ClockAttributes;
-  lC_content.valueToJson = lC_buffer_out.str();
-
-  lC_message.push_back( lC_content );
-
   translateOutput(current, lC_message);
 
   LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),

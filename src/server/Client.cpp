@@ -142,7 +142,8 @@ EfscapeClient::run(int argc, char* argv[])
       std::cout << "** List of available models ***\n";
     
       for (int i = 0; i < lC1_modelList.size(); i++) {
-	std::cout << i << ": "
+	int idx = i + 1;
+	std::cout << idx << ": "
 		  << lC1_modelList[i]
 		  << "\n";
 

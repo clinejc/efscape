@@ -202,36 +202,25 @@ namespace efscape {
      */
     template <class ModelType>
     void RepastModelWrapper<ModelType>::output_func(adevs::Bag<IO_Type>& yb) {
-      // copy the model properties to a boost::property_tree::ptree
+      // copy the model properties to a JSON::Value object
       const repast::Properties& lCr_properties = mCp_model->getProperties();
       repast::Properties::key_iterator iter = lCr_properties.keys_begin();
-      boost::property_tree::ptree lC_ptree;
+
+      Json::Value lC_parameters;
       for ( ; iter != lCr_properties.keys_end(); iter++) {
-	lC_ptree.put( *iter,
-		      lCr_properties.getProperty(*iter) );
+	lC_parameters[*iter] = lCr_properties.getProperty(*iter);
       }
 
       // output properties map
       efscape::impl::IO_Type y("properties_out",
-			       lC_ptree);
+			       lC_parameters);
       yb.insert(y);
 
       // get model output
       repast::ScheduleRunner& runner =
 	repast::RepastProcess::instance()->getScheduleRunner();
 
-      // std::map< std::string, boost::any > lC_output =
-      // 	mCp_model->getOutput();
-      // std::map< std::string, boost::any >::iterator iter2 =
-      // 	lC_output.begin();
-      // for ( ; iter2 != lC_output.end(); iter2++) {
-      // 	y.port = iter2->first;
-      // 	y.value = iter2->second;
-      // 	yb.insert(y);
-      // }
-
-      // boost::property_tree::ptree lC_output =
-      Json::Value lC_output =
+     Json::Value lC_output =
 	mCp_model->outputFunction();
       // BOOST_FOREACH(boost::property_tree::ptree::value_type &v,
       // 		    lC_output.get_child("")) {

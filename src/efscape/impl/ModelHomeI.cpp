@@ -15,7 +15,6 @@
 // __COPYRIGHT_END__
 #include <efscape/impl/ModelHomeI.hpp> // class declaration
 
-#include <efscape/impl/SimRunner.hpp> // SimRunner for wrapping models
 #include <log4cxx/propertyconfigurator.h> // logging
 
 // Include for handling JSON
@@ -186,15 +185,30 @@ namespace efscape {
 		    << lC_buffer.str());
 
       // Load JSON from buffer into Json::Value
-      Json::Value lC_jsonParameters;
-      lC_buffer >> lC_jsonParameters;
+      Json::Value lC_parameters;
+      lC_buffer >> lC_parameters;
 
-      // Attempt to create the specified model with a SimRunner wrapper
-      SimRunner* lCp_simRunner = new SimRunner(lC_jsonParameters);
-      DEVSPtr lCp_model(lCp_simRunner);
-
-      if (lCp_simRunner->getWrappedModel() == nullptr)
+      // retrieve <typeName>
+      //
+      Json::Value lC_modelTypeNameValue = lC_parameters["typeName"];
+      if (!lC_modelTypeNameValue.isString()) {
+	LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		      "Missing <typeName>");
 	return DEVSPtr();
+      }
+
+      std::string lC_modelTypeName = lC_modelTypeNameValue.asString();
+
+      // retrieve the model properties
+      //
+      Json::Value lC_modelProperties = lC_parameters["properties"];
+
+      // load and set wrapped model
+      //      
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		    "Retrieving the model from the factory");
+      DEVSPtr lCp_model( getModelFactory()
+			 .createObject( lC_modelTypeName, lC_modelProperties ) );
 
       return lCp_model;
 

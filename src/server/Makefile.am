@@ -23,7 +23,6 @@ lib_LTLIBRARIES = libefscape-ice.la
 
 libefscape_ice_la_LIBADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
 libefscape_ice_la_LIBADD += $(top_srcdir)/src/slice/efscape/libefscape-idl.la
-#libefscape_ice_la_LIBADD += $(RHPC_LIBS)
 libefscape_ice_la_LIBADD += $(ICE_LIBS)
 libefscape_ice_la_LIBADD += $(DEPS_LIBS)
 
