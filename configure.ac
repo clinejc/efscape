@@ -90,5 +90,6 @@ AC_CONFIG_FILES([Makefile
 		 src/slice/efscape/Makefile
 		 src/server/Makefile
 		 examples/Makefile
-		 examples/gpt/Makefile])
+		 examples/gpt/Makefile
+		 examples/zombie/Makefile])
 AC_OUTPUT

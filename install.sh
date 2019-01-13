@@ -47,6 +47,8 @@ function install_repast_hpc {
   cmake -DCMAKE=Release -DCMAKE_INSTALL_PREFIX=$PREFIX_DIR ../src
   make install
   cd ..
+  ./configure --prefix=$PREFIX_DIR
+  make install
 }
 
 function install_efscape {
@@ -83,7 +85,7 @@ if [ $# -gt '1' ]; then
     PREFIX_DIR=$2
 fi
 
-BUILD_DIR=$PWD/../efscape-ext/
+BUILD_DIR=$PWD/ext/build
 if [ ! -e $BUILD_DIR ]; then
   mkdir $BUILD_DIR
 fi

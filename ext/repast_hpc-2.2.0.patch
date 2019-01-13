@@ -1,6 +1,6 @@
 diff -Naur repast_hpc-2.2.0/cmake/Modules/FindNetCDF.cmake repast_hpc-2.2.0~patched/cmake/Modules/FindNetCDF.cmake
 --- repast_hpc-2.2.0/cmake/Modules/FindNetCDF.cmake	1969-12-31 19:00:00.000000000 -0500
-+++ repast_hpc-2.2.0~patched/cmake/Modules/FindNetCDF.cmake	2017-03-04 11:15:10.000000000 -0500
++++ repast_hpc-2.2.0~patched/cmake/Modules/FindNetCDF.cmake	2019-01-11 19:39:42.000000000 -0500
 @@ -0,0 +1,71 @@
 +# - Find NetCDF
 +# Find the native NetCDF includes and library
@@ -76,8 +76,8 @@ diff -Naur repast_hpc-2.2.0/cmake/Modules/FindNetCDF.cmake repast_hpc-2.2.0~patc
 \ No newline at end of file
 diff -Naur repast_hpc-2.2.0/src/CMakeLists.txt repast_hpc-2.2.0~patched/src/CMakeLists.txt
 --- repast_hpc-2.2.0/src/CMakeLists.txt	1969-12-31 19:00:00.000000000 -0500
-+++ repast_hpc-2.2.0~patched/src/CMakeLists.txt	2018-06-20 18:10:59.000000000 -0400
-@@ -0,0 +1,300 @@
++++ repast_hpc-2.2.0~patched/src/CMakeLists.txt	2019-01-11 19:27:18.000000000 -0500
+@@ -0,0 +1,301 @@
 +project(repast_hpc_project)
 +
 +cmake_minimum_required(VERSION 3.0)
@@ -374,13 +374,14 @@ diff -Naur repast_hpc-2.2.0/src/CMakeLists.txt repast_hpc-2.2.0~patched/src/CMak
 +INSTALL(FILES ${relogo_headers}
 +	DESTINATION include/relogo)
 +
++set(exec_prefix ${CMAKE_INSTALL_PREFIX})
 +CONFIGURE_FILE("repast_hpc.pc.in" "repast_hpc.pc" @ONLY)
 +
 +INSTALL(FILES "${CMAKE_BINARY_DIR}/repast_hpc.pc"
 +	        DESTINATION lib/pkgconfig)
 diff -Naur repast_hpc-2.2.0/src/relogo/SimulationRunnerPlus.h repast_hpc-2.2.0~patched/src/relogo/SimulationRunnerPlus.h
 --- repast_hpc-2.2.0/src/relogo/SimulationRunnerPlus.h	1969-12-31 19:00:00.000000000 -0500
-+++ repast_hpc-2.2.0~patched/src/relogo/SimulationRunnerPlus.h	2018-06-01 19:12:34.000000000 -0400
++++ repast_hpc-2.2.0~patched/src/relogo/SimulationRunnerPlus.h	2019-01-11 19:39:42.000000000 -0500
 @@ -0,0 +1,187 @@
 +/*
 + *   Repast for High Performance Computing (Repast HPC)
@@ -571,7 +572,7 @@ diff -Naur repast_hpc-2.2.0/src/relogo/SimulationRunnerPlus.h repast_hpc-2.2.0~p
 +#endif /* SIMULATIONRUNNERPLUS_HPP_ */
 diff -Naur repast_hpc-2.2.0/src/repast_hpc/Schedule.cpp repast_hpc-2.2.0~patched/src/repast_hpc/Schedule.cpp
 --- repast_hpc-2.2.0/src/repast_hpc/Schedule.cpp	2016-09-28 16:24:17.000000000 -0400
-+++ repast_hpc-2.2.0~patched/src/repast_hpc/Schedule.cpp	2018-06-01 19:12:34.000000000 -0400
++++ repast_hpc-2.2.0~patched/src/repast_hpc/Schedule.cpp	2019-01-11 19:39:42.000000000 -0500
 @@ -175,21 +175,27 @@
  	endEvents.push_back(func);
  }
@@ -615,7 +616,7 @@ diff -Naur repast_hpc-2.2.0/src/repast_hpc/Schedule.cpp repast_hpc-2.2.0~patched
  
 diff -Naur repast_hpc-2.2.0/src/repast_hpc/Schedule.h repast_hpc-2.2.0~patched/src/repast_hpc/Schedule.h
 --- repast_hpc-2.2.0/src/repast_hpc/Schedule.h	2016-09-28 16:24:17.000000000 -0400
-+++ repast_hpc-2.2.0~patched/src/repast_hpc/Schedule.h	2018-06-01 19:12:34.000000000 -0400
++++ repast_hpc-2.2.0~patched/src/repast_hpc/Schedule.h	2019-01-11 19:39:42.000000000 -0500
 @@ -301,6 +301,25 @@
  	}
  
@@ -658,7 +659,7 @@ diff -Naur repast_hpc-2.2.0/src/repast_hpc/Schedule.h repast_hpc-2.2.0~patched/s
  }
 diff -Naur repast_hpc-2.2.0/src/repast_hpc/SharedBaseGrid.h repast_hpc-2.2.0~patched/src/repast_hpc/SharedBaseGrid.h
 --- repast_hpc-2.2.0/src/repast_hpc/SharedBaseGrid.h	2016-09-28 16:24:17.000000000 -0400
-+++ repast_hpc-2.2.0~patched/src/repast_hpc/SharedBaseGrid.h	2018-06-01 19:12:34.000000000 -0400
++++ repast_hpc-2.2.0~patched/src/repast_hpc/SharedBaseGrid.h	2019-01-11 19:39:42.000000000 -0500
 @@ -456,9 +456,11 @@
        Point<GPType> loc(locationVector);
        if(!unbuffered.contains(loc)){
@@ -676,7 +677,7 @@ diff -Naur repast_hpc-2.2.0/src/repast_hpc/SharedBaseGrid.h repast_hpc-2.2.0~pat
        }
 diff -Naur repast_hpc-2.2.0/src/repast_hpc.pc.in repast_hpc-2.2.0~patched/src/repast_hpc.pc.in
 --- repast_hpc-2.2.0/src/repast_hpc.pc.in	1969-12-31 19:00:00.000000000 -0500
-+++ repast_hpc-2.2.0~patched/src/repast_hpc.pc.in	2018-06-20 17:47:17.000000000 -0400
++++ repast_hpc-2.2.0~patched/src/repast_hpc.pc.in	2019-01-11 19:39:42.000000000 -0500
 @@ -0,0 +1,10 @@
 +prefix=@DEST_DIR@
 +exec_prefix=@exec_prefix@
@@ -690,7 +691,7 @@ diff -Naur repast_hpc-2.2.0/src/repast_hpc.pc.in repast_hpc-2.2.0~patched/src/re
 +Cflags: -I${includedir}
 diff -Naur repast_hpc-2.2.0/src/zombie/ZombieObserver.cpp repast_hpc-2.2.0~patched/src/zombie/ZombieObserver.cpp
 --- repast_hpc-2.2.0/src/zombie/ZombieObserver.cpp	2016-09-28 16:24:17.000000000 -0400
-+++ repast_hpc-2.2.0~patched/src/zombie/ZombieObserver.cpp	2018-06-01 19:12:34.000000000 -0400
++++ repast_hpc-2.2.0~patched/src/zombie/ZombieObserver.cpp	2019-01-11 19:39:42.000000000 -0500
 @@ -66,7 +66,7 @@
    if (_rank == 0) {
      Log4CL::instance()->get_logger("root").log(INFO, "TICK BEGINS: " + boost::lexical_cast<string>(RepastProcess::instance()->getScheduleRunner().currentTick()));
@@ -702,7 +703,7 @@ diff -Naur repast_hpc-2.2.0/src/zombie/ZombieObserver.cpp repast_hpc-2.2.0~patch
    get(zombies);
 diff -Naur repast_hpc-2.2.0/src/zombie/ZombieObserver.cpp~orig repast_hpc-2.2.0~patched/src/zombie/ZombieObserver.cpp~orig
 --- repast_hpc-2.2.0/src/zombie/ZombieObserver.cpp~orig	1969-12-31 19:00:00.000000000 -0500
-+++ repast_hpc-2.2.0~patched/src/zombie/ZombieObserver.cpp~orig	2018-06-01 19:12:34.000000000 -0400
++++ repast_hpc-2.2.0~patched/src/zombie/ZombieObserver.cpp~orig	2019-01-11 19:39:42.000000000 -0500
 @@ -0,0 +1,182 @@
 +/*
 + *   Repast for High Performance Computing (Repast HPC)
@@ -888,7 +889,7 @@ diff -Naur repast_hpc-2.2.0/src/zombie/ZombieObserver.cpp~orig repast_hpc-2.2.0~
 +}
 diff -Naur repast_hpc-2.2.0/src/zombie/model-1cpu.props repast_hpc-2.2.0~patched/src/zombie/model-1cpu.props
 --- repast_hpc-2.2.0/src/zombie/model-1cpu.props	1969-12-31 19:00:00.000000000 -0500
-+++ repast_hpc-2.2.0~patched/src/zombie/model-1cpu.props	2018-06-01 19:12:34.000000000 -0400
++++ repast_hpc-2.2.0~patched/src/zombie/model-1cpu.props	2019-01-11 19:39:42.000000000 -0500
 @@ -0,0 +1,22 @@
 +#random.seed = 1284067381
 +stop.at = 10
