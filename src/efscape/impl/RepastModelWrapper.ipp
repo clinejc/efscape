@@ -27,7 +27,7 @@
 #include <json/json.h>
 
 // boost definitions
-#include <boost/foreach.hpp>
+// #include <boost/foreach.hpp>
 
 // other definitions
 #include <log4cxx/logger.h>
@@ -37,6 +37,9 @@ namespace efscape {
   namespace impl {
 
     // instantiate class data members
+    template <class ModelType>
+    const efscape::impl::PortType RepastModelWrapper<ModelType>::initialize_in =
+      "initialize_in";
     template <class ModelType>
     const efscape::impl::PortType RepastModelWrapper<ModelType>::properties_in =
       "properties_in";
@@ -50,6 +53,33 @@ namespace efscape {
     RepastModelWrapper<ModelType>::RepastModelWrapper() :
       ATOMIC()
     {
+      init();
+    } // RepastModelWrapper<ModelType>::RepastModel()
+
+    /**
+     * constructor with argument in JSON format
+     *
+     * @tparameter ModelType wrapped Repast HPC model class
+     * @param aC_args JSON containing model attributes
+      */
+    template <class ModelType>
+    RepastModelWrapper<ModelType>::RepastModelWrapper(Json::Value aC_args) :
+      ATOMIC()
+    {
+      init(aC_args);
+    } // RepastModelWrapper<ModelType>::RepastModel(Json::Value)
+
+    /**
+     * Init function.
+     *
+     * Initilizes the wrapped Repast HPC model
+     *
+     * @tparameter ModelType wrapped Repast HPC model class
+     * @param aC_args
+     */
+    template <class ModelType>
+    void RepastModelWrapper<ModelType>::init(Json::Value aC_args) {
+      
       std::string lC_id = efscape::utils::type< RepastModelWrapper<ModelType> >(*this);
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		    "Creating <"
@@ -85,8 +115,33 @@ namespace efscape {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		    "===> Completed configuration of <"
 		    << lC_id << ">");
+      
+      // 4) Copy JSON attributes to repast Properties
+      repast::Properties lC_props;
+      if (aC_args.isObject()) {
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "aC_args is an object")
+      	for (Json::Value::const_iterator it=aC_args.begin(); it!=aC_args.end();
+      	     ++it) {
+	  std::string lC_key = it.key().asString();
+	  std::string lC_value = it->asString();
+	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+			"Setting property <"
+			<< lC_key
+			<< "> = <"
+			<< lC_value
+			<< ">");
 
-    } // RepastModelWrapper<ModelType>::RepastModel()
+      	  lC_props.putProperty( lC_key,
+      	  		        lC_value );
+      	}
+      } else {
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "aC_args is not an object");
+      }
+           
+      mCp_model->setProperties(lC_props);
+    }
 
     /**
      * destructor
@@ -132,11 +187,18 @@ namespace efscape {
       // Attempt to "consume" input
       adevs::Bag<efscape::impl::IO_Type>::const_iterator i = xb.begin();
 
-
       for (; i != xb.end(); i++) {
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		      "RepastModel input on port <"
 		      << (*i).port << ">");
+	if ( (*i).port == initialize_in) { // event on <properties_in> port
+	    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+			  "Found port=" << initialize_in);
+	}
+	//     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+	// 		  "Initializing repast model...");
+	//     mCp_model->init();		     // 
+	// } else
 	if ( (*i).port == properties_in) { // event on <properties_in> port
 	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 			"Found port=" << properties_in);
@@ -169,7 +231,7 @@ namespace efscape {
 	      // 			     rowPair.second.get_value<std::string>() );
 	      // }
 	      
-	      mCp_model->setup(lC_props);
+	      mCp_model->setProperties(lC_props);
 	    }
 	  }
 	  catch(const boost::bad_any_cast &) {

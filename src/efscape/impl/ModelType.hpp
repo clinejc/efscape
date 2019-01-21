@@ -42,7 +42,7 @@ namespace efscape {
      * A simple struction for hold information about an object class
      *
      * @author Jon Cline <clinej@alumni.stanford.edu>
-     * @version 0.0.3 created 13 Jul 2017, updated 14 Aug 2017
+     * @version 0.0.4 created 13 Jul 2017, updated 17 Jan 2019
      */
     class ModelType
     {
@@ -90,28 +90,10 @@ namespace efscape {
 
     protected:
 
-      /** model type name */
-      std::string mC_typeName;
+      /** model type attributes */
+      Json::Value mC_attributes;
 
-      /** description */
-      std::string mC_description;
-
-      /** library name */
-      std::string mC_libraryName;
-
-      /** model type version */
-      int mi_version;
-
-      /** input ports */
-      Json::Value mC_inputPorts;
-
-      /** output ports */
-      Json::Value mC_outputPorts;
-
-      /** model properties */
-      Json::Value mC_properties;
-      
-    };				// class ModelType
+   };				// class ModelType
     
   } // namespace impl
 } // namespace efscape

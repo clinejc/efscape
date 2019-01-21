@@ -22,6 +22,7 @@
 
 #include <efscape/impl/efscapelib.hpp>
 #include <repast_hpc/Properties.h>
+#include <json/json.h>
 
 namespace efscape {
   namespace impl {
@@ -30,15 +31,18 @@ namespace efscape {
      * Provides an ADEVS wrapper template class for Repast HPC models.
      * <br><br>
      * Assumes that the wrapped model has implemented a single function:
-     *  -# void setup(repast::Properties&)
+     *  -# void setProperties(repast::Properties&)
      *  -# const repast::Properties& getProperties()
-     *  -# std::map<std::string,boost::any> getOutput()
-     *    - Should return only output available for recording
+     *  -# void init()
+     *  -# Json::Value 
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.3 created 09 Aug 2014, updated 05 Nov 2014
+     * @version 0.0.5 created 09 Aug 2014, updated 21 Jun 2018
      *
      * ChangeLog:
+     *  - 2018-06-21 changed output_func(...) to output data in JSON format
+     *    using jsconcpp instead of boost::property_tree::ptree
+     *  - 2017-07-08 replaced boost::scoped_ptr with std::unique_ptr 
      *  - 2014-11-06 implemented output_func(...)
      *    - added output of properties as a property_tree
      *    - added support for mCp_model->getOutput()
@@ -53,6 +57,7 @@ namespace efscape {
     public:
 
       RepastModelWrapper();
+      RepastModelWrapper(Json::Value aC_args);
       virtual ~RepastModelWrapper();
 
       //-------------------
@@ -80,10 +85,13 @@ namespace efscape {
       //-----------------
       // devs model ports
       //-----------------
+      static const efscape::impl::PortType initialize_in;
       static const efscape::impl::PortType properties_in;
 
     private:
 
+      void init(Json::Value aC_properties = Json::Value());
+	
       template<class Archive>
       void serialize(Archive & ar, const unsigned int version) const
       {

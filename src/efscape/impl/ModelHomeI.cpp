@@ -206,9 +206,18 @@ namespace efscape {
       // load and set wrapped model
       //      
       LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-		    "Retrieving the model from the factory");
+		    "Attempting to create a model of type <"
+		    << lC_modelTypeName
+		    << "> from the factory");
       DEVSPtr lCp_model( getModelFactory()
 			 .createObject( lC_modelTypeName, lC_modelProperties ) );
+
+       if (lCp_model == nullptr) {
+         LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		      "Failed to retrieve a model of type <"
+          << lC_modelTypeName
+          << "> from the factory");
+       }
 
       return lCp_model;
 

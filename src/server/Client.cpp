@@ -155,22 +155,56 @@ EfscapeClient::run(int argc, char* argv[])
       // process user input
       int li_userInput = 0;
       std::string lC_parmString = "";
+      std::string lC_modelName;
       do {
 	std::cin >> li_userInput;
 	if (li_userInput > 0 && li_userInput <= lC1_modelList.size()) {
-	  std::string lC_modelName = lC1_modelList[li_userInput - 1];
+	  lC_modelName = lC1_modelList[li_userInput - 1];
 	  std::cout << "Selected model <"
 		    << lC_modelName << ">\n";
 
-	  lC_parmName =
-	    boost::replace_all_copy(lC_modelName,
-				    ":",
-				    "_");
-	  std::cout << "lC_parmName = <" << lC_parmName << ">\n";
-
+	  // Write JSON string into a buffer and read the buffer into a JSON
+	  // object so that an attribute may be added
 	  lC_parmString =
 	    lCp_ModelHome->getModelInfo(lC_modelName.c_str());
 	  
+	  std::stringstream lC_buffer(lC_parmString);
+	  Json::Value lC_jsonParameters;
+	  lC_buffer >> lC_jsonParameters;
+	  if (lC_jsonParameters.isMember("modelName")) {
+	    lC_parmName = lC_jsonParameters["modelName"].asString();
+	    // replace ':'s from namespace separates with '_'s
+	    lC_parmName =
+	      boost::replace_all_copy(lC_parmName,
+				      ":",
+				      "_");
+	  } else {
+	    // generate 'modelName' from class name
+	    // 1. first replace ':'s from namespace separates with '_'s
+	    lC_parmName =
+	      boost::replace_all_copy(lC_modelName,
+				      ":",
+				      "_");
+	    // 2. Next replace leading '<' for template class names with '.'
+	    lC_parmName =
+	      boost::replace_all_copy(lC_parmName,
+				      "<",
+				      ".");
+	    // 3. Remove trailing '>' from template class names
+	    lC_parmName =
+	      boost::replace_all_copy(lC_parmName,
+				      ">",
+				      "");
+	    // add a "modelName" attribute
+	    lC_jsonParameters["modelName"] = lC_parmName;
+
+	    // Write the JSON string back into the cleared buffer
+	    lC_buffer.clear();
+	    lC_buffer << lC_jsonParameters;
+	    lC_parmString = lC_buffer.str(); // update the parm string
+	  }
+	  std::cout << "lC_parmName = <" << lC_parmName << ">\n";
+
 	} else if ( li_userInput > lC1_modelList.size() ) {
 	  std::cout << "Model index <" << li_userInput << "> out of bounds\n";
 	  lC_parmName = "";
@@ -179,20 +213,6 @@ EfscapeClient::run(int argc, char* argv[])
       } while(li_userInput > 0);
 
       if (lC_parmName != "") {
-	// Write JSON string into a buffer and read the buffer into a JSON
-	// object so that an attribute may be added
-	std::stringstream lC_buffer(lC_parmString);
-	Json::Value lC_jsonParameters;
-	lC_buffer >> lC_jsonParameters;
-
-	// add a "modelName" attribute
-	lC_jsonParameters["modelName"] = lC_parmName;
-
-	// Write the JSON string back into the cleared buffer
-	lC_buffer.clear();
-	lC_buffer << lC_jsonParameters;
-	lC_parmString = lC_buffer.str(); // update the parm string
-	
 	// save the model parameter JSON string to a file
 	lC_parmName += ".json";
 	std::ofstream parmFile(lC_parmName.c_str());

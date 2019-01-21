@@ -20,23 +20,35 @@
 namespace efscape {
   namespace impl {
 
-    ModelType::ModelType() :
-      mC_typeName(""),
-      mC_description(""),
-      mC_libraryName(""),
-      mi_version(1)
+    ModelType::ModelType()
     {
+      mC_attributes["typeName"] = "";
+      mC_attributes["description"] = "";
+      mC_attributes["libraryName"] = "";
+      mC_attributes["url"] = "";
+      mC_attributes["version"] = 1;
+
+      mC_attributes["ports"]["inputs"] = Json::Value();
+      mC_attributes["ports"]["outputs"] = Json::Value();
+
+      mC_attributes["properties"] = Json::Value();
     }
 
     ModelType::ModelType(std::string aC_typeName,
 			 std::string aC_description,
 			 std::string aC_libraryName,
-			 int ai_version) :
-      mC_typeName(aC_typeName),
-      mC_description(aC_description),
-      mC_libraryName(aC_libraryName),
-      mi_version(ai_version)
+			 int ai_version)
     {
+      mC_attributes["typeName"] = aC_typeName;
+      mC_attributes["description"] = aC_description;
+      mC_attributes["libraryName"] = aC_libraryName;
+      mC_attributes["url"] = gcp_liburl;
+      mC_attributes["version"] = ai_version;
+
+      mC_attributes["ports"]["inputs"] = Json::Value();
+      mC_attributes["ports"]["outputs"] = Json::Value();
+
+      mC_attributes["properties"] = Json::Value();
     }
 
     ModelType::~ModelType() {}
@@ -46,66 +58,52 @@ namespace efscape {
     //
     
     std::string ModelType::typeName() const {
-      return mC_typeName;
+      return mC_attributes["typeName"].asString();
     }
 
     std::string ModelType::description() const {
-      return mC_description;
+      return mC_attributes["description"].asString();
     }
 
     std::string ModelType::libraryName() const {
-      return mC_libraryName;
+      return mC_attributes["libraryName"].asString();
     }
 
     int ModelType::version() const {
-      return mi_version;
+      return mC_attributes["version"].asInt();
     }
     
     Json::Value
     ModelType::addInputPort(std::string aC_portName,
 			    Json::Value aC_portValue)
     {
-      mC_inputPorts[aC_portName] = aC_portValue;
-      return mC_inputPorts;
+      mC_attributes["ports"]["inputs"][aC_portName] = aC_portValue;
+      return mC_attributes["ports"]["inputs"];
     }
 
     Json::Value
     ModelType::addOutputPort(std::string aC_portName,
 			     Json::Value aC_portValue)
     {
-      mC_outputPorts[aC_portName] = aC_portValue;
-      return mC_outputPorts;
+      mC_attributes["ports"]["outputs"][aC_portName] = aC_portValue;
+      return mC_attributes["ports"]["outputs"];
     }
 
     Json::Value
     ModelType::setProperties(Json::Value aC_properties)
     {
-      mC_properties = aC_properties;
+      mC_attributes["properties"] = aC_properties;
       
-      return mC_properties;
+      return mC_attributes["properties"];
     }
 
     Json::Value
     ModelType::getProperties() const {
-      return mC_properties;
+      return mC_attributes["properties"];
     }
 
     Json::Value ModelType::toJSON() const {
-      Json::Value lC_attributes;
-      
-      lC_attributes["typeName"] = mC_typeName;
-      lC_attributes["description"] = mC_description;
-      lC_attributes["libraryName"] = mC_libraryName;
-      lC_attributes["url"] = gcp_liburl;
-      lC_attributes["version"] = mi_version;
-
-      lC_attributes["ports"]["inputs"] = mC_inputPorts;
-      lC_attributes["ports"]["outputs"] = mC_outputPorts;
-
-      lC_attributes["properties"] = mC_properties;
-
-      
-      return lC_attributes;
+      return mC_attributes;
     }
     
   } // namespace impl
