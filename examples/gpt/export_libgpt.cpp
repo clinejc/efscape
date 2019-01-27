@@ -99,28 +99,28 @@ namespace gpt {
     double t = 10;
 
     if (aC_args.isObject()) {
-      Json::Value lC_attribute = aC_args["genr_period"];
+      Json::Value lC_attribute = aC_args["period"];
       if (lC_attribute.isDouble()) {
 	g = lC_attribute.asDouble();
       } else {
 	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		      "Unable to parse attribute  <genr_period>")
+		      "Unable to parse attribute  <period>")
       }
       
-      lC_attribute = aC_args["proc_period"];
+      lC_attribute = aC_args["processing_time"];
       if (lC_attribute.isDouble()) {
 	p = lC_attribute.asDouble();
       } else {
 	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		      "Unable to parse attribute  <proc_period>")
+		      "Unable to parse attribute  <processing_time>")
       }
       
-      lC_attribute = aC_args["observation_time"];
+      lC_attribute = aC_args["observ_time"];
       if (lC_attribute.isDouble()) {
 	t = lC_attribute.asDouble();
       } else {
 	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		      "Unable to parse attribute  <observation_time>")
+		      "Unable to parse attribute  <observ_time>")
       }
     }
     
@@ -165,7 +165,7 @@ namespace gpt {
       // properties
       //========================================================================
       Json::Value lC_properties;
-      lC_properties["period"] = 1.0;
+      lC_properties["genr_period"] = 1.0;
       lC_properties["processing_time"] = 2.0;
       lC_properties["observ_time"] = 10.0;
       

@@ -21,14 +21,14 @@
 #include <efscape/Model.h>
 
 #include <efscape/impl/efscapelib.hpp>
-#include <efscape/impl/ClockI.hpp>
+#include <json/json.h>
 
 /**
  * Implements the ICE interface efscape::Model and provides an abstract
  * interface for server-side models.
  *
  * @author Jon Cline <clinej@stanfordalumni.org>
- * @version 1.1.1 created 18 Oct 2008, revised 18 May 2018
+ * @version 1.2.0 created 18 Oct 2008, revised 24 Jan 2019
  */
 class ModelI : virtual public efscape::Model,
 		 public adevs::EventListener<efscape::impl::IO_Type>
@@ -36,7 +36,8 @@ class ModelI : virtual public efscape::Model,
 public:
 
   ModelI();
-  ModelI(const efscape::impl::DEVSPtr& aCp_model);
+  ModelI(const efscape::impl::DEVSPtr& aCp_model,
+	 Json::Value aC_info = Json::Value());
   ModelI(const efscape::impl::DEVSPtr& aCp_model,
 	   const char* acp_name);
   ~ModelI();
@@ -112,8 +113,8 @@ protected:
   /** output buffer */
   adevs::Bag< adevs::Event<efscape::impl::IO_Type> > mCC_OutputBuffer;
 
-  /** simulation clock (implementation) */
-  efscape::impl::ClockIPtr mCp_clock;
+  /** model metadata (may include scenario/session-specific info) */
+  Json::Value mC_info;
 
 private:
 

@@ -157,9 +157,15 @@ ModelHomeI::createFromParameters(std::string parameters,
       efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().createModelFromParameters(parameters);
 
     if (lCp_modelI != nullptr) {
+      // Load JSON from buffer into Json::Value
+      std::stringstream lC_buffer(parameters);
+      Json::Value lC_parameters;
+      lC_buffer >> lC_parameters;
+
       // tie the model
-      auto modelI = Ice::uncheckedCast<efscape::ModelPrx>(current.adapter
-							    ->addWithUUID(std::make_shared<ModelI>(lCp_modelI)));
+      auto modelI =
+	Ice::uncheckedCast<efscape::ModelPrx>(current.adapter
+					      ->addWithUUID(std::make_shared<ModelI>(lCp_modelI, lC_parameters)));
   
       return modelI;
     }

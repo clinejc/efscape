@@ -22,7 +22,9 @@
 
 // boost libary definitions
 #include <boost/any.hpp>
-#include <boost/shared_ptr.hpp>
+
+// jsoncpp library definitions
+#include <json/json.h>
 
 #include <string>
 #include <vector>
@@ -85,10 +87,34 @@ namespace efscape {
     DEVS* createModel(const char* acp_classname);
 
     /**
+     * This template function creates a DEVS object of type T with attributes
+     * embedded in a JSON. May be used to register model types with arguments
+     * with the efscape model factory.
+     *
+     * @tparam T derived class
+     * @param aC_value JSON value
+     * @return handle to new model object
+     */
+    template <typename T>
+    DEVS* createModelWithArgs(Json::Value aC_value) {
+      return ( dynamic_cast<DEVS*> (new T(aC_value) ) );
+    }
+
+    /**
+     * Helper function that converts a C++ type name string into a posix file
+     * name compatible string by replacing or removing special characters.
+     * Should work with simple types up to single parameter template classes.
+     *
+     * @param aC_cplusTypeName c++ type name
+     * @return posix file friendly string
+     */
+    std::string cplusTypeName2Posix( std::string aC_cplusTypeName );
+
+    /**
      * Helper function for cloning an adevs model using JSON serialization
      *
      * @param aCp_model handle to model
-     * @returns handle to model clone (null if cloning fails)
+     * @return handle to model clone (null if cloning fails)
      */
     DEVSPtr cloneModelUsingJSON( const DEVSPtr& aCp_model );
 
@@ -101,11 +127,22 @@ namespace efscape {
     void runSim( DEVS* aCp_model, double ad_timeMax = DBL_MAX );
 
     /**
+     * Helper function for create a simulation session that will
+     * run in the efscape server workspace.
+     *
+     * @param aCp_model handle to model
+     * @param aC_info model/session metadata
+     * @return handle to simulator
+     */
+    adevs::Simulator<IO_Type>*
+    createSimSession(DEVS* aCp_model, Json::Value aC_info);
+
+    /**
      * Utility function that returns the root model of the adevs hierarchy
      * containing this model.
      *
      * @param aCp_model
-     * @returns handle to root model
+     * @return handle to root model
      */
     adevs::Devs<IO_Type>*
     getRootModel(adevs::Devs<IO_Type>* aCp_model);
@@ -115,7 +152,7 @@ namespace efscape {
      * containing this model.
      *
      * @param aCp_model
-     * @returns handle to root model
+     * @return handle to root model
      */
     const adevs::Devs<IO_Type>*
     getRootModel(const adevs::Devs<IO_Type>* aCp_model);
@@ -126,7 +163,7 @@ namespace efscape {
      *
      * @tparam T model target type
      * @param aCp_model handle to model
-     * @returns handle to first instance of the specified model type
+     * @return handle to first instance of the specified model type
      */
     template <typename T>
     T* getTargetModel( DEVS* aCp_model )
@@ -156,7 +193,7 @@ namespace efscape {
      *
      * @tparam T model target type
      * @param aCp_model handle to model
-     * @returns handle to first instance of the specified model type
+     * @return handle to first instance of the specified model type
      */
     template <typename T>
     const T* getTargetModel( const DEVS* aCp_model )

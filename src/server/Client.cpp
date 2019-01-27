@@ -30,9 +30,42 @@
 
 #include <log4cxx/logger.h>
 #include <log4cxx/basicconfigurator.h>
+#include <log4cxx/propertyconfigurator.h> // logging
+
+#include <boost/log/trivial.hpp>
+
+namespace fs = boost::filesystem;
 
 // Create logger
-log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("org.efscape.client"));
+log4cxx::LoggerPtr gCp_logger(log4cxx::Logger::getLogger("org.efscape.client"));
+
+/**
+ * Helper function that converts a C++ type name string into a posix file
+ * name compatible string by replacing or removing special characters.
+ * Should work with simple types up to single parameter template classes.
+ * (Note: copied from efscape/impl/efscapelib.?pp)
+ *
+ * @param aC_cplusTypeName c++ type name
+ * @return posix file friendly string
+ */
+std::string cplusTypeName2Posix( std::string aC_cplusTypeName ) {
+  // 1. first replace ':'s from namespace separates with '_'s
+  std::string lC_posixString =
+    boost::replace_all_copy(aC_cplusTypeName,
+			    ":",
+			    "_");   
+  // 2. Next replace leading '<' for template class names with '.'
+  lC_posixString =
+    boost::replace_all_copy(lC_posixString,
+			    "<",
+			    ".");
+  // 3. Remove trailing '>' from template class names
+  lC_posixString =
+    boost::replace_all_copy(lC_posixString,
+			    ">",
+			    "");
+  return lC_posixString;
+}
 
 /**
  * Catches exceptions to handle known on the exit.
@@ -74,21 +107,45 @@ main(int argc, char* argv[])
   EfscapeClient app;
 
   log4cxx::BasicConfigurator::configure();
+  gCp_logger->setLevel(log4cxx::Level::getDebug());
 
   // attempt to retrieve the root directory of efscape ICE configuration
-  std::string lC_EfscapeIcePath = "."; // default location
+  fs::path lC_EfscapeIcePath("."); // default location
   char* lcp_env_variable =	// get EFSCAPE_HOME
     getenv("EFSCAPE_HOME");
 
   if ( lcp_env_variable != 0 )
-    lC_EfscapeIcePath = lcp_env_variable;
+    lC_EfscapeIcePath = fs::path(lcp_env_variable);
 
-  std::string lC_config = lC_EfscapeIcePath
-    + "/config.client";
-  LOG4CXX_DEBUG(logger,
-		"efscape ICE server config=<" << lC_config << ">");
+  fs::path lC_configPath =
+    lC_EfscapeIcePath /
+    fs::path("/config.client");
 
-  return app.main(argc, argv, lC_config.c_str());
+  if ( fs::exists(lC_configPath) ) {
+    LOG4CXX_DEBUG(gCp_logger,
+		  "config path <"
+		  << lC_configPath.string()
+		  << "exists");
+  } else {
+    LOG4CXX_ERROR(gCp_logger,
+		  "config path <"
+		  << lC_configPath.string()
+		  << "does not exist");
+    return EXIT_FAILURE;
+  }
+
+  std::string lC_logger_config = lC_EfscapeIcePath.string()
+    + "/log4j.properties";
+
+  log4cxx::PropertyConfigurator::configure(lC_logger_config.c_str());
+
+  LOG4CXX_DEBUG(gCp_logger,
+  		"efscape ICE server config=<" << lC_configPath.string() << ">");
+  // BOOST_LOG_TRIVIAL(debug)
+  //   << "efscape ICE server config=<"
+  //   << lC_configPath.string() << ">";
+
+  return app.main(argc, argv, lC_configPath.string().c_str());
 }
 
 void menu();
@@ -129,7 +186,7 @@ EfscapeClient::run(int argc, char* argv[])
     if (!lCp_ModelHome)
       throw "Invalid ModelHome proxy";
 
-    LOG4CXX_DEBUG(logger,
+    LOG4CXX_DEBUG(gCp_logger,
 		  "ModelHome accessed successfully!");
 
     // If no input file has been specified, display a list of all models
@@ -173,28 +230,12 @@ EfscapeClient::run(int argc, char* argv[])
 	  lC_buffer >> lC_jsonParameters;
 	  if (lC_jsonParameters.isMember("modelName")) {
 	    lC_parmName = lC_jsonParameters["modelName"].asString();
-	    // replace ':'s from namespace separates with '_'s
-	    lC_parmName =
-	      boost::replace_all_copy(lC_parmName,
-				      ":",
-				      "_");
 	  } else {
 	    // generate 'modelName' from class name
 	    // 1. first replace ':'s from namespace separates with '_'s
 	    lC_parmName =
-	      boost::replace_all_copy(lC_modelName,
-				      ":",
-				      "_");
-	    // 2. Next replace leading '<' for template class names with '.'
-	    lC_parmName =
-	      boost::replace_all_copy(lC_parmName,
-				      "<",
-				      ".");
-	    // 3. Remove trailing '>' from template class names
-	    lC_parmName =
-	      boost::replace_all_copy(lC_parmName,
-				      ">",
-				      "");
+	      cplusTypeName2Posix(lC_modelName);
+	    
 	    // add a "modelName" attribute
 	    lC_jsonParameters["modelName"] = lC_parmName;
 
@@ -227,10 +268,10 @@ EfscapeClient::run(int argc, char* argv[])
     // if file can be opened
     std::shared_ptr<efscape::ModelPrx> lCp_Model;
     if ( parmFile ) {
-      boost::filesystem::path p =
-	boost::filesystem::path(lC_parmName.c_str());
+      fs::path p =
+	fs::path(lC_parmName.c_str());
 
-      LOG4CXX_DEBUG(logger,
+      LOG4CXX_DEBUG(gCp_logger,
 		    "Using input parameter file <"
 		    << lC_parmName
 		    << "> with file extension <"
@@ -243,15 +284,15 @@ EfscapeClient::run(int argc, char* argv[])
 	char ch;
 	while (buf && parmFile.get( ch ))
 	  buf.put( ch );
-	LOG4CXX_DEBUG(logger,
+	LOG4CXX_DEBUG(gCp_logger,
 		      "JSON buffer=>");
-	LOG4CXX_DEBUG(logger,
+	LOG4CXX_DEBUG(gCp_logger,
 		      buf.str() );
 
-	// first try to create model from JSON ser
-	lCp_Model = lCp_ModelHome->createFromJSON(buf.str());
+	// first try to create model from JSON parameters
+	lCp_Model = lCp_ModelHome->createFromParameters(buf.str());
 	if (lCp_Model == nullptr) {
-	  lCp_Model = lCp_ModelHome->createFromParameters(buf.str());
+	  lCp_Model = lCp_ModelHome->createFromJSON(buf.str());
 	}	
       }
     } else {
@@ -262,7 +303,7 @@ EfscapeClient::run(int argc, char* argv[])
       throw "Invalid Model proxy";
     }
 
-    LOG4CXX_DEBUG(logger,
+    LOG4CXX_DEBUG(gCp_logger,
 		  "Model created!");
 
     // get a simulator for the model
@@ -272,12 +313,14 @@ EfscapeClient::run(int argc, char* argv[])
     if (!lCp_Simulator)
       throw "Invalid Simulator proxy";
       
-    LOG4CXX_DEBUG(logger,
+    LOG4CXX_DEBUG(gCp_logger,
 		  "Simulator created!");
 
     double ld_time = 0.0;
 
     if (lCp_Simulator->start()) {
+      LOG4CXX_DEBUG(gCp_logger,
+		    "Simulation started!");
 
       // get initial output from the model
       efscape::Message lC_message =
@@ -285,30 +328,37 @@ EfscapeClient::run(int argc, char* argv[])
 
       // get a handle to the simulation model clock
       for (int i = 0; i < lC_message.size(); i++) {
-	LOG4CXX_DEBUG(logger,
+	LOG4CXX_DEBUG(gCp_logger,
 		      "message " << i << ": value on port <"
 		      << lC_message[i].port << "> = "
 		      << lC_message[i].valueToJson);
 
       }
+      
+      LOG4CXX_DEBUG(gCp_logger,
+		    "Next event time = "
+		    << lCp_Simulator->nextEventTime());
 
-      while ( (ld_time = lCp_Simulator->nextEventTime()) < DBL_MAX/*lCp_Clock->timeMax()*/) {
+      while ( (ld_time = lCp_Simulator->nextEventTime()) < DBL_MAX) {
+	LOG4CXX_DEBUG(gCp_logger,
+		      "simulation time = "
+		      << ld_time);
 	lCp_Simulator->execNextEvent();
 	efscape::Message lC_message =
 	  lCp_Model->outputFunction();
 	if (lC_message.size() > 0) {
-	  LOG4CXX_DEBUG(logger,
+	  LOG4CXX_DEBUG(gCp_logger,
 			"time step = " << ld_time
 			<< ", message size = "
 			<< lC_message.size() );
 	  for (int i = 0; i < lC_message.size(); i++) {
-	    LOG4CXX_DEBUG(logger,
+	    LOG4CXX_DEBUG(gCp_logger,
 			  "message " << i << ": value on port <"
 			  << lC_message[i].port << "> = "
 			  << lC_message[i].valueToJson);
 	  }
 	}
-      }
+      }	// while ( (ld_time = ...
 
     }
     else {

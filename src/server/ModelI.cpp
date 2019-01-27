@@ -15,8 +15,10 @@
 // __COPYRIGHT_END__
 #include "ModelI.hpp"
 
+// definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>
-#include <efscape/impl/SimRunner.hpp>
+#include <efscape/impl/ModelHomeSingleton.hpp>
+
 #include <efscape/utils/type.hpp>
 
 #include <json/json.h>
@@ -51,47 +53,38 @@ bool ModelI::initialize(const Ice::Current& current)
 		  "main model does not exist");
     return false;
   }
+  
+  //----------------------------------------------------------------------------
+  // initialize model
+  //
+  //----------------------------------------------------------------------------
+  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		"Initializing the model...");
+
+  adevs::Bag<efscape::impl::IO_Type> xb;
+  efscape::impl::IO_Type x("initialize_in",
+			   0);
+  xb.insert(x);
+  efscape::impl::inject_events(0., xb, lCp_model);
 
   // create simulator and register the wrapper as an event listener
   mCp_simulator.reset
-    ( new adevs::Simulator<efscape::impl::IO_Type>(lCp_model) );
+    ( efscape::impl::createSimSession(lCp_model, mC_info) );
   mCp_simulator->addEventListener(this);
-
-  std::string lC_ParmName; // model parameter file
-  lC_ParmName = mC_name + ".json";
      
-  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		"Setting the simulation clock");
 
   try {
-    // compute the initial state of the model
-    while ( mCp_simulator->nextEventTime() == 0) {
-      mCp_simulator->execNextEvent();
-    }
     if ( mCp_simulator->nextEventTime() < DBL_MAX) {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "The simulation model is ready to run!");
+  		    "The simulation model is ready to run!");
     }
     else
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "The simulation model is inert");
-
-    // save the initial state of the model in xml format
-    try {
-      // make an archive
-      std::ofstream ofs(lC_ParmName.c_str());
-      efscape::impl::saveAdevsToJSON(mCp_WrappedModel, ofs);
-    }
-    catch(std::exception lC_exp) {
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    lC_exp.what()
-		    << ": unable to save initial simulation state in JSON format -- "
-		    << "continuing...");
-    }
+  		    "The simulation model is inert");
   }
   catch(std::logic_error lC_exp) {
     LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		  lC_exp.what());
+  		  lC_exp.what());
   }
 
   return true;
@@ -261,8 +254,11 @@ ModelI::ModelI() {}
  * constructor
  *
  * @param aCp_model handle to model to be tied
+ * @param aC_info model metadata
  */
-ModelI::ModelI(const efscape::impl::DEVSPtr& aCp_model)
+ModelI::ModelI(const efscape::impl::DEVSPtr& aCp_model,
+	       Json::Value aC_info) :
+  mC_info(aC_info)
 {
   if (aCp_model == nullptr)
     return;
@@ -272,6 +268,11 @@ ModelI::ModelI(const efscape::impl::DEVSPtr& aCp_model)
   // Set model name
   mC_name = efscape::utils::type<efscape::impl::DEVS>(*aCp_model);
 
+  if (!mC_info.isObject()) {
+    mC_info =
+      efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
+      getModelFactory().getProperties(mC_name.c_str());    
+  }
 }
 
 /**

@@ -24,14 +24,9 @@
 #include <repast_hpc/RepastProcess.h>
 #include <repast_hpc/logger.h>
 
-#include <json/json.h>
-
-// boost definitions
-// #include <boost/foreach.hpp>
-
 // other definitions
+#include <json/json.h>
 #include <log4cxx/logger.h>
-#include <iostream>
 
 namespace efscape {
   namespace impl {
@@ -195,9 +190,9 @@ namespace efscape {
 	    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 			  "Found port=" << initialize_in);
 	}
-	//     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-	// 		  "Initializing repast model...");
-	//     mCp_model->init();		     // 
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "Initializing repast model...");
+	mCp_model->init();		     // initialize repast hpc model
 	// } else
 	if ( (*i).port == properties_in) { // event on <properties_in> port
 	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -221,22 +216,13 @@ namespace efscape {
 
 	      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 			    "Loading properties...");
-	      // BOOST_FOREACH( boost::property_tree::ptree::value_type const& rowPair,
-	      // 		     pt.get_child( "" ) ) {
-	      // 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-	      // 		      "=> property "
-	      // 		      << "<" << rowPair.first << ">="
-	      // 		      << "<" << rowPair.second.get_value<std::string>() << ">");
-	      // 	lC_props.putProperty(rowPair.first,
-	      // 			     rowPair.second.get_value<std::string>() );
-	      // }
 	      
 	      mCp_model->setProperties(lC_props);
 	    }
 	  }
 	  catch(const boost::bad_any_cast &) {
 	    LOG4CXX_ERROR(ModelHomeI::getLogger(),
-			  "Unable to cast input as <boost::property_tree>");
+			  "Unable to cast input as <Json::Value>");
 	  }
 	} // 'if ( (*i).port == properties_in)'
 

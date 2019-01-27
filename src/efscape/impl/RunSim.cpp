@@ -31,6 +31,8 @@
 #include <sstream>
 #include <boost/algorithm/string.hpp>
 
+namespace fs = boost::filesystem;
+
 namespace efscape {
 
   namespace impl {
@@ -38,7 +40,7 @@ namespace efscape {
     // class variables
     const char* RunSim::mScp_program_name = "efdriver";
     const char* RunSim::mScp_program_version =
-      "version 1.0.1 (2018/05/26)";
+      "version 1.1.0 (2019/01/22)";
 
     /** default constructor */
     RunSim::RunSim() {
@@ -100,9 +102,11 @@ namespace efscape {
 	// processing argument (should be at most 1 input file)
 	std::string lC_parmName = "";
 
-	// If no input file has been specified, display a list of all models
-	// currently loaded, and allow the user to select a model and output
-	// a default model parameter file.
+	//----------------------------------------------------------------------
+	// 1. If no input file has been specified, display a list of all models
+	//    currently loaded, and allow the user to select a model and output
+	//    a default model parameter file.
+	//----------------------------------------------------------------------
 	if (files() == 0) {
 	  // Get a list of model type ids
 	  std::set<std::string> lC1_modelTypes =
@@ -143,13 +147,18 @@ namespace efscape {
 	      Json::Value lC_info =
 		Singleton<ModelHomeI>::Instance().getModelFactory().
 		getProperties(lC_modelName);
-	      lC_info["modelName"] = lC_parmName;
-
+	      if ( lC_info.isMember("modelName") ) {
+		lC_parmName = lC_info["modelName"].asString();
+	      } else {
+		lC_parmName =
+		  efscape::impl::cplusTypeName2Posix(lC_modelName);
+		lC_info["modelName"] = lC_parmName;
+	      }
+	      
 	      std::ostringstream lC_buffer_out;
 	      lC_buffer_out << lC_info;
 	      lC_parmString = lC_buffer_out.str();
 	      std::cout << lC_parmString << std::endl;
-
 
 	    } else if ( li_userInput > lC1_modelTypes.size() ) {
 	      std::cout << "Model index <" << li_userInput << "> out of bounds\n";
@@ -167,10 +176,13 @@ namespace efscape {
 	  return EXIT_SUCCESS;
 	}
 
-	// At this point, there should be a single command line argment,
-	// which should be a valid parameter file name.
-	// Attempt to create model from the specified parameter file
+	//----------------------------------------------------------------------
+	// 2. At this point, there should be a single command line argment,
+	//    which should be a valid parameter file name.
+	//    Attempt to create model from the specified parameter file
+	//----------------------------------------------------------------------
 	std::shared_ptr<DEVS> lCp_model;
+	Json::Value lC_info;
 	lC_parmName = (*this)[0];
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "Running with a single parameter <"
@@ -178,9 +190,15 @@ namespace efscape {
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "Loading file <" << lC_parmName << ">");
 
-	boost::filesystem::path p =
-	  boost::filesystem::path(lC_parmName.c_str());
-	
+	fs::path p =
+	  fs::path(lC_parmName.c_str());
+
+	//----------------------------------------------------------------------
+	// 2a. If this the input file is in JSON format:
+	//     1. First attempt to load the input as a JSON parameter file
+	//     2. If the first attempt fails, attempt to load the input as a
+	//        a cereal serialization of the model
+	//----------------------------------------------------------------------
 	if (p.extension().string() == ".json") {
 	  // try to load the parameter file
 	  std::ifstream parmFile(lC_parmName.c_str());
@@ -192,19 +210,31 @@ namespace efscape {
 	    while (buf && parmFile.get( ch ))
 	      buf.put( ch );
 	    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			  buf.str() );
-
+	  		  buf.str() );
+	    
 	    lCp_model =
 	      Singleton<ModelHomeI>::Instance().
-	      createModelFromJSON(buf.str());
+	      createModelFromParameters(buf.str());
 	    
 	    if (lCp_model == nullptr) {
+	      LOG4CXX_ERROR(ModelHomeI::getLogger(),
+			    "Attempt to load input file <"
+			    << lC_parmName
+			    << "> failed: "
+			    << "attempting to deserialize cereal JSON input");
 	      lCp_model =
 		Singleton<ModelHomeI>::Instance().
-		createModelFromParameters(buf.str());
+		createModelFromJSON(buf.str());
 	    }
+
+	    // load parameter into a JSON value to be used later
+	    std::istringstream lC_buffer_in(buf.str());
+	    lC_buffer_in >> lC_info;
 	  }
 	}
+	//----------------------------------------------------------------------
+	// 2b. Otherwise, this should be am C++ xml serialization file
+	//----------------------------------------------------------------------
 	else if (p.extension().string() == ".xml") {
 	    lCp_model = DEVSPtr( loadAdevsFromXML(lC_parmName.c_str()) );
 	}
@@ -216,10 +246,25 @@ namespace efscape {
 	  return EXIT_FAILURE;
 	}
 
+	//----------------------------------------------------------------------
+	// 3. Run the simulation model
+	//----------------------------------------------------------------------
+	// initialize the model first
+	adevs::Bag<IO_Type> xb;
+	IO_Type x("initialize_in",
+		  0);
+	xb.insert(x);
+	inject_events(0., xb, lCp_model.get());
+	
+	
       	// create simulator
       	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
       		      "Creating simulator...");
-      	adevs::Simulator<IO_Type> lCp_simulator(lCp_model.get() );
+	
+      	// adevs::Simulator<IO_Type> lCp_simulator(lCp_model.get() );
+	std::unique_ptr< adevs::Simulator<efscape::impl::IO_Type> >
+	  lCp_simulator
+	  ( createSimSession(lCp_model.get(), lC_info) );
 
       	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
       		      "Attempt to create simulation model successful!"
@@ -247,7 +292,7 @@ namespace efscape {
 			<< lCp_clock->timeUnits());
 
       	}
-
+	
 	//
       	// simulate model until time max
 	//
@@ -264,9 +309,9 @@ namespace efscape {
 	std::ostream lC_out(buf);
 	
 	double ld_time = 0.;
-      	while ( (ld_time = lCp_simulator.nextEventTime())
+      	while ( (ld_time = lCp_simulator->nextEventTime())
       		< ld_timeMax ) {
-      	  lCp_simulator.execNextEvent();
+      	  lCp_simulator->execNextEvent();
 
 	  // 
 	  adevs::Bag<IO_Type> xb;
@@ -283,6 +328,7 @@ namespace efscape {
 	    }
 	  }
       	}
+	std::cout << lC_info << std::endl;
       }
       catch(std::logic_error lC_excp) {
       	LOG4CXX_ERROR(ModelHomeI::getLogger(),

@@ -25,6 +25,12 @@
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
+// definitions for access the local file system
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
+
+namespace fs = boost::filesystem;
+
 namespace efscape {
 
   namespace server {
@@ -104,10 +110,13 @@ namespace efscape {
 	if ( lcp_env_variable != 0 )
 	  lC_EfscapeIcePath = lcp_env_variable;
 
-	std::string lC_ice_config = lC_EfscapeIcePath
-	  + "/config.server";
+	fs::path lC_iceConfigPath =
+	  fs::path(lC_EfscapeIcePath) /
+	  fs::path("config.server");
+
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		      "efscape ICE server config=<" << lC_ice_config << ">");
+		      "efscape ICE server config=<"
+		      << lC_iceConfigPath.string() << ">");
 
 	// provide command-line arguments
 	int argc = 1;
@@ -115,7 +124,7 @@ namespace efscape {
 	argv[0] = new char[std::string(program_name()).size()+1];
 	strcpy(argv[0], program_name());
 
-	this->main(argc, argv, lC_ice_config.c_str());
+	this->main(argc, argv, lC_iceConfigPath.string().c_str());
 
 	// delete argv (no longer needed)
 	for (int i = 0; i < argc; i++) {

@@ -19,8 +19,20 @@
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
+#include <boost/algorithm/string.hpp>
+
 #include <fstream>
 #include <sstream>
+
+// definitions for accessing and managing local file system resources
+#include <boost/uuid/uuid.hpp>            // uuid class
+#include <boost/uuid/uuid_generators.hpp> // generators
+#include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
+#include <boost/filesystem/operations.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp> // date_time definitions
+using namespace boost::gregorian;
+
+namespace fs = boost::filesystem;
 
 namespace efscape {
 
@@ -39,12 +51,16 @@ namespace efscape {
     void inject_events(double e, const adevs::Bag<IO_Type>& xb,
 		       DEVS* aCp_model)
     {
+      if (aCp_model == nullptr) {
+	return;
+      }
+      
       ATOMIC* lCp_atomic = NULL;
       if ( (lCp_atomic = aCp_model->typeIsAtomic() ) != NULL ) {
 	lCp_atomic->delta_ext(e, xb);
       }
       else {
-	NETWORK* lCp_network = NULL;
+	NETWORK* lCp_network = aCp_model->typeIsNetwork();
 	adevs::Set<DEVS*> components;
 	lCp_network->getComponents(components);
 	/*typename*/ adevs::Set<DEVS*>::iterator iter =
@@ -75,7 +91,7 @@ namespace efscape {
       else {
 	NETWORK* lCp_network = NULL;
 	if ( (lCp_network = aCp_model->typeIsNetwork()) == NULL)
-	     return;
+	  return;
 	adevs::Set<DEVS*> components;
 	lCp_network->getComponents(components);
 	/*typename*/ adevs::Set<DEVS*>::iterator iter =
@@ -90,21 +106,40 @@ namespace efscape {
       return ( Singleton<ModelHomeI>::Instance().getModelFactory().createObject(acp_classname) );
     }
 
-   DEVSPtr cloneModelUsingJSON( const DEVSPtr& aCp_model ) {
+    std::string cplusTypeName2Posix( std::string aC_cplusTypeName ) {
+      // 1. first replace ':'s from namespace separates with '_'s
+      std::string lC_posixString =
+	boost::replace_all_copy(aC_cplusTypeName,
+				":",
+				"_");   
+      // 2. Next replace leading '<' for template class names with '.'
+      lC_posixString =
+	boost::replace_all_copy(lC_posixString,
+				"<",
+				".");
+      // 3. Remove trailing '>' from template class names
+      lC_posixString =
+	boost::replace_all_copy(lC_posixString,
+				">",
+				"");
+      return lC_posixString;
+    }
+    
+    DEVSPtr cloneModelUsingJSON( const DEVSPtr& aCp_model ) {
 
-     DEVSPtr lCp_clone;
-     try {
-       // serialize the model out to a buffer and then back in as a clone
-       std::ostringstream lC_buffer_out;
-       saveAdevsToJSON(aCp_model, lC_buffer_out);
-       std::istringstream lC_buffer_in(lC_buffer_out.str().c_str());
-       lCp_clone = loadAdevsFromJSON(lC_buffer_in);
-     } catch(...) {
-       LOG4CXX_ERROR(ModelHomeI::getLogger(),
-		     "Exception encountered during attempt to clone adevs model");
-     }
+      DEVSPtr lCp_clone;
+      try {
+	// serialize the model out to a buffer and then back in as a clone
+	std::ostringstream lC_buffer_out;
+	saveAdevsToJSON(aCp_model, lC_buffer_out);
+	std::istringstream lC_buffer_in(lC_buffer_out.str().c_str());
+	lCp_clone = loadAdevsFromJSON(lC_buffer_in);
+      } catch(...) {
+	LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		      "Exception encountered during attempt to clone adevs model");
+      }
 
-     return lCp_clone;
+      return lCp_clone;
     }
 
     void runSim( DEVS* aCp_model, double ad_timeMax ) {
@@ -114,6 +149,110 @@ namespace efscape {
       while (lC_sim.nextEventTime() < ad_timeMax) {
 	lC_sim.execNextEvent();
       }
+    }
+
+    adevs::Simulator<IO_Type>*
+    createSimSession(DEVS* aCp_model, Json::Value aC_info) {
+      //------------------------------------------------------------------------
+      // create new directory for this simulation session
+      // $EFSCAPE_PATH/sessions/[today's date]/[modelName]-uuid
+      //------------------------------------------------------------------------
+      std::ostringstream lC_buffer;
+      
+      // Write todays date to a string
+      date today = day_clock::local_day();
+      date_facet* f = new date_facet("%Y-%m-%d");
+      locale loc = locale(locale("en_US"), f);
+      // following lines only needed if reusing the lC_buffer
+      // lC_buffer.clear();
+      // lC_buffer.str("");
+      // lC_buffer.seekp(0);
+      lC_buffer.imbue(loc);
+      lC_buffer << today;
+
+      // get model name
+      std::string lC_modelName = "model";
+      if ( aC_info.isMember("modelName") ) {
+	lC_modelName = aC_info["modelName"].asString();
+      } else if ( aC_info.isMember("typeName") ) {
+	lC_modelName =
+	  cplusTypeName2Posix( aC_info["typeName"].asString() );
+      }
+
+      // generate unique id for session
+      boost::uuids::uuid uuid = boost::uuids::random_generator()();
+
+      //------------------------------------------------------------------------
+      // create session path: apparently requires two steps to work reliably
+      // 1. create $EFSCAPE_PATH/sessions/[today's date]
+      // 2. append [modelName]-uuid
+      //------------------------------------------------------------------------
+      fs::path lC_sessionPath =
+	fs::path(efscape::impl::ModelHomeI::getHomeDir()) /
+	fs::path("sessions") /
+	fs::path(lC_buffer.str());
+
+      // first attempt to create the session path if needed
+      if (!fs::exists(lC_sessionPath)) {
+      	try {
+      	  fs::create_directory(lC_sessionPath);
+      	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+      			"Created session directory <"
+      			<< lC_sessionPath.string()
+      			<< ">");
+      	}
+      	catch(exception& e) {
+      	  LOG4CXX_ERROR(ModelHomeI::getLogger(),
+      			"Attempt to create directory <"
+      		  	<< lC_sessionPath.string()
+      			<< ">: "
+      			<< e.what());
+      	}
+      }
+
+      // Now append model name
+      lC_sessionPath =
+      	lC_sessionPath /
+      	fs::path(lC_modelName + "-" + boost::uuids::to_string(uuid));
+
+
+      // attempt to create the session path if needed
+      if (!fs::exists(lC_sessionPath)) {
+      	try {
+      	  fs::create_directory(lC_sessionPath);
+      	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+      			"Created session directory <"
+      			<< lC_sessionPath.string()
+      			<< ">");
+      	}
+      	catch(exception& e) {
+      	  LOG4CXX_ERROR(ModelHomeI::getLogger(),
+      			"Attempt to create directory <"
+      		  	<< lC_sessionPath.string()
+      			<< ">: "
+      			<< e.what());
+      	}
+      }
+
+      if ( chdir(lC_sessionPath.string().c_str()) ) {
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		      "Changed directory to <"
+		      << lC_sessionPath.string()
+		      << ">");
+      } else {
+	LOG4CXX_ERROR(ModelHomeI::getLogger(),
+		      "Attempt to change directory to <"
+		      <<lC_sessionPath.string()
+		      << "> failed!");
+      }
+
+      // write metadata/parameter file to session directory
+      std::string lC_fileName = lC_modelName + ".json";
+      std::ofstream ofs(lC_fileName.c_str());
+      ofs << aC_info << std::endl;
+
+      // return handle to new simulator with model
+      return ( new adevs::Simulator<IO_Type>(aCp_model) );
     }
 
     adevs::Devs<IO_Type>*
