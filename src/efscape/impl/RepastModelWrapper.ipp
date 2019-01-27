@@ -33,11 +33,8 @@ namespace efscape {
 
     // instantiate class data members
     template <class ModelType>
-    const efscape::impl::PortType RepastModelWrapper<ModelType>::initialize_in =
-      "initialize_in";
-    template <class ModelType>
-    const efscape::impl::PortType RepastModelWrapper<ModelType>::properties_in =
-      "properties_in";
+    const efscape::impl::PortType RepastModelWrapper<ModelType>::setup_in =
+      "setup_in";
 
     /**
      * default constructor
@@ -134,8 +131,9 @@ namespace efscape {
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		      "aC_args is not an object");
       }
-           
-      mCp_model->setProperties(lC_props);
+
+      // 5) set properties
+      mCp_props.reset( new repast::Properties(lC_props) );
     }
 
     /**
@@ -186,46 +184,14 @@ namespace efscape {
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		      "RepastModel input on port <"
 		      << (*i).port << ">");
-	if ( (*i).port == initialize_in) { // event on <properties_in> port
+	
+	if ( (*i).port == setup_in) { // event on <properties_in> port
 	    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-			  "Found port=" << initialize_in);
+			  "Found port <"
+			  << setup_in
+			  << ">: initializing repast model..");
+	    mCp_model->setup(*mCp_props); // initialize repast hpc model
 	}
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		      "Initializing repast model...");
-	mCp_model->init();		     // initialize repast hpc model
-	// } else
-	if ( (*i).port == properties_in) { // event on <properties_in> port
-	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-			"Found port=" << properties_in);
-	  try {
-	    // 1) try to extract the properties file name
-	    Json::Value lC_value =
-	      boost::any_cast<Json::Value>( (*i).value );
-
-	    // 2) if time <= 0., need to initialize the model
-	    if ( e <= 0.) {
-	      // 2014-09-26 added by jcline: (re-)sets clock to 0.
-	      repast::RepastProcess::instance()->getScheduleRunner().init();
-
-	      // 2015-05-27 currently ignoring the 'world' variable
-	      boost::mpi::communicator* world =
-		repast::RepastProcess::instance()->getCommunicator();
-
-	      // Load properties and initialize
-	      repast::Properties lC_props;
-
-	      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-			    "Loading properties...");
-	      
-	      mCp_model->setProperties(lC_props);
-	    }
-	  }
-	  catch(const boost::bad_any_cast &) {
-	    LOG4CXX_ERROR(ModelHomeI::getLogger(),
-			  "Unable to cast input as <Json::Value>");
-	  }
-	} // 'if ( (*i).port == properties_in)'
-
       }
     }
 
@@ -270,12 +236,6 @@ namespace efscape {
 
      Json::Value lC_output =
 	mCp_model->outputFunction();
-      // BOOST_FOREACH(boost::property_tree::ptree::value_type &v,
-      // 		    lC_output.get_child("")) {
-      //   y.port = v.first;
-      // 	y.value = v.second;
-      // 	yb.insert(y);
-      // }
     }
 
     /**

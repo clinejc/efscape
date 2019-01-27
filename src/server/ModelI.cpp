@@ -62,7 +62,7 @@ bool ModelI::initialize(const Ice::Current& current)
 		"Initializing the model...");
 
   adevs::Bag<efscape::impl::IO_Type> xb;
-  efscape::impl::IO_Type x("initialize_in",
+  efscape::impl::IO_Type x("setup_in",
 			   0);
   xb.insert(x);
   efscape::impl::inject_events(0., xb, lCp_model);

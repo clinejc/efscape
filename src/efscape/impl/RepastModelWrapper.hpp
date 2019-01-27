@@ -30,24 +30,13 @@ namespace efscape {
     /**
      * Provides an ADEVS wrapper template class for Repast HPC models.
      * <br><br>
-     * Assumes that the wrapped model has implemented a single function:
-     *  -# void setProperties(repast::Properties&)
+     * Assumes that the wrapped model has implemented the following functions:
      *  -# const repast::Properties& getProperties()
-     *  -# void init()
-     *  -# Json::Value 
+     *  -# void setup(repast::Properties&)
+     *  -# Json::Value outputFunction()
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.0.5 created 09 Aug 2014, updated 21 Jun 2018
-     *
-     * ChangeLog:
-     *  - 2018-06-21 changed output_func(...) to output data in JSON format
-     *    using jsconcpp instead of boost::property_tree::ptree
-     *  - 2017-07-08 replaced boost::scoped_ptr with std::unique_ptr 
-     *  - 2014-11-06 implemented output_func(...)
-     *    - added output of properties as a property_tree
-     *    - added support for mCp_model->getOutput()
-     *  - 2014-09-13 created version that loads the model.props file
-     *  - 2014-08-09 created template class RepastModelWrapper<T>
+     * @version 0.1.0 created 09 Aug 2014, updated 27 Jan 2019
      */
     template <class ModelType>
     class RepastModelWrapper : public ATOMIC
@@ -85,8 +74,7 @@ namespace efscape {
       //-----------------
       // devs model ports
       //-----------------
-      static const efscape::impl::PortType initialize_in;
-      static const efscape::impl::PortType properties_in;
+      static const efscape::impl::PortType setup_in;
 
     private:
 
@@ -99,6 +87,9 @@ namespace efscape {
 	ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ATOMIC);
       }
 
+      /** handle to Repast properties */
+      std::unique_ptr<repast::Properties> mCp_props;
+      
       /** handle to Repast model */
       std::unique_ptr<ModelType> mCp_model;
 

@@ -251,7 +251,7 @@ namespace efscape {
 	//----------------------------------------------------------------------
 	// initialize the model first
 	adevs::Bag<IO_Type> xb;
-	IO_Type x("initialize_in",
+	IO_Type x("setup_in",
 		  0);
 	xb.insert(x);
 	inject_events(0., xb, lCp_model.get());
