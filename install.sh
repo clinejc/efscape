@@ -37,11 +37,11 @@ function install_repast_hpc {
   fi
   cd $BUILD_DIR
   if [ ! -e $BUILD_DIR/repast_hpc-2.2.0.tgz ]; then
-      wget https://github.com/Repast/repast.hpc/releases/download/v2.2.0/repast_hpc-2.2.0.tgz
+      wget https://github.com/Repast/repast.hpc/releases/download/v2.3.0/repast_hpc-2.3.0.tgz
   fi
-  tar xvzf repast_hpc-2.2.0.tgz
-  cd repast_hpc-2.2.0
-  patch -p1 -i $EFSCAPE_PATH/ext/repast_hpc-2.2.0.patch
+  tar xvzf repast_hpc-2.3.0.tgz
+  cd repast_hpc-2.3.0
+  patch -p1 -i $EFSCAPE_PATH/ext/repast_hpc-2.3.0.patch
   mkdir Release
   cd Release
   cmake -DCMAKE=Release -DCMAKE_INSTALL_PREFIX=$PREFIX_DIR ../src
