@@ -77,12 +77,7 @@ namespace efscape {
 		    "Creating <"
 		    << lC_id << ">...");
 
-      // 1) Create Repast model
-      mCp_model.reset( new ModelType() ); // create model
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "===> 1) Just reset the wrapped model ***");
-
-      // 2) Get default config file
+      // 1) Get default config file
 
       // attempt to retrieve the root directory of efscape ICE configuration
       std::string lC_EfscapeIcePath = "."; // default location
@@ -96,19 +91,22 @@ namespace efscape {
 	+ std::string("/config.props");
 
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "===> 2) Attempting to load configuration file ***");
+		    "===> 1) Attempting to load configuration file ***");
 
-      // 3) Intialize RepastProcess
+      // 2) Intialize RepastProcess
       repast::RepastProcess::init(lC_config_file);
 
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "===> 3) Initialized the RepastProcess!");
+		    "===> 2) Initialized the RepastProcess!");
 
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		    "===> Completed configuration of <"
 		    << lC_id << ">");
       
-      // 4) Copy JSON attributes to repast Properties
+      // 3) Copy JSON attributes to repast Properties
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+                "===> 3) Copying JSON attributes to repast Properties");
+      
       repast::Properties lC_props;
       if (aC_args.isObject()) {
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -132,8 +130,15 @@ namespace efscape {
 		      "aC_args is not an object");
       }
 
-      // 5) set properties
       mCp_props.reset( new repast::Properties(lC_props) );
+
+      // 4) Create Repast model
+      mCp_model.reset( new ModelType() ); // create model
+      
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "===> 4) Just reset the wrapped model ***");
+
+
     }
 
     /**

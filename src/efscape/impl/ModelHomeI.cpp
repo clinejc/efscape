@@ -340,7 +340,20 @@ namespace efscape {
 	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      lC_buffer_out.str());
       }
-
+      
+      //---------------------------------------
+      // List all the commands currently loaded
+      //---------------------------------------
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+		    "*** Available commands: ***");
+      li_cnt = 0;
+      std::set<std::string> lC1_CommandNames =
+      	getCommandFactory().getTypeIDs();
+      for (iter = lC1_CommandNames.begin(); iter != lC1_CommandNames.end();
+      	   iter++) {
+      	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+      		      "=>" << ++li_cnt << ") " << *iter);
+      }
     } // ModelHomeI::LoadLibraries()
 
     /**

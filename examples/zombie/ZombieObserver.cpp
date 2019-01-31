@@ -62,6 +62,13 @@ using namespace relogo;
 const string HUMAN_COUNT_PROP = "human.count";
 const string ZOMBIE_COUNT_PROP = "zombie.count";
 
+Json::Value ZombieObserver::outputFunction() {
+	Json::Value lC_output;
+	lC_output["testing"] = "Say hello!";
+
+	return lC_output;
+}
+
 void ZombieObserver::go() {
   if (_rank == 0) {
     Log4CL::instance()->get_logger("root").log(INFO, "TICK BEGINS: " + boost::lexical_cast<string>(RepastProcess::instance()->getScheduleRunner().currentTick()));

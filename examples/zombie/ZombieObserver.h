@@ -47,35 +47,42 @@
 
 #include "AgentPackage.h"
 
-class ZombieObserver : public repast::relogo::Observer {
+#include <json/json.h>
 
-private:
+class ZombieObserver : public repast::relogo::Observer
+{
+
+  private:
 	repast::Properties props;
 	int zombieType, humanType;
 	int _infectionCount;
 
-public:
+  public:
 	ZombieObserver() : _infectionCount(0) {}
 	virtual ~ZombieObserver() {}
 
+	Json::Value outputFunction();
+
 	void go();
-	virtual void setup(repast::Properties& props); // NOTE: 'virtual' needed by some compilers
+	virtual void setup(repast::Properties &props); // NOTE: 'virtual' needed by some compilers
 
 	// create and provide for agents moving between processes
-	repast::relogo::RelogoAgent* createAgent(const AgentPackage& content);
-	void provideContent(const repast::AgentRequest& request, std::vector<AgentPackage>& out);
+	repast::relogo::RelogoAgent *createAgent(const AgentPackage &content);
+	void provideContent(const repast::AgentRequest &request, std::vector<AgentPackage> &out);
 
 	// create and provide for buffer sync
-	void createAgents(std::vector<AgentPackage>& content, std::vector<repast::relogo::RelogoAgent*>& out);
-	void provideContent(repast::relogo::RelogoAgent* agent, std::vector<AgentPackage>& out);
+	void createAgents(std::vector<AgentPackage> &content, std::vector<repast::relogo::RelogoAgent *> &out);
+	void provideContent(repast::relogo::RelogoAgent *agent, std::vector<AgentPackage> &out);
 
 	void updateAgent(AgentPackage package);
 
-	void incrementInfectionCount() {
+	void incrementInfectionCount()
+	{
 		_infectionCount++;
 	}
 
-	int infectionCount() const {
+	int infectionCount() const
+	{
 		return _infectionCount;
 	}
 };

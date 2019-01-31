@@ -383,8 +383,8 @@ diff -Naur repast_hpc-2.3.0/src/CMakeLists.txt repast_hpc-2.3.0~patched/src/CMak
 +	        DESTINATION lib/pkgconfig)
 diff -Naur repast_hpc-2.3.0/src/relogo/SimulationRunnerPlus.h repast_hpc-2.3.0~patched/src/relogo/SimulationRunnerPlus.h
 --- repast_hpc-2.3.0/src/relogo/SimulationRunnerPlus.h	1969-12-31 19:00:00.000000000 -0500
-+++ repast_hpc-2.3.0~patched/src/relogo/SimulationRunnerPlus.h	2019-01-12 20:50:28.000000000 -0500
-@@ -0,0 +1,187 @@
++++ repast_hpc-2.3.0~patched/src/relogo/SimulationRunnerPlus.h	2019-01-29 10:34:29.000000000 -0500
+@@ -0,0 +1,194 @@
 +/*
 + *   Repast for High Performance Computing (Repast HPC)
 + *
@@ -463,8 +463,8 @@ diff -Naur repast_hpc-2.3.0/src/relogo/SimulationRunnerPlus.h repast_hpc-2.3.0~p
 +    class SimulationRunnerPlus {
 +    protected:
 +      boost::mpi::communicator* comm;
-+      boost::scoped_ptr<Properties> mCp_props;
-+      boost::scoped_ptr<ObserverType> mCp_obs;
++      std::unique_ptr<Properties> mCp_props;
++      std::unique_ptr<ObserverType> mCp_obs;
 +
 +    public:
 +      /**
@@ -511,6 +511,13 @@ diff -Naur repast_hpc-2.3.0/src/relogo/SimulationRunnerPlus.h repast_hpc-2.3.0~p
 +       */
 +      const repast::Properties& getProperties() {
 +	return *mCp_props;
++      }
++
++      /**
++       * @returns handle to Observer
++       */
++      ObserverType* getObserver() {
++	return mCp_obs.get();
 +      }
 +    };
 +
