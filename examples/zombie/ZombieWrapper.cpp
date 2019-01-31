@@ -66,7 +66,7 @@ public:
     // properties
     //========================================================================
     Json::Value lC_properties;
-    lC_properties["stopAt"] = 10;
+    lC_properties["stop.at"] = 10;
     lC_properties["human.count"] = 500;
     lC_properties["zombie.count"] = 5;
     lC_properties["min.x"] = -100;
