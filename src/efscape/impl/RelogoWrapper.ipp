@@ -245,12 +245,22 @@ void RelogoWrapper<ObserverType, PatchType>::output_func(adevs::Bag<IO_Type> &yb
                            lC_parameters);
   yb.insert(y);
 
-  // get model output
+  // get model output and direct output to output ports
   repast::ScheduleRunner &runner =
       repast::RepastProcess::instance()->getScheduleRunner();
 
   Json::Value lC_output =
       mCp_model->getObserver()->outputFunction();
+
+  if (lC_output.isObject()) {
+    Json::Value::Members lC_memberNames =
+      lC_output.getMemberNames();
+    for (int i = 0; i < lC_memberNames.size(); i++) {
+      y = efscape::impl::IO_Type( lC_memberNames[i],
+				  lC_output[ lC_memberNames[i] ] );
+      yb.insert(y);
+    }
+  }
 }
 
 /**

@@ -63,10 +63,32 @@ const string HUMAN_COUNT_PROP = "human.count";
 const string ZOMBIE_COUNT_PROP = "zombie.count";
 
 Json::Value ZombieObserver::outputFunction() {
-	Json::Value lC_output;
-	lC_output["testing"] = "Say hello!";
+  Json::Value lC_output;
+  lC_output["turtles_out"] = Json::Value(Json::arrayValue);
+  
+  // get all turtles
+  AgentSet<Turtle> turtles;
+  get(turtles);
+  AgentSet<Turtle>::as_iterator myIterator = turtles.begin();
+  AgentSet<Turtle>::as_iterator endIterator = turtles.end();
+  int cnt = 0;
+  for (; myIterator != endIterator; myIterator++) {
+	Json::Value lC_package;
 
-	return lC_output;
+	std::stringstream ss;
+	ss << (*myIterator)->getId();
+	lC_package["id"] = ss.str();
+	lC_package["type"] = (*myIterator)->getId().agentType();
+	lC_package["xCor"] = (*myIterator)->xCor();
+	lC_package["yCor"] = (*myIterator)->yCor();
+	lC_package["pxCor"] = (*myIterator)->pxCor();
+	lC_package["pyCor"] = (*myIterator)->pyCor();
+
+	lC_output["turtles_out"][cnt] = lC_package;
+
+	++cnt;
+  }
+  return lC_output;
 }
 
 void ZombieObserver::go() {

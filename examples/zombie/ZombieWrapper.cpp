@@ -13,21 +13,6 @@
 #include <efscape/impl/RelogoWrapper.ipp>
 #include "ZombieObserver.h"
 #include "relogo/Patch.h"
-// #include <ircm/Ircm.hpp>
-
-// // Required for class Ircm
-// #include <ircm/agents/IrcmAgent.hpp>
-// #include <ircm/agents/TaxAgency.hpp>
-// #include <ircm/agents/FilerType.hpp>
-// #include <ircm/contexts/EmployersSharedContext.hpp>
-// #include <ircm/contexts/PreparersSharedContext.hpp>
-// #include <ircm/contexts/ZonesSharedContext.hpp>
-// #include <ircm/random/IrcmRandom.hpp>
-// #include <ircm/taxreturn/Imputations.hpp>
-// #include <ircm/taxreturn/ReportingParameters.hpp>
-// #include <ircm/taxreturn/TaxReturn.hpp>
-// #include <repast_hpc/Properties.h>
-// #include <ircm/IrcmObserver.hpp>
 
 // definitions for accessing the model factory
 #include <efscape/impl/ModelHomeI.hpp>
@@ -53,14 +38,35 @@ public:
                                           "The ZombieWrapper class wraps the Repast HPC Relogo zombie model.",
                                           gcp_libname,
                                           1)
-  {
+  {//========================================================================
+    // input ports:
+    //========================================================================
+    addInputPort("setup_in", Json::Value(Json::nullValue));
+
     //========================================================================
     // output ports:
-    // * "out": array
+    // * "properties_out": object
+    // * "patchtes_out": array of objects
+    // * "turtles_out": array of objects
     //========================================================================
-    Json::Value lC_portValue;
-    lC_portValue = Json::Value(Json::arrayValue);
-    addOutputPort("out", lC_portValue);
+    Json::Value lC_portValue = Json::Value(Json::objectValue);
+    addOutputPort("properties_out", lC_portValue);
+
+    Json::Value lC_agentArray = Json::Value(Json::arrayValue);
+
+    Json::Value lC_agentAttributes = Json::Value(Json::objectValue);
+    lC_agentAttributes["id"] = "";
+    lC_agentAttributes["type"] = 0;
+    lC_agentAttributes["pxCor"] = 0;
+    lC_agentAttributes["pyCor"] = 0;
+    lC_agentArray[0] = lC_agentAttributes;
+    addOutputPort("patches_out", lC_agentArray);
+
+    lC_agentAttributes["xCor"] = 0;
+    lC_agentAttributes["yCor"] = 0;
+    lC_agentArray[0] = lC_agentAttributes;
+    addOutputPort("turtles_out", lC_agentArray);
+
 
     //========================================================================
     // properties
