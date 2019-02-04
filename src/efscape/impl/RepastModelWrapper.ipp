@@ -18,15 +18,20 @@
 
 // definitions for efscape models
 #include <efscape/impl/ModelHomeI.hpp>
+#include <efscape/impl/ModelHomeSingleton.hpp>
 #include <efscape/utils/type.hpp>
 
 // Repast HPC definitions
 #include <repast_hpc/RepastProcess.h>
+#include <repast_hpc/Properties.h>
 #include <repast_hpc/logger.h>
 
 // other definitions
-#include <json/json.h>
 #include <log4cxx/logger.h>
+
+#include <boost/filesystem/operations.hpp>
+
+namespace fs = boost::filesystem;
 
 namespace efscape {
   namespace impl {
@@ -43,103 +48,23 @@ namespace efscape {
      */
     template <class ModelType>
     RepastModelWrapper<ModelType>::RepastModelWrapper() :
-      ATOMIC()
+      ATOMIC(),
+      mC_modelProps(Json::nullValue)
     {
-      init();
     } // RepastModelWrapper<ModelType>::RepastModel()
 
     /**
      * constructor with argument in JSON format
      *
      * @tparameter ModelType wrapped Repast HPC model class
-     * @param aC_args JSON containing model attributes
+     * @param aC_modelProps JSON containing model properties
       */
     template <class ModelType>
-    RepastModelWrapper<ModelType>::RepastModelWrapper(Json::Value aC_args) :
-      ATOMIC()
+    RepastModelWrapper<ModelType>::RepastModelWrapper(Json::Value aC_modelProps) :
+      ATOMIC(),
+      mC_modelProps(aC_modelProps)
     {
-      init(aC_args);
     } // RepastModelWrapper<ModelType>::RepastModel(Json::Value)
-
-    /**
-     * Init function.
-     *
-     * Initilizes the wrapped Repast HPC model
-     *
-     * @tparameter ModelType wrapped Repast HPC model class
-     * @param aC_args
-     */
-    template <class ModelType>
-    void RepastModelWrapper<ModelType>::init(Json::Value aC_args) {
-      
-      std::string lC_id = efscape::utils::type< RepastModelWrapper<ModelType> >(*this);
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "Creating <"
-		    << lC_id << ">...");
-
-      // 1) Get default config file
-
-      // attempt to retrieve the root directory of efscape ICE configuration
-      std::string lC_EfscapeIcePath = "."; // default location
-      char* lcp_env_variable =	// get EFSCAPE_HOME
-	getenv("EFSCAPE_HOME");
-
-      if ( lcp_env_variable != 0 )
-	lC_EfscapeIcePath = lcp_env_variable;
-
-      std::string lC_config_file = lC_EfscapeIcePath
-	+ std::string("/config.props");
-
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "===> 1) Attempting to load configuration file ***");
-
-      // 2) Intialize RepastProcess
-      repast::RepastProcess::init(lC_config_file);
-
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "===> 2) Initialized the RepastProcess!");
-
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "===> Completed configuration of <"
-		    << lC_id << ">");
-      
-      // 3) Copy JSON attributes to repast Properties
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-                "===> 3) Copying JSON attributes to repast Properties");
-      
-      repast::Properties lC_props;
-      if (aC_args.isObject()) {
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		      "aC_args is an object")
-      	for (Json::Value::const_iterator it=aC_args.begin(); it!=aC_args.end();
-      	     ++it) {
-	  std::string lC_key = it.key().asString();
-	  std::string lC_value = it->asString();
-	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-			"Setting property <"
-			<< lC_key
-			<< "> = <"
-			<< lC_value
-			<< ">");
-
-      	  lC_props.putProperty( lC_key,
-      	  		        lC_value );
-      	}
-      } else {
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		      "aC_args is not an object");
-      }
-
-      mCp_props.reset( new repast::Properties(lC_props) );
-
-      // 4) Create Repast model
-      mCp_model.reset( new ModelType() ); // create model
-      
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		    "===> 4) Just reset the wrapped model ***");
-
-
-    }
 
     /**
      * destructor
@@ -148,14 +73,107 @@ namespace efscape {
      */
     template <class ModelType>
     RepastModelWrapper<ModelType>::~RepastModelWrapper() {
-      std::string lC_id = efscape::utils::type< RepastModelWrapper<ModelType> >(*this);
+      std::string lC_id =
+	efscape::utils::type< RepastModelWrapper<ModelType> >(*this);
+      
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		    "Deleting RepastModelWrapper=<"
 		    << lC_id << ">...");
-
-      // Shutdown Repast process
-      repast::RepastProcess::instance()->done();
     }
+
+    /**
+     * Setup function.
+     *
+     * Initilizes and sets up the wrapped Repast HPC model
+     *
+     * @tparameter ModelType wrapped Repast HPC model class
+     * @param aC_propsFile Repast HPC config file name
+     */
+    template <class ModelType>
+    void RepastModelWrapper<ModelType>::setup(std::string aC_propsFile)
+    {   
+      std::string lC_id =
+	efscape::utils::type< RepastModelWrapper<ModelType> >(*this);
+      
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    lC_id << "::setup("
+		    << aC_propsFile
+		    << ")...");
+
+      // 1) Get config file
+      std::string lC_config_file = aC_propsFile;
+
+      if ( lC_config_file == "" ||
+	   !fs::exists(fs::path(lC_config_file)) ) {
+	// get the default config file
+	// attempt to retrieve the root directory of efscape ICE configuration
+	std::string lC_EfscapeIcePath = "."; // default location
+	char *lcp_env_variable =             // get EFSCAPE_HOME
+	  getenv("EFSCAPE_HOME");
+
+	if (lcp_env_variable != 0)
+	  lC_EfscapeIcePath = lcp_env_variable;
+
+	lC_config_file = lC_EfscapeIcePath + std::string("/config.props");
+      }
+
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "===> 1) Attempting to load configuration file ***");
+
+      // 2) Intialize RepastProcess
+      mCp_world.reset( new boost::mpi::communicator() );
+      repast::RepastProcess::init(lC_config_file, mCp_world.get());
+
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "===> 2) Initialized the RepastProcess!");
+
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "===> Completed configuration of <"
+                    << lC_id << ">");
+
+      // 3) Copy JSON attributes to repast Properties
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "===> 3) Copying JSON attributes to repast Properties");
+
+      repast::Properties lC_props;
+      if (!mC_modelProps.isObject())
+	{
+	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+			"mC_modelProps is not an object:"
+			<< " using default properties");
+    
+	  // Retrieve default parameters
+	  Json::Value lC_info =
+	    efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
+	    getModelFactory().getProperties(lC_id);
+    
+	  mC_modelProps = lC_info["properties"];
+	}
+
+      for (Json::Value::const_iterator it = mC_modelProps.begin();
+	   it != mC_modelProps.end();
+	   ++it) {
+	std::string lC_key = it.key().asString();
+	std::string lC_value = it->asString();
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "Setting property <"
+		      << lC_key
+		      << "> = <"
+		      << lC_value
+		      << ">");
+
+	lC_props.putProperty(lC_key,
+			     lC_value);
+      }
+
+      // 4) Create Repast Relogo model
+      mCp_model.reset(new ModelType());
+      mCp_model->setup(lC_props);
+
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "===> 4) Just reset and setup the wrapped model ***");
+
+    } // RepastModelWrapper<ModelType>::setup(std::string)
 
     //--------------------------------------------
     // begin implementation of devs::adevs methods
@@ -183,20 +201,25 @@ namespace efscape {
 				const adevs::Bag<IO_Type>& xb)
     {
       // Attempt to "consume" input
-      adevs::Bag<efscape::impl::IO_Type>::const_iterator i = xb.begin();
-
-      for (; i != xb.end(); i++) {
+      // adevs::Bag<efscape::impl::IO_Type>::const_iterator i = xb.begin();
+      for (auto i : xb) {
 	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-		      "RepastModel input on port <"
-		      << (*i).port << ">");
+		      "Found port <"
+		      << setup_in
+		      << ">: initializing repast model..");
 	
-	if ( (*i).port == setup_in) { // event on <properties_in> port
-	    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-			  "Found port <"
-			  << setup_in
-			  << ">: initializing repast model..");
-	    mCp_model->setup(*mCp_props); // initialize repast hpc model
+	std::string lC_configFile = "";
+	
+	try {
+	  lC_configFile =
+	    boost::any_cast<std::string>( i.value );
 	}
+	catch (const boost::bad_any_cast &) {
+	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+			"Unable to translate output");
+	}
+	setup(lC_configFile);
+
       }
     }
 
@@ -221,6 +244,24 @@ namespace efscape {
      */
     template <class ModelType>
     void RepastModelWrapper<ModelType>::output_func(adevs::Bag<IO_Type>& yb) {
+      
+      //----------------------------------------------------------------
+      // Check if the simulation is still running.
+      // If not, get reference to Repast HPC ScheduleRunner and shut the
+      // simulation down -- this should complete all data recording
+      //----------------------------------------------------------------
+      repast::ScheduleRunner &runner =
+	repast::RepastProcess::instance()->getScheduleRunner();
+  
+      if (!runner.isRunning()) {
+	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		      "Shutting repast::RepastProcess down...");
+	repast::RepastProcess::instance()->done();
+      }
+
+      // Before proceeding, check if the wrapped model exists
+      if (mCp_model.get() == nullptr) return;
+      
       // copy the model properties to a JSON::Value object
       const repast::Properties& lCr_properties = mCp_model->getProperties();
       repast::Properties::key_iterator iter = lCr_properties.keys_begin();
@@ -235,10 +276,7 @@ namespace efscape {
 			       lC_parameters);
       yb.insert(y);
 
-    // get model output and direct output to output ports
-     repast::ScheduleRunner &runner =
-       repast::RepastProcess::instance()->getScheduleRunner();
-
+      // get model output and direct output to output ports
      Json::Value lC_output =
        mCp_model->outputFunction();
 

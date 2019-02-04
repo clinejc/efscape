@@ -252,7 +252,7 @@ namespace efscape {
 	// initialize the model first
 	adevs::Bag<IO_Type> xb;
 	IO_Type x("setup_in",
-		  0);
+		  "");
 	xb.insert(x);
 	inject_events(0., xb, lCp_model.get());
 	
@@ -261,10 +261,10 @@ namespace efscape {
       	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
       		      "Creating simulator...");
 	
-      	// adevs::Simulator<IO_Type> lCp_simulator(lCp_model.get() );
-	std::unique_ptr< adevs::Simulator<efscape::impl::IO_Type> >
-	  lCp_simulator
-	  ( createSimSession(lCp_model.get(), lC_info) );
+      	adevs::Simulator<IO_Type> lCp_simulator(lCp_model.get() );
+	// std::unique_ptr< adevs::Simulator<efscape::impl::IO_Type> >
+	//   lCp_simulator
+	//   ( createSimSession(lCp_model.get(), lC_info) );
 
       	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
       		      "Attempt to create simulation model successful!"
@@ -309,18 +309,18 @@ namespace efscape {
 	std::ostream lC_out(buf);
 	
 	double ld_time = 0.;
-      	while ( (ld_time = lCp_simulator->nextEventTime())
+      	while ( (ld_time = lCp_simulator.nextEventTime())
       		< ld_timeMax ) {
-      	  lCp_simulator->execNextEvent();
+      	  lCp_simulator.execNextEvent();
 
 	  // 
 	  adevs::Bag<IO_Type> xb;
 	  get_output(xb, lCp_model.get());
-	  adevs::Bag<IO_Type>::iterator i = xb.begin();
-	  for (; i != xb.end(); i++) {
+	  // adevs::Bag<IO_Type>::iterator i = xb.begin();
+	  for (auto i : xb) {
 	    try {
 	      Json::Value lC_messages =
-		boost::any_cast<Json::Value>( (*i).value );
+		boost::any_cast<Json::Value>( i.value );
 	      lC_out << lC_messages << std::endl;
 	    }
 	    catch(const boost::bad_any_cast &) {
@@ -328,7 +328,20 @@ namespace efscape {
 	    }
 	  }
       	}
-	std::cout << lC_info << std::endl;
+
+	//
+	// adevs::Bag<IO_Type> xb;
+	get_output(xb, lCp_model.get());;
+	for (auto i : xb) {
+	  try {
+	    Json::Value lC_messages =
+	      boost::any_cast<Json::Value>( i.value );
+	    lC_out << lC_messages << std::endl;
+	  }
+	  catch(const boost::bad_any_cast &) {
+	    ;
+	  }
+	}	
       }
       catch(std::logic_error lC_excp) {
       	LOG4CXX_ERROR(ModelHomeI::getLogger(),

@@ -48,7 +48,7 @@ bool ModelI::initialize(const Ice::Current& current)
 
   // verify that the wrapped model has been set properly
   adevs::Devs<efscape::impl::IO_Type>* lCp_model = mCp_WrappedModel.get();
-  if (lCp_model == 0) {
+  if (lCp_model == nullptr) {
     LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
 		  "main model does not exist");
     return false;
@@ -63,7 +63,7 @@ bool ModelI::initialize(const Ice::Current& current)
 
   adevs::Bag<efscape::impl::IO_Type> xb;
   efscape::impl::IO_Type x("setup_in",
-			   0);
+			   "");
   xb.insert(x);
   efscape::impl::inject_events(0., xb, lCp_model);
 
@@ -332,19 +332,60 @@ ModelI::translateInput(const Ice::Current& aCr_current,
 void ModelI::translateOutput(const Ice::Current& aCr_current,
 			       efscape::Message& aCr_external_output)
 {
-  std::cout << "ModelI::translateOutput(...): processing output...\n";
-  adevs::Bag< adevs::Event<efscape::impl::IO_Type> >::iterator
-    i = mCC_OutputBuffer.begin();
-  for ( ; i != mCC_OutputBuffer.end(); i++) {
+  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		"ModelI::translateOutput(...): processing output...");
+
+  //--------------------------------------
+  // First check if the simulation is done
+  // If so, retrieve final output
+  //--------------------------------------
+  if (mCp_simulator->nextEventTime() < DBL_MAX) {
+    ;
+  } else {
+    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		  "Done with simulation! Need to retrieve final output...");
+    
+    adevs::Bag<efscape::impl::IO_Type> xb;
+    efscape::impl::get_output(xb, mCp_WrappedModel.get());
+    // adevs::Bag<efscape::impl::IO_Type>::iterator i = xb.begin();
+    // for (auto i = xb.begin(); i != xb.end(); i++) {
+    for (auto i : xb) {
+      try {
+	Json::Value lC_value =
+	  boost::any_cast<Json::Value>( i.value );
+
+	efscape::Content lC_content;
+	lC_content.port = i.port;
+	
+	std::ostringstream lC_buffer_out;
+	lC_buffer_out << lC_value;
+	lC_content.valueToJson = lC_buffer_out.str();
+
+	aCr_external_output.push_back( lC_content );
+
+      }
+      catch(const boost::bad_any_cast &) {
+	;
+      }
+    }
+  }
+
+  //-----------------------------------------------------------------------
+  // Else if this simulation is not done, there should be events to process
+  //-----------------------------------------------------------------------
+  
+  // adevs::Bag< adevs::Event<efscape::impl::IO_Type> >::iterator
+  //   i = mCC_OutputBuffer.begin();
+  for (auto i : mCC_OutputBuffer) {
     LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		  "Processing event on port<"
-		  << (*i).value.port << ">...");
+		  << i.value.port << ">...");
     try {
       Json::Value lC_value =
-	boost::any_cast<Json::Value>( (*i).value.value );
+	boost::any_cast<Json::Value>( i.value.value );
 
       efscape::Content lC_content;
-      lC_content.port = (*i).value.port;
+      lC_content.port = i.value.port;
 	
       std::ostringstream lC_buffer_out;
       lC_buffer_out << lC_value;

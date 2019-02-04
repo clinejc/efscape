@@ -21,7 +21,6 @@
 #include <boost/serialization/version.hpp>
 
 #include <efscape/impl/efscapelib.hpp>
-#include <repast_hpc/Properties.h>
 #include <relogo/SimulationRunnerPlus.h>
 #include <json/json.h>
 
@@ -48,7 +47,7 @@ class RelogoWrapper : public ATOMIC
 
 public:
   RelogoWrapper();
-  RelogoWrapper(Json::Value aC_args);
+  RelogoWrapper(Json::Value aC_modelProps);
   virtual ~RelogoWrapper();
 
   //-------------------
@@ -79,7 +78,7 @@ public:
   static const efscape::impl::PortType setup_in;
 
 private:
-  void init(Json::Value aC_properties = Json::Value());
+  void setup(std::string aC_propsFile);
 
   template <class Archive>
   void serialize(Archive &ar, const unsigned int version) const
@@ -88,8 +87,12 @@ private:
     ar &BOOST_SERIALIZATION_BASE_OBJECT_NVP(ATOMIC);
   }
 
-  /** handle to Repast properties */
-  std::unique_ptr<repast::Properties> mCp_props;
+  /** handle to Repast properties in JSON format */
+  Json::Value mC_modelProps;
+
+  /** handle to communicator */
+  std::unique_ptr< boost::mpi::communicator > mCp_world;
+
 
   /** handle to Repast model */
   std::unique_ptr< repast::relogo::SimulationRunnerPlus<ObserverType, PatchType> >

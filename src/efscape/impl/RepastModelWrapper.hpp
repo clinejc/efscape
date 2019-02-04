@@ -21,8 +21,8 @@
 #include <boost/serialization/version.hpp>
 
 #include <efscape/impl/efscapelib.hpp>
-#include <repast_hpc/Properties.h>
 #include <json/json.h>
+#include <boost/mpi/communicator.hpp>
 
 namespace efscape {
   namespace impl {
@@ -36,7 +36,7 @@ namespace efscape {
      *  -# Json::Value outputFunction()
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 0.1.0 created 09 Aug 2014, updated 27 Jan 2019
+     * @version 0.1.1 created 09 Aug 2014, updated 02 Feb 2019
      */
     template <class ModelType>
     class RepastModelWrapper : public ATOMIC
@@ -78,7 +78,7 @@ namespace efscape {
 
     private:
 
-      void init(Json::Value aC_properties = Json::Value());
+      void setup(std::string aC_propsFile);
 	
       template<class Archive>
       void serialize(Archive & ar, const unsigned int version) const
@@ -87,8 +87,11 @@ namespace efscape {
 	ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ATOMIC);
       }
 
-      /** handle to Repast properties */
-      std::unique_ptr<repast::Properties> mCp_props;
+      /** handle to Repast properties in JSON format */
+      Json::Value mC_modelProps;
+
+      /** handle to communicator */
+      std::unique_ptr< boost::mpi::communicator > mCp_world;
       
       /** handle to Repast model */
       std::unique_ptr<ModelType> mCp_model;
