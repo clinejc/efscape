@@ -43,17 +43,21 @@
 #include "relogo/grid_types.h"
 #include "relogo/Patch.h"
 #include "repast_hpc/AgentRequest.h"
-#include "repast_hpc/SVDataSet.h"
-#include "repast_hpc/SVDataSetBuilder.h"
+// #include "repast_hpc/SVDataSet.h"
+// #include "repast_hpc/SVDataSetBuilder.h"
 
-#ifndef _WIN32
-#include "repast_hpc/NCDataSetBuilder.h"
-#endif
+// #ifndef _WIN32
+// #include "repast_hpc/NCDataSetBuilder.h"
+// #endif
 
 #include "ZombieObserver.h"
 #include "Human.h"
 #include "Zombie.h"
 #include "InfectionSum.h"
+
+#include <boost/filesystem/operations.hpp>
+
+namespace fs = boost::filesystem;
 
 using namespace std;
 using namespace repast;
@@ -62,91 +66,108 @@ using namespace relogo;
 const string HUMAN_COUNT_PROP = "human.count";
 const string ZOMBIE_COUNT_PROP = "zombie.count";
 
-Json::Value ZombieObserver::outputFunction() {
-  Json::Value lC_output;
-  lC_output["turtles_out"] = Json::Value(Json::arrayValue);
-  
-  // get all turtles
-  AgentSet<Turtle> turtles;
-  get(turtles);
-  AgentSet<Turtle>::as_iterator myIterator = turtles.begin();
-  AgentSet<Turtle>::as_iterator endIterator = turtles.end();
-  int cnt = 0;
-  for (; myIterator != endIterator; myIterator++) {
-	Json::Value lC_package;
+Json::Value ZombieObserver::outputFunction()
+{
+	Json::Value lC_output;
+	lC_output["turtles_out"] = Json::Value(Json::arrayValue);
 
-	std::stringstream ss;
-	ss << (*myIterator)->getId();
-	lC_package["id"] = ss.str();
-	lC_package["type"] = (*myIterator)->getId().agentType();
-	lC_package["xCor"] = (*myIterator)->xCor();
-	lC_package["yCor"] = (*myIterator)->yCor();
-	lC_package["pxCor"] = (*myIterator)->pxCor();
-	lC_package["pyCor"] = (*myIterator)->pyCor();
+	// get all turtles
+	AgentSet<Turtle> turtles;
+	get(turtles);
+	AgentSet<Turtle>::as_iterator myIterator = turtles.begin();
+	AgentSet<Turtle>::as_iterator endIterator = turtles.end();
+	int cnt = 0;
+	for (; myIterator != endIterator; myIterator++)
+	{
+		Json::Value lC_package;
 
-	lC_output["turtles_out"][cnt] = lC_package;
+		std::stringstream ss;
+		ss << (*myIterator)->getId();
+		lC_package["id"] = ss.str();
+		lC_package["type"] = (*myIterator)->getId().agentType();
+		lC_package["xCor"] = (*myIterator)->xCor();
+		lC_package["yCor"] = (*myIterator)->yCor();
+		lC_package["pxCor"] = (*myIterator)->pxCor();
+		lC_package["pyCor"] = (*myIterator)->pyCor();
 
-	++cnt;
-  }
-  return lC_output;
+		lC_output["turtles_out"][cnt] = lC_package;
+
+		++cnt;
+	}
+	return lC_output;
 }
 
-void ZombieObserver::go() {
-  if (_rank == 0) {
-    Log4CL::instance()->get_logger("root").log(INFO, "TICK BEGINS: " + boost::lexical_cast<string>(RepastProcess::instance()->getScheduleRunner().currentTick()));
-  }
-  // only synchronize if running on more than one processor!
-  if (RepastProcess::communicator()->size() > 1) {
-    synchronize<AgentPackage>(*this, *this, *this, RepastProcess::USE_LAST_OR_USE_CURRENT);
-  }
+void ZombieObserver::go()
+{
+	if (_rank == 0)
+	{
+		Log4CL::instance()->get_logger("root").log(INFO, "TICK BEGINS: " + boost::lexical_cast<string>(RepastProcess::instance()->getScheduleRunner().currentTick()));
+	}
+	// only synchronize if running on more than one processor!
+	if (RepastProcess::communicator()->size() > 1)
+	{
+		synchronize<AgentPackage>(*this, *this, *this, RepastProcess::USE_LAST_OR_USE_CURRENT);
+	}
 
-  AgentSet<Zombie> zombies;
-  get(zombies);
-  zombies.ask(&Zombie::step);
+	AgentSet<Zombie> zombies;
+	get(zombies);
+	zombies.ask(&Zombie::step);
 
-  AgentId id(0,0,2);
-  Zombie* z = who<Zombie>(id);
+	AgentId id(0, 0, 2);
+	Zombie *z = who<Zombie>(id);
 
-  AgentSet<Human> humans;
-  get(humans);
-  humans.ask(&Human::step);
+	AgentSet<Human> humans;
+	get(humans);
+	humans.ask(&Human::step);
 
-  if (_rank == 0) {
-    Log4CL::instance()->get_logger("root").log(INFO, "TICK ENDS: " + boost::lexical_cast<string>(RepastProcess::instance()->getScheduleRunner().currentTick()));
-  }
+	if (_rank == 0)
+	{
+		Log4CL::instance()->get_logger("root").log(INFO, "TICK ENDS: " + boost::lexical_cast<string>(RepastProcess::instance()->getScheduleRunner().currentTick()));
+	}
 }
 
-void ZombieObserver::setup(Properties& props) {
-  //	Observer::setup(props); // No longer need to call this (SimRunner calls _setup, which calls this after all initialization is done)
-  repast::Timer initTimer;
-  initTimer.start();
+void ZombieObserver::setup(Properties &props)
+{
+	//	Observer::setup(props); // No longer need to call this (SimRunner calls _setup, which calls this after all initialization is done)
+	repast::Timer initTimer;
+	initTimer.start();
 
-  int humanCount = strToInt(props.getProperty(HUMAN_COUNT_PROP));
-  humanType = create<Human> (humanCount);
+	int humanCount = strToInt(props.getProperty(HUMAN_COUNT_PROP));
+	humanType = create<Human>(humanCount);
 
-  int zombieCount = strToInt(props.getProperty(ZOMBIE_COUNT_PROP));
-  zombieType = create<Zombie> (zombieCount);
+	int zombieCount = strToInt(props.getProperty(ZOMBIE_COUNT_PROP));
+	zombieType = create<Zombie>(zombieCount);
 
-  AgentSet<Human> humans;
-  get(humans);
-  humans.apply(RandomMove(this));
+	AgentSet<Human> humans;
+	get(humans);
+	humans.apply(RandomMove(this));
 
-  AgentSet<Zombie> zombies;
-  get(zombies);
-  zombies.apply(RandomMove(this));
+	AgentSet<Zombie> zombies;
+	get(zombies);
+	zombies.apply(RandomMove(this));
 
-	SVDataSetBuilder svbuilder("./output/data.csv", ",", repast::RepastProcess::instance()->getScheduleRunner().schedule());
-	InfectionSum* iSum = new InfectionSum(this);
-	svbuilder.addDataSource(repast::createSVDataSource("number_infected", iSum, std::plus<int>()));
-	addDataSet(svbuilder.createDataSet());
+	cout << "****===> Zombie current path=" << fs::current_path().string() << std::endl;
 
+	/*SVDataSetBuilder*/
+	_svbuilder.reset(new SVDataSetBuilder("./output/data.csv",
+										  ",",
+										  repast::RepastProcess::instance()->getScheduleRunner().schedule()));
+	InfectionSum *iSum = new InfectionSum(this);
+	_svbuilder->addDataSource(repast::createSVDataSource("number_infected",
+														 iSum,
+														 std::plus<int>()));
+	addDataSet(_svbuilder->createDataSet());
 
 #ifndef _WIN32
 	// no netcdf under windows
-	NCDataSetBuilder builder("./output/data.ncf", RepastProcess::instance()->getScheduleRunner().schedule());
-	InfectionSum* infectionSum = new InfectionSum(this);
-	builder.addDataSource(repast::createNCDataSource("number_infected", infectionSum, std::plus<int>()));
-	addDataSet(builder.createDataSet());
+	/*NCDataSetBuilder*/
+	_builder.reset(new NCDataSetBuilder("./output/data.ncf",
+										RepastProcess::instance()->getScheduleRunner().schedule()));
+	InfectionSum *infectionSum = new InfectionSum(this);
+	_builder->addDataSource(repast::createNCDataSource("number_infected",
+													   infectionSum,
+													   std::plus<int>()));
+	addDataSet(_builder->createDataSet());
 #endif
 
 	long double t = initTimer.stop();
@@ -155,24 +176,33 @@ void ZombieObserver::setup(Properties& props) {
 	props.putProperty("init.time", ss.str());
 }
 
-RelogoAgent* ZombieObserver::createAgent(const AgentPackage& content) {
-	if (content.type == zombieType) {
+RelogoAgent *ZombieObserver::createAgent(const AgentPackage &content)
+{
+	if (content.type == zombieType)
+	{
 		return new Zombie(content.getId(), this);
-	} else if (content.type == humanType) {
+	}
+	else if (content.type == humanType)
+	{
 		return new Human(content.getId(), this, content);
-	} else {
+	}
+	else
+	{
 		// it's a patch.
 		return new Patch(content.getId(), this);
 	}
 }
 
-void ZombieObserver::provideContent(const repast::AgentRequest& request, std::vector<AgentPackage>& out) {
-	const vector<AgentId>& ids = request.requestedAgents();
-	for (int i = 0, n = ids.size(); i < n; i++) {
+void ZombieObserver::provideContent(const repast::AgentRequest &request, std::vector<AgentPackage> &out)
+{
+	const vector<AgentId> &ids = request.requestedAgents();
+	for (int i = 0, n = ids.size(); i < n; i++)
+	{
 		AgentId id = ids[i];
-		AgentPackage content = { id.id(), id.startingRank(), id.agentType(), id.currentRank(), 0, false };
-		if (id.agentType() == humanType) {
-			Human* human = who<Human> (id);
+		AgentPackage content = {id.id(), id.startingRank(), id.agentType(), id.currentRank(), 0, false};
+		if (id.agentType() == humanType)
+		{
+			Human *human = who<Human>(id);
 			content.infected = human->infected();
 			content.infectionTime = human->infectionTime();
 		}
@@ -180,35 +210,46 @@ void ZombieObserver::provideContent(const repast::AgentRequest& request, std::ve
 	}
 }
 
-void ZombieObserver::provideContent(RelogoAgent* agent, std::vector<AgentPackage>& out) {
+void ZombieObserver::provideContent(RelogoAgent *agent, std::vector<AgentPackage> &out)
+{
 	AgentId id = agent->getId();
-	AgentPackage content = { id.id(), id.startingRank(), id.agentType(), id.currentRank(), 0, false };
-	if (id.agentType() == humanType) {
-		Human* human = static_cast<Human*> (agent);
+	AgentPackage content = {id.id(), id.startingRank(), id.agentType(), id.currentRank(), 0, false};
+	if (id.agentType() == humanType)
+	{
+		Human *human = static_cast<Human *>(agent);
 		content.infected = human->infected();
 		content.infectionTime = human->infectionTime();
 	}
 	out.push_back(content);
 }
 
-void ZombieObserver::createAgents(std::vector<AgentPackage>& contents, std::vector<RelogoAgent*>& out) {
-	for (size_t i = 0, n = contents.size(); i < n; ++i) {
+void ZombieObserver::createAgents(std::vector<AgentPackage> &contents, std::vector<RelogoAgent *> &out)
+{
+	for (size_t i = 0, n = contents.size(); i < n; ++i)
+	{
 		AgentPackage content = contents[i];
-		if (content.type == zombieType) {
+		if (content.type == zombieType)
+		{
 			out.push_back(new Zombie(content.getId(), this));
-		} else if (content.type == humanType) {
+		}
+		else if (content.type == humanType)
+		{
 			out.push_back(new Human(content.getId(), this, content));
-		} else {
+		}
+		else
+		{
 			// it's a patch.
 			out.push_back(new Patch(content.getId(), this));
 		}
 	}
 }
 
-void ZombieObserver::updateAgent(AgentPackage package){
-  repast::AgentId id(package.id, package.proc, package.type);
-  if (id.agentType() == humanType) {
-    Human * human = who<Human> (id);
-    human->set(package.infected, package.infectionTime);
-  }
+void ZombieObserver::updateAgent(AgentPackage package)
+{
+	repast::AgentId id(package.id, package.proc, package.type);
+	if (id.agentType() == humanType)
+	{
+		Human *human = who<Human>(id);
+		human->set(package.infected, package.infectionTime);
+	}
 }

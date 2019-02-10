@@ -22,7 +22,6 @@
 
 #include <efscape/impl/efscapelib.hpp>
 #include <json/json.h>
-#include <boost/mpi/communicator.hpp>
 
 namespace efscape {
   namespace impl {
@@ -90,9 +89,6 @@ namespace efscape {
       /** handle to Repast properties in JSON format */
       Json::Value mC_modelProps;
 
-      /** handle to communicator */
-      std::unique_ptr< boost::mpi::communicator > mCp_world;
-      
       /** handle to Repast model */
       std::unique_ptr<ModelType> mCp_model;
 

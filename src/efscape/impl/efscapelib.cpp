@@ -215,7 +215,6 @@ namespace efscape {
       	lC_sessionPath /
       	fs::path(lC_modelName + "-" + boost::uuids::to_string(uuid));
 
-
       // attempt to create the session path if needed
       if (!fs::exists(lC_sessionPath)) {
       	try {
@@ -251,6 +250,15 @@ namespace efscape {
       std::ofstream ofs(lC_fileName.c_str());
       ofs << aC_info << std::endl;
 
+      //-----------------------------------------------------------
+      // initialize the model by injecting -a message to the "setup"
+      //----------------------------------------------------------
+      adevs::Bag<efscape::impl::IO_Type> xb;
+      efscape::impl::IO_Type x("setup_in",
+			       "");
+      xb.insert(x);
+      inject_events(0., xb, aCp_model);
+      
       // return handle to new simulator with model
       return ( new adevs::Simulator<IO_Type>(aCp_model) );
     }

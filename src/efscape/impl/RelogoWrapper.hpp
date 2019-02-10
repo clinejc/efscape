@@ -90,10 +90,6 @@ private:
   /** handle to Repast properties in JSON format */
   Json::Value mC_modelProps;
 
-  /** handle to communicator */
-  std::unique_ptr< boost::mpi::communicator > mCp_world;
-
-
   /** handle to Repast model */
   std::unique_ptr< repast::relogo::SimulationRunnerPlus<ObserverType, PatchType> >
   mCp_model;

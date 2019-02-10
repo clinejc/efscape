@@ -40,7 +40,7 @@ namespace impl
 
 // instantiate class data members
 template <typename ObserverType, typename PatchType>
-const efscape::impl::PortType RelogoWrapper<ObserverType, PatchType>::setup_in =
+const PortType RelogoWrapper<ObserverType, PatchType>::setup_in =
     "setup_in";
 
 /**
@@ -80,9 +80,9 @@ template <typename ObserverType, typename PatchType>
 RelogoWrapper<ObserverType, PatchType>::~RelogoWrapper()
 {
   std::string lC_id =
-    efscape::utils::type<RelogoWrapper<ObserverType, PatchType>>(*this);
+    utils::type<RelogoWrapper<ObserverType, PatchType>>(*this);
   
-  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
                 "Deleting RelogoWrapper=<"
                     << lC_id << ">...");
 }
@@ -101,9 +101,9 @@ void RelogoWrapper<ObserverType, PatchType>::setup(std::string aC_propsFile)
 {
 
   std::string lC_id =
-    efscape::utils::type<RelogoWrapper<ObserverType, PatchType>>(*this);
+    utils::type<RelogoWrapper<ObserverType, PatchType>>(*this);
   
-  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		lC_id << "::setup("
 		<< aC_propsFile
 		<< ")...");
@@ -125,35 +125,37 @@ void RelogoWrapper<ObserverType, PatchType>::setup(std::string aC_propsFile)
     lC_config_file = lC_EfscapeIcePath + std::string("/config.props");
   }
   
-  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
                 "===> 1) Attempting to load configuration file ***");
 
   // 2) Intialize RepastProcess
-  mCp_world.reset( new boost::mpi::communicator() );
+  boost::mpi::communicator* lCp_world =
+    Singleton<ModelHomeI>::Instance().
+    getCommunicator();
   repast::RepastProcess::init(lC_config_file,
-			      mCp_world.get());
+			      lCp_world);
 
-  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
                 "===> 2) Initialized the RepastProcess!");
 
-  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
                 "===> Completed configuration of <"
                     << lC_id << ">");
 
   // 3) Copy JSON attributes to repast Properties
-  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
                 "===> 3) Copying JSON attributes to repast Properties");
 
   repast::Properties lC_props;
   if (!mC_modelProps.isObject())
   {
-    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
                   "mC_modelProps is not an object:"
 		  << " using default properties");
     
     // Retrieve default parameters
     Json::Value lC_info =
-      efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
+      Singleton<ModelHomeI>::Instance().
       getModelFactory().getProperties(lC_id);
     
     mC_modelProps = lC_info["properties"];
@@ -164,7 +166,7 @@ void RelogoWrapper<ObserverType, PatchType>::setup(std::string aC_propsFile)
        ++it) {
     std::string lC_key = it.key().asString();
     std::string lC_value = it->asString();
-    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		  "Setting property <"
 		  << lC_key
 		  << "> = <"
@@ -176,12 +178,12 @@ void RelogoWrapper<ObserverType, PatchType>::setup(std::string aC_propsFile)
   }
 
   // 4) Create Repast model
-  boost::mpi::communicator *world =
-      repast::RepastProcess::instance()->getCommunicator();
-  mCp_model.reset(new repast::relogo::SimulationRunnerPlus<ObserverType, PatchType>(world));
+  lCp_world =
+    repast::RepastProcess::instance()->getCommunicator();
+  mCp_model.reset(new repast::relogo::SimulationRunnerPlus<ObserverType, PatchType>(lCp_world));
   mCp_model->setup(lC_props); // initialize repast hpc model
 
-  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
                 "===> 4) Just reset and setup the wrapped model ***");
   
 } // RelogoWrapper<ObserverType, PatchType>::setup(std::string)
@@ -199,7 +201,11 @@ template <typename ObserverType, typename PatchType>
 void RelogoWrapper<ObserverType, PatchType>::delta_int()
 {
   // execute next event
-  repast::RepastProcess::instance()->getScheduleRunner().execNextEvent();
+  repast::ScheduleRunner &runner =
+    repast::RepastProcess::instance()->getScheduleRunner();
+  runner.execNextEvent();
+  if (!runner.isRunning()) // end simulation if done
+    runner.end();
 } // RelogoWrapper<ObserverType, PatchType>::delta_int()
 
 /**
@@ -215,16 +221,16 @@ void RelogoWrapper<ObserverType, PatchType>::delta_ext(double e,
                                                        const adevs::Bag<IO_Type> &xb)
 {
   // Attempt to "consume" input
-  // adevs::Bag<efscape::impl::IO_Type>::const_iterator i = xb.begin();
+  // adevs::Bag<IO_Type>::const_iterator i = xb.begin();
   for (auto i : xb)
   {
-    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
                   "Relogo input on port <"
                       << i.port << ">");
 
     if (i.port == setup_in)
     { // event on <properties_in> port
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
                     "Found port <"
                         << setup_in
                         << ">: initializing repast model..");
@@ -236,7 +242,7 @@ void RelogoWrapper<ObserverType, PatchType>::delta_ext(double e,
 	  boost::any_cast<std::string>( i.value );
       }
       catch (const boost::bad_any_cast &) {
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "Unable to translate output");
       }
       setup(lC_configFile);
@@ -277,7 +283,7 @@ void RelogoWrapper<ObserverType, PatchType>::output_func(adevs::Bag<IO_Type> &yb
       repast::RepastProcess::instance()->getScheduleRunner();
   
   if (!runner.isRunning()) {
-    LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		  "Shutting repast::RepastProcess down...");
     repast::RepastProcess::instance()->done();
   }
@@ -296,7 +302,7 @@ void RelogoWrapper<ObserverType, PatchType>::output_func(adevs::Bag<IO_Type> &yb
   }
 
   // output properties map
-  efscape::impl::IO_Type y("properties_out",
+  IO_Type y("properties_out",
                            lC_parameters);
   yb.insert(y);
 
@@ -308,7 +314,7 @@ void RelogoWrapper<ObserverType, PatchType>::output_func(adevs::Bag<IO_Type> &yb
     Json::Value::Members lC_memberNames =
       lC_output.getMemberNames();
     for (int i = 0; i < lC_memberNames.size(); i++) {
-      y = efscape::impl::IO_Type( lC_memberNames[i],
+      y = IO_Type( lC_memberNames[i],
 				  lC_output[ lC_memberNames[i] ] );
       yb.insert(y);
     }

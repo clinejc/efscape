@@ -56,23 +56,21 @@ bool ModelI::initialize(const Ice::Current& current)
   
   //----------------------------------------------------------------------------
   // initialize model
-  //
   //----------------------------------------------------------------------------
   LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		"Initializing the model...");
 
-  adevs::Bag<efscape::impl::IO_Type> xb;
-  efscape::impl::IO_Type x("setup_in",
-			   "");
-  xb.insert(x);
-  efscape::impl::inject_events(0., xb, lCp_model);
+  // adevs::Bag<efscape::impl::IO_Type> xb;
+  // efscape::impl::IO_Type x("setup_in",
+  // 			   "");
+  // xb.insert(x);
+  // efscape::impl::inject_events(0., xb, lCp_model);
 
   // create simulator and register the wrapper as an event listener
   mCp_simulator.reset
     ( efscape::impl::createSimSession(lCp_model, mC_info) );
   mCp_simulator->addEventListener(this);
      
-
   try {
     if ( mCp_simulator->nextEventTime() < DBL_MAX) {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),

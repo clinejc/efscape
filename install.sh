@@ -58,10 +58,19 @@ function install_efscape {
     make install
 }
 
+function install_server {
+    cd $EFSCAPE_PATH/src/server
+    cp -p -R certs config.client config.props config.server log4j.properties $EFSCAPE_HOME
+    if [ ! -e $EFSCAPE_HOME/sessions ]; then
+      mkdir $EFSCAPE_HOME/sessions
+    fi
+}
+
 function install_all {
     install_adevs
     install_repast_hpc
     install_efscape
+    install_server
 }
 
 function help_info() {
@@ -71,6 +80,7 @@ function help_info() {
     echo "[adevs]      install adevs."
     echo "[repast_hpc] install repast_hpc."
     echo "[efscape]    install efscape."
+    echo "[server]     install efscape server."
     echo "[all]        install all packages including efscape."
     echo "[help]       show this help info."
 }
@@ -99,6 +109,9 @@ case $1 in
 	;;
     'efscape')
 	install_efscape
+	;;
+    'server')
+	install_server
 	;;
     'all')
 	install_all

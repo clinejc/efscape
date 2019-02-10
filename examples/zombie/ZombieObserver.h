@@ -44,6 +44,12 @@
 #include "relogo/Observer.h"
 #include "repast_hpc/AgentRequest.h"
 #include "repast_hpc/Properties.h"
+#include "repast_hpc/SVDataSet.h"
+#include "repast_hpc/SVDataSetBuilder.h"
+
+#ifndef _WIN32
+#include "repast_hpc/NCDataSetBuilder.h"
+#endif
 
 #include "AgentPackage.h"
 
@@ -56,6 +62,10 @@ class ZombieObserver : public repast::relogo::Observer
 	repast::Properties props;
 	int zombieType, humanType;
 	int _infectionCount;
+	std::unique_ptr<repast::SVDataSetBuilder> _svbuilder;
+#ifndef _WIN32
+	std::unique_ptr<repast::NCDataSetBuilder> _builder;
+#endif
 
   public:
 	ZombieObserver() : _infectionCount(0) {}

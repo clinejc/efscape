@@ -19,6 +19,7 @@
 #include <efscape/impl/efscapelib.hpp>
 #include <efscape/utils/CommandOpt.hpp>
 #include <efscape/utils/Factory.hpp>
+#include <boost/mpi/communicator.hpp>
 
 #include <log4cxx/logger.h>
 #include <boost/dll.hpp>	// boost dynamic library
@@ -83,6 +84,14 @@ namespace efscape {
 
       static log4cxx::LoggerPtr& getLogger();
 
+      void setCommunicator( boost::mpi::communicator* aCp_world ) {
+	mCp_world = aCp_world;
+      }
+
+      boost::mpi::communicator* getCommunicator() {
+	return mCp_world;
+      }
+      
     private:
 
       /** path of resources (on server) */
@@ -90,6 +99,9 @@ namespace efscape {
 
       /** smart handle to program log */
       static log4cxx::LoggerPtr mSCp_logger;
+
+      /** handle to world */
+      boost::mpi::communicator* mCp_world;
 
       std::unique_ptr<model_factory> mCp_ModelFactory;
       std::unique_ptr< command_factory > mCp_CommandFactory;

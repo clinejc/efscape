@@ -38,7 +38,7 @@ namespace efscape {
 
     // instantiate class data members
     template <class ModelType>
-    const efscape::impl::PortType RepastModelWrapper<ModelType>::setup_in =
+    const PortType RepastModelWrapper<ModelType>::setup_in =
       "setup_in";
 
     /**
@@ -58,7 +58,7 @@ namespace efscape {
      *
      * @tparameter ModelType wrapped Repast HPC model class
      * @param aC_modelProps JSON containing model properties
-      */
+     */
     template <class ModelType>
     RepastModelWrapper<ModelType>::RepastModelWrapper(Json::Value aC_modelProps) :
       ATOMIC(),
@@ -74,9 +74,9 @@ namespace efscape {
     template <class ModelType>
     RepastModelWrapper<ModelType>::~RepastModelWrapper() {
       std::string lC_id =
-	efscape::utils::type< RepastModelWrapper<ModelType> >(*this);
+	utils::type< RepastModelWrapper<ModelType> >(*this);
       
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		    "Deleting RepastModelWrapper=<"
 		    << lC_id << ">...");
     }
@@ -93,9 +93,9 @@ namespace efscape {
     void RepastModelWrapper<ModelType>::setup(std::string aC_propsFile)
     {   
       std::string lC_id =
-	efscape::utils::type< RepastModelWrapper<ModelType> >(*this);
+	utils::type< RepastModelWrapper<ModelType> >(*this);
       
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		    lC_id << "::setup("
 		    << aC_propsFile
 		    << ")...");
@@ -117,34 +117,36 @@ namespace efscape {
 	lC_config_file = lC_EfscapeIcePath + std::string("/config.props");
       }
 
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		    "===> 1) Attempting to load configuration file ***");
 
       // 2) Intialize RepastProcess
-      mCp_world.reset( new boost::mpi::communicator() );
-      repast::RepastProcess::init(lC_config_file, mCp_world.get());
+      boost::mpi::communicator* lCp_world =
+	Singleton<ModelHomeI>::Instance().
+	getCommunicator();
+      repast::RepastProcess::init(lC_config_file, lCp_world);
 
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		    "===> 2) Initialized the RepastProcess!");
 
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		    "===> Completed configuration of <"
                     << lC_id << ">");
 
       // 3) Copy JSON attributes to repast Properties
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		    "===> 3) Copying JSON attributes to repast Properties");
 
       repast::Properties lC_props;
       if (!mC_modelProps.isObject())
 	{
-	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 			"mC_modelProps is not an object:"
 			<< " using default properties");
     
 	  // Retrieve default parameters
 	  Json::Value lC_info =
-	    efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
+	    Singleton<ModelHomeI>::Instance().
 	    getModelFactory().getProperties(lC_id);
     
 	  mC_modelProps = lC_info["properties"];
@@ -155,7 +157,7 @@ namespace efscape {
 	   ++it) {
 	std::string lC_key = it.key().asString();
 	std::string lC_value = it->asString();
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "Setting property <"
 		      << lC_key
 		      << "> = <"
@@ -170,7 +172,7 @@ namespace efscape {
       mCp_model.reset(new ModelType());
       mCp_model->setup(lC_props);
 
-      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+      LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		    "===> 4) Just reset and setup the wrapped model ***");
 
     } // RepastModelWrapper<ModelType>::setup(std::string)
@@ -186,7 +188,11 @@ namespace efscape {
     template <class ModelType>
     void RepastModelWrapper<ModelType>::delta_int() {
       // execute next event
-      repast::RepastProcess::instance()->getScheduleRunner().execNextEvent();
+      repast::ScheduleRunner &runner =
+	repast::RepastProcess::instance()->getScheduleRunner();
+      runner.execNextEvent();
+      if (!runner.isRunning()) // end simulation if done
+	runner.end();
     } // RepastModelWrapper<ModelType>::delta_int()
 
     /**
@@ -198,12 +204,12 @@ namespace efscape {
      */
     template <class ModelType>
     void RepastModelWrapper<ModelType>::delta_ext(double e,
-				const adevs::Bag<IO_Type>& xb)
+						  const adevs::Bag<IO_Type>& xb)
     {
       // Attempt to "consume" input
-      // adevs::Bag<efscape::impl::IO_Type>::const_iterator i = xb.begin();
+      // adevs::Bag<IO_Type>::const_iterator i = xb.begin();
       for (auto i : xb) {
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "Found port <"
 		      << setup_in
 		      << ">: initializing repast model..");
@@ -215,7 +221,7 @@ namespace efscape {
 	    boost::any_cast<std::string>( i.value );
 	}
 	catch (const boost::bad_any_cast &) {
-	  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+	  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 			"Unable to translate output");
 	}
 	setup(lC_configFile);
@@ -254,7 +260,7 @@ namespace efscape {
 	repast::RepastProcess::instance()->getScheduleRunner();
   
       if (!runner.isRunning()) {
-	LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		      "Shutting repast::RepastProcess down...");
 	repast::RepastProcess::instance()->done();
       }
@@ -272,23 +278,23 @@ namespace efscape {
       }
 
       // output properties map
-      efscape::impl::IO_Type y("properties_out",
-			       lC_parameters);
+      IO_Type y("properties_out",
+		lC_parameters);
       yb.insert(y);
 
       // get model output and direct output to output ports
-     Json::Value lC_output =
-       mCp_model->outputFunction();
+      Json::Value lC_output =
+	mCp_model->outputFunction();
 
-     if (lC_output.isObject()) {
-       Json::Value::Members lC_memberNames =
-	 lC_output.getMemberNames();
-       for (int i = 0; i < lC_memberNames.size(); i++) {
-	 y = efscape::impl::IO_Type( lC_memberNames[i],
-				     lC_output[ lC_memberNames[i] ] );
-	 yb.insert(y);
-       }
-     }
+      if (lC_output.isObject()) {
+	Json::Value::Members lC_memberNames =
+	  lC_output.getMemberNames();
+	for (int i = 0; i < lC_memberNames.size(); i++) {
+	  y = IO_Type( lC_memberNames[i],
+		       lC_output[ lC_memberNames[i] ] );
+	  yb.insert(y);
+	}
+      }
     }
 
     /**

@@ -38,7 +38,7 @@
 
 #include "repast_hpc/io.h"
 #include "repast_hpc/RepastProcess.h"
-#include "relogo/SimulationRunner.h"
+#include "relogo/SimulationRunnerPlus.h"
 #include "relogo/Patch.h"
 //#include "repast_hpc/initialize_random.h"
 
@@ -65,12 +65,15 @@ void runZombies(std::string propsFile, int argc, char ** argv) {
 
   props.putProperty("process.count", world.size());
 
-	SimulationRunner runner(&world);
+	// SimulationRunner runner(&world);
+	SimulationRunnerPlus<ZombieObserver, Patch> runner(&world);
 
 	if(world.rank() == 0) std::cout << " Starting... " << std::endl;
 	repast::Timer timer;
 	timer.start();
-	runner.run<ZombieObserver, Patch>(props);
+	// runner.run<ZombieObserver, Patch>(props);
+	runner.setup(props);
+	runner.run();
 
   props.putProperty("run.time", timer.stop());
 

@@ -262,9 +262,6 @@ namespace efscape {
       		      "Creating simulator...");
 	
       	adevs::Simulator<IO_Type> lCp_simulator(lCp_model.get() );
-	// std::unique_ptr< adevs::Simulator<efscape::impl::IO_Type> >
-	//   lCp_simulator
-	//   ( createSimSession(lCp_model.get(), lC_info) );
 
       	LOG4CXX_DEBUG(ModelHomeI::getLogger(),
       		      "Attempt to create simulation model successful!"

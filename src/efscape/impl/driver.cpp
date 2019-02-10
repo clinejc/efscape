@@ -35,6 +35,7 @@
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
 #include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
 
 void fnExit(void) {
   LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
@@ -81,6 +82,9 @@ int main(int argc, char** argv) {
 
   // initialize MPI environment (use of MPI option)
   boost::mpi::environment env(argc, argv);
+  boost::mpi::communicator world;
+  efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
+    setCommunicator(&world);
 
   //---------------------------------------
   // extract the program name from the path

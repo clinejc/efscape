@@ -6,6 +6,7 @@
 #include <efscape/impl/ModelHomeI.hpp>
 #include <efscape/impl/ModelHomeSingleton.hpp>
 
+#include <repast_hpc/RepastProcess.h>
 #include <boost/mpi/environment.hpp>
 #include <boost/mpi/communicator.hpp>
 #include <iostream>
@@ -52,18 +53,22 @@ namespace zombie {
 	efscape::impl::ModelHomeI::getLogger()->setLevel(log4cxx::Level::getError());
       }
 
-     // 1) Retrieve the model default parameters
+      //------------------------------------------------------------------------
+      // 1) Retrieve the model default parameters
+      //------------------------------------------------------------------------
       std::shared_ptr<efscape::impl::DEVS> lCp_model;
       std::string lC_className = "efscape::impl::RelogoWrapper<ZombieObserver, repast::relogo::Patch>";
  
-      // 3) Retrieve the model with parameters
-      Json::Value lC_info =
+     Json::Value lC_info =
 	efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
 	getModelFactory().getProperties(lC_className);
 
       std::ostringstream lC_buffer;
       lC_buffer << lC_info;
 
+      //------------------------------------------------------------------------
+      // 2) Retrieve the model with parameters
+      //------------------------------------------------------------------------
       lCp_model =
 	efscape::impl::Singleton<efscape::impl::ModelHomeI>::Instance().
 	createModelFromParameters(lC_buffer.str());
@@ -78,53 +83,65 @@ namespace zombie {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		    "Attempt to create an object of type<"
 		    << lC_className << "> with parameters was successful!");
-
-      // Write todays date to a string
-      date today = day_clock::local_day();
-      date_facet* f = new date_facet("%Y-%m-%d");
-      locale loc = locale(locale("en_US"), f);
-      lC_buffer.clear();
-      lC_buffer.str("");
-      lC_buffer.seekp(0);
-      lC_buffer.imbue(loc);
-      lC_buffer << today;
-
-      fs::path lC_path =
-	fs::path(efscape::impl::ModelHomeI::getHomeDir()) /
-	fs::path("sessions") /
-	fs::path(lC_buffer.str());
-
-      std::cout << lC_path.string() << std::endl;
-
-      if (!fs::exists(lC_path)) {
-	try {
-	  fs::create_directory(lC_path);
-	}
-	catch(exception& e) {
-	  std::cerr << e.what() << std::endl;
-	}
-      }
-
-      if (chdir(lC_path.string().c_str())) {
-	std::cout << "Changed directory" << std::endl;
-      } else {
-	std::cout << "chdir failed\n";
-      }
-  
-      // initialize model
+ 
+      //------------------------------------------------------------------------
+      // 3. Run the simulation model
+      //----------------------------------------------------------------------
+      // initialize the model first
       adevs::Bag<efscape::impl::IO_Type> xb;
       efscape::impl::IO_Type x("setup_in",
-			       0);
+			       "");
       xb.insert(x);
       efscape::impl::inject_events(0., xb, lCp_model.get());
 
-      // test ta()
-      efscape::impl::ATOMIC* lCp_atomic = lCp_model->typeIsAtomic();
+      // create simulator
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "Creating simulator...");
+	
+      adevs::Simulator<efscape::impl::IO_Type> lCp_simulator(lCp_model.get() );
 
-      if (lCp_atomic != nullptr) {
-	std::cout << "ta() = " << lCp_atomic->ta() << std::endl;
+      LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
+		    "Attempt to create simulation model successful!"
+		    << "...Initializing simulation...");
+
+      // initialize the simulation clock
+      double ld_timeMax = adevs_inf<double>();
+   	
+      //
+      // simulate model until time max
+      //
+	
+      // select an output stream for simulation output 
+      std::streambuf * buf;
+      std::ofstream of;
+      if (out_file() != "") {
+	of.open(out_file());
+	buf = of.rdbuf();
+      } else {
+	buf = std::cout.rdbuf();
       }
-     
+      std::ostream lC_out(buf);
+	
+      double ld_time = 0.;
+      while ( (ld_time = lCp_simulator.nextEventTime())
+	      < ld_timeMax ) {
+	lCp_simulator.execNextEvent();
+
+	// 
+	adevs::Bag<efscape::impl::IO_Type> xb;
+	efscape::impl::get_output(xb, lCp_model.get());
+	// adevs::Bag<IO_Type>::iterator i = xb.begin();
+	for (auto i : xb) {
+	  try {
+	    Json::Value lC_messages =
+	      boost::any_cast<Json::Value>( i.value );
+	    lC_out << lC_messages << std::endl;
+	  }
+	  catch(const boost::bad_any_cast &) {
+	    ;
+	  }
+	}
+      }
     }
     catch(std::logic_error lC_excp) {
       std::cerr

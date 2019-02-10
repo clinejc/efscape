@@ -359,27 +359,7 @@ EfscapeClient::run(int argc, char* argv[])
 	  }
 	}
       }	// while ( (ld_time = ...
-
-      // Simulation should now be done -- check for final output
-      lC_message =
-	lCp_Model->outputFunction();
-      if (lC_message.size() > 0) {
-	LOG4CXX_DEBUG(gCp_logger,
-		      "time step = " << ld_time
-		      << ", message size = "
-		      << lC_message.size() );
-	for (int i = 0; i < lC_message.size(); i++) {
-	  LOG4CXX_DEBUG(gCp_logger,
-			"message " << i << ": value on port <"
-			<< lC_message[i].port << "> = "
-			<< lC_message[i].valueToJson);
-
-	}
-      } else {
-	LOG4CXX_DEBUG(gCp_logger,
-		      "Final model output is empty!");
-      }
-      
+     
       LOG4CXX_DEBUG(gCp_logger,
 		    "Simulation completed!");
     }
@@ -399,9 +379,4 @@ EfscapeClient::run(int argc, char* argv[])
   // Ice::collectGarbage();
 
   return li_status;
-}
-
-void menu() {
-  std::cout <<
-    "models:\n";
 }
