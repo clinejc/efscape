@@ -15,6 +15,8 @@
 // __COPYRIGHT_END__
 #include "SimulatorI.hpp"
 
+#include <adevs/adevs.h>
+
 /** default constructor */
 SimulatorI::SimulatorI() :
   mCp_model(nullptr)
@@ -113,7 +115,7 @@ SimulatorI::computeNextState(Ice::Double elapsedTime,
 bool
 SimulatorI::halt(const Ice::Current& current)
 {
-  return false;
+  return (mCp_model->timeAdvance() == DBL_MAX);
 }
 
 /**
