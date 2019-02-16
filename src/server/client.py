@@ -37,6 +37,7 @@ def run(communicator):
 
         modelName = None
         while True:
+            # prompt user for input: number of the model
             response = input('\nEnter the number of the model (0 to exit)==> ')
             if int(response) > 0 and int(response) <= len(modelList):
                 modelName = modelList[int(response) - 1]
@@ -46,12 +47,16 @@ def run(communicator):
                 parameters = json.loads(parmString)
                 print(parameters)
 
-                #
-                parmName = parameters['modelName']
+                # if the parameter 'modelName' exists, attempt to write
+                # the default parameters to file [modelName].json
+                if 'modelName' in parameters:
+                    parmName = parameters['modelName']
+
+                    parmFile = open(parmName + '.json', 'w')
+                    parmFile.write(parmString)
+                    parmFile.close()
                 
                 break
-
-        
 
         print('done')
         sys.exit(0)
@@ -62,7 +67,6 @@ def run(communicator):
 
     f = open(parmName, 'r')
     parmString = f.read()
-    print(parmString)
 
     # 5. create model from parameter file
     model = modelHome.createFromParameters(parmString)
@@ -80,6 +84,7 @@ def run(communicator):
 
     print('simulator created!')
 
+    # 6. run simulation
     t = 0
     idx = 0
     if simulator.start():
@@ -87,7 +92,8 @@ def run(communicator):
         message = model.outputFunction()
         print('message size = ' + str(len(message)))
         for x in message:
-            print('message ' + str(idx) + ': value on port <' + x.port + '> = ' +  x.valueToJson)
+            print('message ' + str(idx) + ': value on port <' + \
+                      x.port + '> = ' +  x.valueToJson)
 
         while not simulator.halt():
             t = simulator.nextEventTime()
@@ -95,15 +101,19 @@ def run(communicator):
             simulator.execNextEvent()
             message = model.outputFunction()
             for x in message:
-                print('message ' + str(idx) + ': value on port <' + x.port + '> = ' +  x.valueToJson)            
+                print('message ' + str(idx) + ': value on port <' + \
+                          x.port + '> = ' +  x.valueToJson)            
 
+    # 7. Wrap-up
     simulator.destroy()
     model.destroy()
+    
 #
 # Ice.initialize returns an initialized Ice communicator,
 # the communicator is destroyed once it goes out of scope.
 #
-with Ice.initialize(sys.argv, "config.client") as communicator:
+with Ice.initialize(sys.argv,
+        str(Path(os.environ['EFSCAPE_PATH']) / "src/server/config.client")) as communicator:
 
     #
     # The communicator initialization removes all Ice-related arguments from argv

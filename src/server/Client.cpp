@@ -339,7 +339,8 @@ EfscapeClient::run(int argc, char* argv[])
 		    "Next event time = "
 		    << lCp_Simulator->nextEventTime());
 
-      while ( (ld_time = lCp_Simulator->nextEventTime()) < DBL_MAX) {
+      while ( !lCp_Simulator->halt() ) {
+	ld_time = lCp_Simulator->nextEventTime();
 	LOG4CXX_DEBUG(gCp_logger,
 		      "simulation time = "
 		      << ld_time);

@@ -62,7 +62,7 @@ Ice.Trace.Network=1
 #
 Ice.Plugin.IceSSL=IceSSL:createIceSSL
 #IceSSL.DefaultDir=../../../certs
-IceSSL.DefaultDir=/Users/jcc/git/ice-demos/certs
+IceSSL.DefaultDir=./certs
 IceSSL.CertFile=server.p12
 IceSSL.Password=password
 IceSSL.Keychain=server.keychain

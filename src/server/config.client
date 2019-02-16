@@ -39,7 +39,7 @@ ModelHome.Proxy=ModelHome:tcp -p 10000:udp
 # SSL Configuration
 #
 #Ice.Plugin.IceSSL=IceSSL:createIceSSL
-#IceSSL.DefaultDir=../../../certs
+#IceSSL.DefaultDir=./certs
 #IceSSL.CertAuthFile=cacert.pem
 #IceSSL.CertFile=c_rsa1024_pub.pem
 #IceSSL.KeyFile=c_rsa1024_priv.pem
