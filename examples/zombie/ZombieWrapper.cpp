@@ -38,7 +38,7 @@ public:
                                           "The ZombieWrapper class wraps the Repast HPC Relogo zombie model.",
                                           gcp_libname,
                                           1)
-  {//========================================================================
+  { //========================================================================
     // input ports:
     //========================================================================
     addInputPort("setup_in", Json::Value(Json::nullValue));
@@ -46,12 +46,15 @@ public:
     //========================================================================
     // output ports:
     // * "properties_out": object
-    // * "patchtes_out": array of objects
+    // * "patches_out": array of objects
+    // * "breeds_out": array of turtle breeds (types)
     // * "turtles_out": array of objects
     //========================================================================
+    // properties_out
     Json::Value lC_portValue = Json::Value(Json::objectValue);
     addOutputPort("properties_out", lC_portValue);
 
+    // patches_out
     Json::Value lC_agentArray = Json::Value(Json::arrayValue);
 
     Json::Value lC_agentAttributes = Json::Value(Json::objectValue);
@@ -62,11 +65,22 @@ public:
     lC_agentArray[0] = lC_agentAttributes;
     addOutputPort("patches_out", lC_agentArray);
 
+    // breeds_out
+    Json::Value lC_breedArray = Json::Value(Json::arrayValue);
+    Json::Value lC_breed;
+    lC_breed["type"] = "human";
+    lC_breed["id"] = 0;
+    lC_breedArray[0] = lC_breed;
+    lC_breed["type"] = "zombie";
+    lC_breed["id"] = 1;
+    lC_breedArray[1] = lC_breed;
+    addOutputPort("breeds_out", lC_breedArray);
+
+    // turtles_out
     lC_agentAttributes["xCor"] = 0;
     lC_agentAttributes["yCor"] = 0;
     lC_agentArray[0] = lC_agentAttributes;
     addOutputPort("turtles_out", lC_agentArray);
-
 
     //========================================================================
     // properties
@@ -87,6 +101,23 @@ public:
 
     // additional attributes
     mC_attributes["modelName"] = "ef_relogo.zombie";
+
+    // portrayal list for visualization
+    Json::Value lC_visualization;
+    Json::Value lC_portrayal;
+
+    lC_portrayal["Color"] = "blue";
+    lC_portrayal["Shape"] = "circle";
+    lC_portrayal["r"] = 3;
+    lC_visualization["human"] = lC_portrayal;
+
+    lC_portrayal["Color"] = "red";
+    lC_portrayal["Shape"] = "circle";
+    lC_portrayal["r"] = 3;
+    lC_visualization["zombie"] = lC_portrayal;
+    
+    mC_attributes["visualization"] = lC_visualization;
+
   }
 };
 

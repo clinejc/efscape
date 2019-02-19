@@ -91,9 +91,16 @@ Json::Value ZombieObserver::outputFunction()
 		lC_package["pyCor"] = (*myIterator)->pyCor();
 
 		lC_output["turtles_out"][cnt] = lC_package;
-
 		++cnt;
 	}
+
+	// add breeds
+	Json::Value lC_breeds;
+	lC_breeds["human"] = this->humanType;
+	lC_breeds["zombie"] = this->zombieType;
+	lC_output["breeds_out"] = lC_breeds;
+
+
 	return lC_output;
 }
 
@@ -145,8 +152,6 @@ void ZombieObserver::setup(Properties &props)
 	AgentSet<Zombie> zombies;
 	get(zombies);
 	zombies.apply(RandomMove(this));
-
-	cout << "****===> Zombie current path=" << fs::current_path().string() << std::endl;
 
 	/*SVDataSetBuilder*/
 	_svbuilder.reset(new SVDataSetBuilder("./output/data.csv",
