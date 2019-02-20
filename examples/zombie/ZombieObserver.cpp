@@ -69,7 +69,15 @@ const string ZOMBIE_COUNT_PROP = "zombie.count";
 Json::Value ZombieObserver::outputFunction()
 {
 	Json::Value lC_output;
-	lC_output["turtles_out"] = Json::Value(Json::arrayValue);
+
+	//-----------------------
+	// output port: clock_out
+	lC_output["currentTick"] =
+	  RepastProcess::instance()->getScheduleRunner().currentTick();
+
+	//-------------------------
+	// output port: turtles_out
+	lC_output["turtles"] = Json::Value(Json::arrayValue);
 
 	// get all turtles
 	AgentSet<Turtle> turtles;
@@ -90,15 +98,16 @@ Json::Value ZombieObserver::outputFunction()
 		lC_package["pxCor"] = (*myIterator)->pxCor();
 		lC_package["pyCor"] = (*myIterator)->pyCor();
 
-		lC_output["turtles_out"][cnt] = lC_package;
+		lC_output["turtles"][cnt] = lC_package;
 		++cnt;
 	}
 
-	// add breeds
+	//--------------------
+	// output port: breeds
 	Json::Value lC_breeds;
 	lC_breeds["human"] = this->humanType;
 	lC_breeds["zombie"] = this->zombieType;
-	lC_output["breeds_out"] = lC_breeds;
+	lC_output["breeds"] = lC_breeds;
 
 
 	return lC_output;
