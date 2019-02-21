@@ -60,12 +60,6 @@ bool ModelI::initialize(const Ice::Current& current)
   LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
 		"Initializing the model...");
 
-  // adevs::Bag<efscape::impl::IO_Type> xb;
-  // efscape::impl::IO_Type x("setup_in",
-  // 			   "");
-  // xb.insert(x);
-  // efscape::impl::inject_events(0., xb, lCp_model);
-
   // create simulator and register the wrapper as an event listener
   mCp_simulator.reset
     ( efscape::impl::createSimSession(lCp_model, mC_info) );
@@ -74,7 +68,16 @@ bool ModelI::initialize(const Ice::Current& current)
   try {
     if ( mCp_simulator->nextEventTime() < DBL_MAX) {
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
-  		    "The simulation model is ready to run!");
+                    "The simulation model is ready to run!");
+
+      // now output the initial state of the wrapped model
+      adevs::Bag<efscape::impl::IO_Type> xb;
+      efscape::impl::get_output(xb, lCp_model);
+      for (auto i : xb)
+      {
+        adevs::Event<efscape::impl::IO_Type> y(lCp_model, i);
+        this->outputEvent(y, 0.0);
+      }
     }
     else
       LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(),
