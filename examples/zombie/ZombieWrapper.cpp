@@ -52,7 +52,7 @@ public:
     //========================================================================
     // properties_out
     Json::Value lC_portValue = Json::Value(Json::objectValue);
-    addOutputPort("properties_out", lC_portValue);
+    addOutputPort("properties", lC_portValue);
 
     // patches_out
     Json::Value lC_agentArray = Json::Value(Json::arrayValue);
@@ -63,7 +63,7 @@ public:
     lC_agentAttributes["pxCor"] = 0;
     lC_agentAttributes["pyCor"] = 0;
     lC_agentArray[0] = lC_agentAttributes;
-    addOutputPort("patches_out", lC_agentArray);
+    addOutputPort("patches", lC_agentArray);
 
     // breeds_out
     Json::Value lC_breedArray = Json::Value(Json::arrayValue);
@@ -74,13 +74,13 @@ public:
     lC_breed["type"] = "zombie";
     lC_breed["id"] = 1;
     lC_breedArray[1] = lC_breed;
-    addOutputPort("breeds_out", lC_breedArray);
+    addOutputPort("breeds", lC_breedArray);
 
     // turtles_out
     lC_agentAttributes["xCor"] = 0;
     lC_agentAttributes["yCor"] = 0;
     lC_agentArray[0] = lC_agentAttributes;
-    addOutputPort("turtles_out", lC_agentArray);
+    addOutputPort("turtles", lC_agentArray);
 
     //========================================================================
     // properties
