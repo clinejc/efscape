@@ -59,7 +59,7 @@ namespace efscape {
        *
        * @param aC_parameters embedded in a JSON string
        */
-      SimRunner(Json::Value aC_parameters);
+      SimRunner(Json::Value aC_modelProps);
 
       /** destructor */
       ~SimRunner();
@@ -67,16 +67,6 @@ namespace efscape {
       //-------------------------
       // accessor/mutator methods
       //-------------------------
-
-      /** @returns model type name */
-      std::string getModelTypeName() const {
-	return mC_modelTypeName;
-      }
-
-      /** @returns model name */
-      std::string getModelName() const{
-	return mC_modelName;
-      }
 
       //
       // clock
@@ -169,30 +159,13 @@ namespace efscape {
        */
       void gc_output(adevs::Bag<IO_Type>& g);
 
-      //-----------------
-      // devs model ports
-      //-----------------
-      /** clock input port */
-      static const efscape::impl::PortType clock_in;
-
-      /** properties input port */
-      static const efscape::impl::PortType properties_in;
-
     protected:
-
-      /**
-       * Create the wrapped model (to be overridden by derived classes)
-       *
-       * @throws adevs::exception
-       */
-      virtual void createModel()
-	throw(adevs::exception);
-
-      std::string mC_modelTypeName;
-      std::string mC_modelName;
 
       /** simulation clock (implementation) */
       ClockIPtr mCp_ClockI;
+
+      /** handle to Repast properties in JSON format */
+      Json::Value mC_modelProps;
 
     private:
       friend class cereal::access;
@@ -203,8 +176,6 @@ namespace efscape {
 	// invoke serialization
 	ar( cereal::make_nvp("adevs::ModelWrapper", // parent class
 			     cereal::base_class<efscape::impl::ModelWrapperBase>(this) ),
-	    cereal::make_nvp("modelTypeName", mC_modelTypeName),
-	    cereal::make_nvp("modelName", mC_modelName),
 	    cereal::make_nvp("clock", mCp_ClockI) );
       }
     };				// class SimRunner
