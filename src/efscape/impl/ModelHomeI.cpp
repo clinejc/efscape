@@ -208,16 +208,27 @@ namespace efscape {
       LOG4CXX_DEBUG(ModelHomeI::getLogger(),
 		    "Attempting to create a model of type <"
 		    << lC_modelTypeName
-		    << "> from the factory");
+		    << "> with properties from the factory");
       DEVSPtr lCp_model( getModelFactory()
 			 .createObject( lC_modelTypeName, lC_modelProperties ) );
 
-       if (lCp_model == nullptr) {
-         LOG4CXX_ERROR(ModelHomeI::getLogger(),
-		      "Failed to retrieve a model of type <"
-          << lC_modelTypeName
-          << "> from the factory");
-       }
+      if (lCp_model == nullptr)
+      {
+        LOG4CXX_ERROR(ModelHomeI::getLogger(),
+                      "Failed to retrieve a model of type <"
+                          << lC_modelTypeName
+                          << "> with parameters from the factory");
+
+        // try
+        lCp_model = createModel(lC_modelTypeName);
+        if (lCp_model == nullptr)
+        {
+          LOG4CXX_ERROR(ModelHomeI::getLogger(),
+                        "Second attempt to retrieve a model of type <"
+                            << lC_modelTypeName
+                            << "> , this time without parameters, from the factory");
+        }
+      }
 
       return lCp_model;
 

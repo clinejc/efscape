@@ -45,7 +45,7 @@ namespace efscape {
      * model session. It replaces the efscape::impl::AdevsModel
      *
      * @author Jon C. Cline <clinej@stanfordalumni.org>
-     * @version 0.2.0 created 27 Apr 2017, revised 11 Aug 2017
+     * @version 0.3.0 created 27 Apr 2017, revised 02 Mar 2019
      */
     class SimRunner : public ModelWrapperBase
     {

@@ -29,30 +29,30 @@ namespace efscape
 namespace impl
 {
 
-SimRunner::SimRunner() : ModelWrapperBase(),
-                         mC_modelProps(Json::nullValue)
+SimRunner::SimRunner() : SimRunner(Json::nullValue) //ModelWrapperBase(),
+                                                    //mC_modelProps(Json::nullValue)
 {
-  // initialize the clock
-  mCp_ClockI.reset(new ClockI);
-  mCp_ClockI->timeMax() = DBL_MAX;
+  // // initialize the clock
+  // mCp_ClockI.reset(new ClockI);
+  // mCp_ClockI->timeMax() = DBL_MAX;
 
-  // load and set wrapped model
-  //
-  std::string lC_ClassName = "efscape::impl::AdevsModel"; // default root model is of class efscape::impl::AdevsModel
-  LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-                "Retrieving the model from the factory");
-  DEVSPtr lCp_model(Singleton<ModelHomeI>::Instance()
-                        .getModelFactory()
-                        .createObject(lC_ClassName));
+  // // load and set wrapped model
+  // //
+  // std::string lC_ClassName = "efscape::impl::AdevsModel"; // default root model is of class efscape::impl::AdevsModel
+  // LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+  //               "Retrieving the model from the factory");
+  // DEVSPtr lCp_model(Singleton<ModelHomeI>::Instance()
+  //                       .getModelFactory()
+  //                       .createObject(lC_ClassName));
 
-  if (lCp_model == nullptr)
-  {
-    LOG4CXX_ERROR(ModelHomeI::getLogger(),
-                  "Unable to create model <" << lC_ClassName << ">");
-    return;
-  }
+  // if (lCp_model == nullptr)
+  // {
+  //   LOG4CXX_ERROR(ModelHomeI::getLogger(),
+  //                 "Unable to create model <" << lC_ClassName << ">");
+  //   return;
+  // }
 
-  setWrappedModel(lCp_model);
+  // setWrappedModel(lCp_model);
 }
 
 SimRunner::SimRunner(Json::Value aC_modelProps) : ModelWrapperBase(),
@@ -75,8 +75,13 @@ SimRunner::SimRunner(Json::Value aC_modelProps) : ModelWrapperBase(),
   if (lCp_model == nullptr)
   {
     LOG4CXX_ERROR(ModelHomeI::getLogger(),
-                  "Unable to create model <" << lC_ClassName << ">");
+                  "Unable to create wrapped model <" << lC_ClassName << ">");
     return;
+  }
+  else
+  {
+    LOG4CXX_DEBUG(ModelHomeI::getLogger(),
+                  "Set wrapped model <" << lC_ClassName << ">");
   }
 
   setWrappedModel(lCp_model);
@@ -128,14 +133,12 @@ void SimRunner::translateInput(const adevs::Bag<IO_Type> &
                                adevs::Bag<adevs::Event<IO_Type>> &
                                    internal_input)
 {
-  adevs::Bag<IO_Type>::iterator iter;
-  for (iter = external_input.begin(); iter != external_input.end();
-       iter++)
+  for (auto i: external_input)
   {
     LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-                  "passing on port <" << (*iter).port << ">");
+                  "passing on port <" << i.port << ">");
     internal_input.insert(adevs::Event<IO_Type>(getWrappedModel().get(),
-                                                (*iter)));
+                                                i));
   }
 }
 
@@ -144,10 +147,9 @@ void SimRunner::translateOutput(const adevs::Bag<adevs::Event<IO_Type>> &
                                 adevs::Bag<IO_Type> &external_output)
 {
   adevs::Bag<adevs::Event<IO_Type>>::iterator iter;
-  for (iter = internal_output.begin(); iter != internal_output.end();
-       iter++)
+  for (auto i: internal_output)
   {
-    external_output.insert(IO_Type((*iter).value));
+    external_output.insert(IO_Type(i.value));
   }
 }
 
