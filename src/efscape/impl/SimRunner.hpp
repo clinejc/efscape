@@ -1,7 +1,7 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : SimRunner.hpp
-// Copyright (C) 2006-2018 Jon C. Cline
+// Copyright (C) 2006-2019 Jon C. Cline
 // 
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above

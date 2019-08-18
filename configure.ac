@@ -61,7 +61,7 @@ BOOST_LOG()
 
 # Zeroc Ice
 ICE_CFLAGS="-I$ICE_HOME/include"
-ICE_LIBS="-L$ICE_HOME/lib -lGlacier2 -lIce++11 -lIceBox++11 -lIceGrid++11 -lIcePatch2 -lIceSSL++11 -lIceStorm++11"
+ICE_LIBS="-L$ICE_HOME/lib -lGlacier2++11 -lIce++11 -lIceBox++11 -lIceGrid++11 -lIcePatch2 -lIceSSL++11 -lIceStorm++11 -lIceXML.37"
 AC_SUBST(ICE_CFLAGS)
 AC_SUBST(ICE_LIBS)
 

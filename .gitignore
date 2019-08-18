@@ -1,1 +1,25 @@
 ext/build
+
+# make and build files
+.vscode
+*.deps
+*.dirstamp
+*.libs
+*.o
+*.lo
+*.la
+*.pc
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache
+config.log
+config.status
+config
+configure
+m4/libtool.m4
+m4/ltoptions.m4
+m4/ltsugar.m4
+m4/ltversion.m4
+m4/lt~obsolete.m4
+libtool

@@ -5,6 +5,6 @@ includedir=${exec_prefix}/include
 
 Name: Ice
 Description: A modern distributed computing platform for C++, .NET, Java, Python, Objective-C, Ruby, PHP, and JavaScript
-Version: 3.7.0
-Libs: -L${libdir} -lGlacier2 -lIce++11 -lIceBox++11 -lIceGrid++11 -lIcePatch2 -lIceSSL++11 -lIceStorm++11 -lIceXML.3.7.0
+Version: 3.7.2
+Libs: -L${libdir} -lGlacier2++11 -lIce++11 -lIceBox++11 -lIceGrid++11 -lIcePatch2 -lIceSSL++11 -lIceStorm++11 -lIceXML.37
 Cflags: -I${includedir}

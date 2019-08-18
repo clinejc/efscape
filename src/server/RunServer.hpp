@@ -17,7 +17,6 @@
 #define EFSCAPE_SERVER_RUNSERVER_HPP
 
 #include <efscape/utils/CommandOpt.hpp>
-#include <Ice/Application.h>
 
 namespace efscape {
 
@@ -29,13 +28,14 @@ namespace efscape {
      * interface derived from the CommandOpt class.
      *
      * @author Jon Cline <clinej@stanfordalumni.org>
-     * @version 1.0.0 created 23 Sep 2014, revised 23 Sep 2014
+     * @version 2.0.0 created 23 Sep 2014, revised 18 Aug 2019
      *
      * ChangeLog:
+     *   - 2019-08-18 Updated RunServer implementation works with ice 3.7.2
+     *   - 2018-05-12 Version 1.1 runs with C++11
      *   - 2014-09-23 Created class RunServer.
      */
-    class RunServer : public efscape::utils::CommandOpt,
-		      public Ice::Application
+    class RunServer : public efscape::utils::CommandOpt
     {
     public:
 
@@ -49,9 +49,6 @@ namespace efscape {
       const char* program_version();
 
       static const char* ProgramName();
-
-      // Implementation ICE application methods
-      int run(int, char*[]);
 
     protected:
 

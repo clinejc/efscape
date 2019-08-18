@@ -1,7 +1,7 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : SimRunner.cpp
-// Copyright (C) 2006-2018 Jon C. Cline
+// Copyright (C) 2006-2019 Jon C. Cline
 //
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -29,30 +29,8 @@ namespace efscape
 namespace impl
 {
 
-SimRunner::SimRunner() : SimRunner(Json::nullValue) //ModelWrapperBase(),
-                                                    //mC_modelProps(Json::nullValue)
+SimRunner::SimRunner() : SimRunner(Json::nullValue)
 {
-  // // initialize the clock
-  // mCp_ClockI.reset(new ClockI);
-  // mCp_ClockI->timeMax() = DBL_MAX;
-
-  // // load and set wrapped model
-  // //
-  // std::string lC_ClassName = "efscape::impl::AdevsModel"; // default root model is of class efscape::impl::AdevsModel
-  // LOG4CXX_DEBUG(ModelHomeI::getLogger(),
-  //               "Retrieving the model from the factory");
-  // DEVSPtr lCp_model(Singleton<ModelHomeI>::Instance()
-  //                       .getModelFactory()
-  //                       .createObject(lC_ClassName));
-
-  // if (lCp_model == nullptr)
-  // {
-  //   LOG4CXX_ERROR(ModelHomeI::getLogger(),
-  //                 "Unable to create model <" << lC_ClassName << ">");
-  //   return;
-  // }
-
-  // setWrappedModel(lCp_model);
 }
 
 SimRunner::SimRunner(Json::Value aC_modelProps) : ModelWrapperBase(),
@@ -63,9 +41,11 @@ SimRunner::SimRunner(Json::Value aC_modelProps) : ModelWrapperBase(),
   mCp_ClockI.reset(new ClockI);
   mCp_ClockI->timeMax() = DBL_MAX;
 
+  return;
+
   // load and set wrapped model
   //
-  std::string lC_ClassName = "efscape::impl::AdevsModel"; // default root model is of class efscape::impl::AdevsModel
+  std::string lC_ClassName = "gpt::GPT"; // default root model is of class efscape::impl::AdevsModel
   LOG4CXX_DEBUG(ModelHomeI::getLogger(),
                 "Retrieving the model from the factory");
   DEVSPtr lCp_model(Singleton<ModelHomeI>::Instance()
