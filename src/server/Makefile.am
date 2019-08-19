@@ -31,6 +31,8 @@ libefscape_ice_la_SOURCES=  $(hh_sources) $(cc_sources)
 # programs
 bin_PROGRAMS = efserver
 bin_PROGRAMS += efclient
+bin_PROGRAMS += efserver2
+bin_PROGRAMS += efclient2
 
 # efserver: ICE server for efscape simulator
 efserver_SOURCES = $(top_srcdir)/src/efscape/impl/driver.cpp
@@ -43,6 +45,16 @@ efserver_LDADD += $(BOOST_REGEX_LIBS)
 efserver_LDADD += $(DEPS_LIBS)
 efserver_LDADD += $(NETCDF_CXX_LIBS)
 
+efserver2_SOURCES = Server.cpp
+
+efserver2_LDADD = $(top_srcdir)/src/efscape/impl/libefscape-impl.la
+efserver2_LDADD += libefscape-ice.la
+efserver2_LDADD += $(ICE_LIBS)
+efserver2_LDADD += $(BOOST_MPI_LIBS)
+efserver2_LDADD += $(BOOST_REGEX_LIBS)
+efserver2_LDADD += $(DEPS_LIBS)
+efserver2_LDADD += $(NETCDF_CXX_LIBS)
+
 # efclient: ICE client for efscape simulator
 efclient_SOURCES = Client.cpp
 efclient_LDADD = $(top_srcdir)/src/slice/efscape/libefscape-idl.la
@@ -50,6 +62,13 @@ efclient_LDADD += $(ICE_LIBS)
 efclient_LDADD += $(BOOST_FILESYSTEM_LIBS)
 efclient_LDADD += $(BOOST_SYSTEM_LIBS)
 efclient_LDADD += $(DEPS_LIBS)
+
+efclient2_SOURCES = ClientWithIceGrid.cpp
+efclient2_LDADD = $(top_srcdir)/src/slice/efscape/libefscape-idl.la
+efclient2_LDADD += $(ICE_LIBS)
+efclient2_LDADD += $(BOOST_FILESYSTEM_LIBS)
+efclient2_LDADD += $(BOOST_SYSTEM_LIBS)
+efclient2_LDADD += $(DEPS_LIBS)
 
 copyright:
 	cp $(top_srcdir)/Copyright.doc $(top_srcdir)/Makefile.cr $(top_srcdir)/Sed.cr .

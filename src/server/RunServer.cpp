@@ -199,22 +199,6 @@ void RunServer::usage(int exit_value) {
   exit(exit_value);
 }
 
-/**
- * Implements the run method for ModelHomeServer.
- *
- * @param argc argument count
- * @param argv argument vector
- */
-int RunServer::run(int argc, char* argv[]) {
-  auto adapter = communicator()->createObjectAdapter("ModelHome");
-  auto servant = make_shared<ModelHomeI>();
-  adapter->add(servant, Ice::stringToIdentity("ModelHome"));
-  adapter->activate();
-  communicator()->waitForShutdown();
-
-  return EXIT_SUCCESS;
-}
-
 //================================
 // end of RunServer implementation
 //================================
