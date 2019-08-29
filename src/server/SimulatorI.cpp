@@ -15,7 +15,8 @@
 // __COPYRIGHT_END__
 #include "SimulatorI.hpp"
 
-#include <adevs/adevs.h>
+#include <cfloat>
+#include <limits>
 
 /** default constructor */
 SimulatorI::SimulatorI() :
