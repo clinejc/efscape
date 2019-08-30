@@ -28,6 +28,20 @@
 
 using namespace std;
 
+/**
+ * Implements an ICE (Internet Connection Engine) server simple interactive
+ * model for the efscape modeling framework. It provides a command-line
+ * interface derived from the CommandOpt class.
+ *
+ * @author Jon Cline <clinej@stanfordalumni.org>
+ * @version 2.0.0 created 23 Sep 2014, revised 18 Aug 2019
+ * @param argc argument count
+ * @param argv array of arguments
+ * @return exit status
+ *
+ * ChangeLog:
+ *   - 2019-08-18 Updated to use IceGrid (forked from original RunServer)
+ */
 int main(int argc, char* argv[])
 {
     int status = 0;

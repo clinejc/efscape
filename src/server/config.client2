@@ -1,7 +1,7 @@
 #
 # The IceGrid locator proxy.
 #
-Ice.Default.Locator=DemoIceGrid/Locator:default -h localhost -p 4061
+Ice.Default.Locator=EfscapeIceGrid/Locator:default -h localhost -p 4061
 
 #
 # To use the IceGrid discovery plugin comment out the default locator
@@ -9,4 +9,4 @@ Ice.Default.Locator=DemoIceGrid/Locator:default -h localhost -p 4061
 # plugin uses multicast to discover IceGrid.
 #
 #Ice.Plugin.IceLocatorDiscovery=IceLocatorDiscovery:createIceLocatorDiscovery
-#IceLocatorDiscovery.InstanceName=DemoIceGrid
+#IceLocatorDiscovery.InstanceName=EfscapeIceGrid
