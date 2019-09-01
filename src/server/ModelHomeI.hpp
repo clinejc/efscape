@@ -1,7 +1,7 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : ModelHomeI.hpp
-// Copyright (C) 2006-2018 Jon C. Cline
+// Copyright (C) 2006-2019 Jon C. Cline
 // 
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -25,7 +25,7 @@
  * models. It replaces the ModelRepository interface.
  *
  * @author Jon Cline <clinej@stanfordalumni.org>
- * @version 3.1.1 created 24 Dec 2006, revised 18 May 2018
+ * @version 3.2.1 created 24 Dec 2006, revised 31 Aug 2019
  */
 class ModelHomeI : virtual public efscape::ModelHome
 {
@@ -64,6 +64,8 @@ public:
   std::shared_ptr<efscape::SimulatorPrx>
   createSim(std::shared_ptr<efscape::ModelPrx>,
 	    const Ice::Current&) override;
+
+  virtual void shutdown(const Ice::Current&) override;
   //
   // local (server-side) methods
   //

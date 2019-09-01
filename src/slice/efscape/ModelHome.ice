@@ -1,7 +1,7 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : ModelHome.ice
-// Copyright (C) 2006-2018 Jon C. Cline
+// Copyright (C) 2006-2019 Jon C. Cline
 // 
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -26,7 +26,7 @@
  * services, for an Internet Connection Environment (ICE)-based framework.
  *
  * @author Jon C. Cline <jon.c.cline@gmail.com>
- * @version 1.0.0 created 06 Dec 2006, revised 02 Apr 2018
+ * @version 1.1.0 created 06 Dec 2006, revised 31 Aug 2019
  */
 [["js:es6-module"]]
 module efscape {
@@ -50,6 +50,8 @@ module efscape {
     string getModelInfo(string name);
 
     Simulator* createSim(Model* rootModel);
+
+    void shutdown();
   };
 
 };

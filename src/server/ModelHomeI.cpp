@@ -260,6 +260,17 @@ ModelHomeI::createSim(std::shared_ptr<efscape::ModelPrx> rootModel,
   return simulatorI;
 }
 
+/**
+ * Shuts down the modelHome.
+ *
+ * @param current method invocation
+ */
+void
+ModelHomeI::shutdown(const Ice::Current& current)
+{
+  current.adapter->getCommunicator()->shutdown();
+}
+
 //--------------------------------------------------------------------------
 // implementation of local (server-side) methods
 //--------------------------------------------------------------------------

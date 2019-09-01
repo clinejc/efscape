@@ -64,7 +64,7 @@ Ice::Double
 SimulatorI::nextEventTime(const Ice::Current& current)
 {
   if (!mCp_model)
-    return 0.0;
+    return DBL_MAX;
 
   return mCp_model->timeAdvance();
 }
