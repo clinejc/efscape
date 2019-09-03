@@ -5,7 +5,7 @@ import sys
 import click
 import logging
 import click_log
-from efscape.server import ModelHomeI, ModelI, run_server ## createContent
+from efscape.server import ModelHomeI, ModelI, run_server, test_devs
 
 # configure loggings
 logger = logging.getLogger()  #__name__)
@@ -17,7 +17,7 @@ def main(args=sys.argv):
     """Console script for efscape."""
     click.echo("Running " "efscape.cli.main...")
 
-    ModelHomeI.addModel("test", ModelI)
+    #test_devs()
     run_server(args)
 
     # modelHome = ModelHomeI()

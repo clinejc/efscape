@@ -49,20 +49,42 @@ class ModelI(efscape.Model):
     """
     Implements interface Model -- basic DEVS interface
     """
-
-    name = 'model'  # model name
-    wrapped_model = None  # wrapped model
     ports = {}  # model ports
 
-    def __init__(self, wrapped_model = None):
+    def __init__(self, wrapped_model = None, modelInfo = {}):
         super().__init__()
-        self.wrapped_model = wrapped_model
+        self.wrapped_model = wrapped_model  # set the wrappped model
+        self.name = 'model'
         if wrapped_model is not None:
             self.name = wrapped_model.__class__
-    
-    def addPort(self, port_name, port_index):
-        self.ports[port_name] = port_index
-        self.ports[port_index] = port_name
+
+        self.modelInfo = modelInfo  # set model metadata
+
+        # get information about model ports
+        self.ports = {}
+        if "ports" in self.modelInfo:
+            # Add 2-way mapping of external ports to internal ports
+            for key, value in self.modelInfo["ports"].items():
+                self.ports[key] = value
+                self.ports[value] = key
+
+        #
+        # get information about model output sources from model metadata
+        # * The output source should be the name of an atomic model
+        #
+        self.output_source = None
+        if "output_source" in self.modelInfo:
+            print(self.modelInfo["output_source"])
+            if self.wrapped_model.__class__.__name__ == self.modelInfo["output_source"]:
+                self.output_source = self.wrapped_model
+                logger.info("Added root model<" + self.wrapped_model.__class__.__name__ + ">")
+            else:
+                for submodel in self.wrapped_model:
+                    if submodel.__class__.__name__ == self.modelInfo["output_source"]:
+                        self.output_source = submodel
+                        logger.info("Added submodel<" + submodel.__class__.__name__ +">")
+            if not isinstance(self.output_source, devs.AtomicBase):
+                self.output_source = None
 
     # interfaces from Entity
     def getName(self, current=None):
@@ -72,10 +94,16 @@ class ModelI(efscape.Model):
     def initialize(self, current=None):
         status = False
         if self.wrapped_model is not None:
+            # initialize the model if operation is available
             initialize_op = getattr(self.wrapped_model, "initialize", None)
             if callable(initialize_op):
                 initialize_op(self.wrapped_model.path.parent_op)
                 status = True
+    
+            # add simulator for the wrapped model
+            self.simulator = devs.Simulator(self.wrapped_model)  
+
+            status = True  # 2019-09-03 ignoring initialization failure for now      
         
         return status
 
@@ -83,51 +111,78 @@ class ModelI(efscape.Model):
         if self.wrapped_model is None:
             return sys.float_info.max
 
-        return self.wrapped_model.ta()
+        return self.simulator.next_event_time()
 
     def internalTransition(self, current=None):
         if self.wrapped_model is None:
             return False
         
-        self.wrapped_model.delta_int()
+        self.simulator.execute_next_event()
 
         return True
 
     def externalTransition(self, elapsedTime, msg, current=None):
         if self.wrapped_model is None:
             return False
+        print("ModelI.externalTransition(...)...")
+        print("\ttime=" + str(elapsedTime))
+        print("\tmessage=" + str(msg))
 
         # convert input message to pydevs input format
         xb = []
         for content in msg:
             if content.port in self.ports:
-                xb.append((self.ports[content.port],json.loads(content.valueToJson)))
-        self.wrapped_model.delta_ext(elapsedTime, xb)
-        
+                try:
+                    xb.append((self.ports[content.port],json.loads(content.valueToJson)))
+                except ValueError as ex:
+                    logger.error(str(ex))
+                    logger.error("Decoding JSON has failed for <" + content.valueToJson + ">")
+            else:
+                print("content port not found")
+                print(self.ports)
+        #self.simulator.compute_next_state(xb, elapsedTime)
+        print(xb)
+        if self.output_source is not None:
+            self.output_source.delta_ext(elapsedTime,xb)
+
         return True
 
     def confluentTransition(self, msg, current=None):
         if self.wrapped_model is None:
             return False
         
+        # process external events first
         self.externalTransition(self.timeAdvance(), msg, current)
         self.internalTransition(current)
 
         return True
 
     def outputFunction(self, current=None):
+        print("ModelI.outputFunction(): entering...")
         message = []
-        if self.wrapped_model is None:
+        if self.output_source is None:
             return message
+
+        print("ModelI.outputFunction(): potential output...")
+
+        yb = self.output_source.output_func()
+
+        if yb is None:
+            print("ModelI.outputFunction(): nothing to output")
+            return
         
-        yb = self.wrapped_model.output_func()
+        print(yb)
 
         # convert
         message = []
         for port, value in yb:
             print(port)
             if port in self.ports:
-                message.append(efscape.Content(self.ports[port], json.dumps(value)))
+                try:
+                    message.append(efscape.Content(self.ports[port], json.dumps(value)))
+                except TypeError as ex:
+                    logger.error(str(ex))
+                    logger.error("Unable to serialize message <" + str(value) + ">")
 
         return message
 
@@ -280,8 +335,10 @@ class ModelHomeI(efscape.ModelHome):
 
         if name in self.models:
             wrapped_model = self.models[name][0]()
-            modelI = ModelI(wrapped_model)
-            model = efscape.ModelPrx.uncheckedCast(current.adapter.addWithUUID(modelI))
+            modelInfo = self.models[name][1]
+            modelI = ModelI(wrapped_model, modelInfo)
+            if current is not None:
+                model = efscape.ModelPrx.uncheckedCast(current.adapter.addWithUUID(modelI))
 
         return model
 
@@ -300,6 +357,7 @@ class ModelHomeI(efscape.ModelHome):
     def getModelInfo(self, name, current=None):
         if name not in self.models:
             return {}
+
         return json.dumps(self.models[name][1])
 
     def createSim(self, model, current=None):
@@ -309,6 +367,10 @@ class ModelHomeI(efscape.ModelHome):
         simulator = efscape.SimulatorPrx.uncheckedCast(current.adapter.addWithUUID(simulatorI))
  
         return simulator
+
+    def shutdown(self, current=None):
+        if current is not None:
+            current.adapter.getCommunicator().shutdown()
 
 
 # for testing
@@ -338,6 +400,165 @@ class Source(devs.AtomicBase):
         self.logger.info('Generate job {}'.format(self.job_id))
         return self.arrival_port, self.job_id
 
+class Server(devs.AtomicBase):
+    arrival_port = 0
+    departure_port = 1
+
+    def __init__(self, service_rate=1.0, **kwds):
+        super().__init__(**kwds)
+        self.logger = logging.getLogger('quickstart.Server')
+        self.logger.info('Initialize server with service rate {}'.format(service_rate))
+        self.service_rate = service_rate
+        self.remaining_service_time = devs.infinity
+        self.queue = collections.deque()
+        self.job_in_service = None
+
+    def ta(self):
+        if self.job_in_service is None:
+            self.logger.debug('Server is idle')
+            return devs.infinity
+
+        return self.remaining_service_time
+
+    def start_next_job(self):
+        self.job_in_service = self.queue.popleft()
+        self.remaining_service_time = random.expovariate(self.service_rate)
+        self.logger.info('Start processing job {} with service time {}'.format(self.job_in_service, self.remaining_service_time))
+
+    def delta_int(self):
+        # service finished
+        self.logger.info('Finished processing job {}'.format(self.job_in_service))
+        if len(self.queue):
+            # jobs waiting, start to process immediately
+            self.start_next_job()
+        else:
+            # no more jobs, switch to idle
+            self.logger.info('Queue empty, server turns idle')
+            self.job_in_service = None
+
+    def delta_ext(self, e, xb):
+        if self.job_in_service is not None:
+            self.remaining_service_time -= e
+
+        # new job(s) arriving
+        for port, job_id in xb:
+            self.logger.info('New job {} arrives'.format(job_id))
+            self.queue.append(job_id)
+            if self.job_in_service is None:
+                # queue empty, start immediately
+                self.start_next_job()
+            else:
+                # server busy
+                self.logger.debug('Server busy, enqueueing job {}'.format(job_id))
+
+        self.logger.debug('Remaining service time for job {}: {} time units'.format(self.job_in_service, self.remaining_service_time))
+
+    def delta_conf(self, xb):
+        # treat incoming jobs first
+        self.delta_ext(self.ta(), xb)
+        self.delta_int()
+
+    def output_func(self):
+        # service finished
+        return self.departure_port, self.job_in_service
+
+
+class Observer(devs.AtomicBase):
+    arrival_port = 0
+    departure_port = 1
+    output_port = 2
+    test_input_port = 3
+
+    def __init__(self, time=0.0, **kwds):
+        super().__init__(**kwds)
+        self.logger = logging.getLogger('quickstart.Observer')
+        self.logger.info('Initialize observer at time {}'.format(time))
+        self.time = time
+        self.arrivals = list()
+        self.departures = list()
+
+        # 03 Sep 2019: add output
+        self.is_active = False
+        self.output = None
+
+    def delta_ext(self, e, xb):
+        self.time += e
+        for port, job_id in xb:
+            if port == self.arrival_port:
+                self.logger.info('Job {} arrives at time {}'.format(job_id, self.time))
+                self.arrivals.append(self.time)
+                self.output = {"job_id": job_id, "action": "arrival", "time": self.time}
+            elif port == self.departure_port:
+                self.logger.info('Job {} departs at time {}'.format(job_id, self.time))
+                self.departures.append(self.time)
+                self.output = {"job_id": job_id, "action": "departure", "time": self.time}
+            elif port == self.test_input_port:
+                self.logger.info('test input: {}'.format(job_id))
+
+    def delta_int(self):
+        self.output = None
+
+    def ta(self):
+        if self.output is not None:
+            return 0.
+
+        return devs.infinity
+
+    def output_func(self):
+        # output ready
+        yb = []
+        if self.output is not None:
+            yb.append((self.output_port, self.output))
+            print("yb=" + str(yb))
+            return yb
+
+def createGPT():
+    source = Source(1.0)
+    server = Server(1.0)
+    observer = Observer()
+    digraph = devs.Digraph()
+    digraph.add(source)
+    digraph.add(server)
+    digraph.add(observer)
+    digraph.couple(source, source.arrival_port, server, server.arrival_port)
+    digraph.couple(source, source.arrival_port, observer, observer.arrival_port)
+    digraph.couple(server, server.departure_port, observer, observer.departure_port)
+
+    return digraph
+
+def test_devs():
+    """
+    Test the GPT model
+    """
+    model = createGPT()
+
+    simulator = devs.Simulator(model)
+    simulator.execute_until(5.0)
+
+    for m in model:
+        print(m.__class__.__name__)
+
+        modelInfo = {
+            "description": "Classic DEVS model",
+            "ports": {
+                "arrival_port": 0
+            }
+        }
+        ModelHomeI.addModel("Source", Source, modelInfo)
+
+        modelInfo = {
+            "description": "Classic DEVS GPT model",
+            "ports": {
+                "output_port": 2,
+                "test_input_port": 3
+            },
+            "output_source": "Observer"
+        }
+        ModelHomeI.addModel("GPT", createGPT, modelInfo)
+
+        modelHome = ModelHomeI()
+        testmodel = modelHome.create("GPT")
+
 
 def run_server(args):
     #
@@ -355,9 +576,25 @@ def run_server(args):
             print(args[0] + ": too many arguments")
             sys.exit(1)
 
-        ModelHomeI.addModel("Source", Source, {"description": "Class DEVS model"})
-        modelHome = ModelHomeI()
+        modelInfo = {
+            "description": "Classic DEVS model",
+            "ports": {
+                "arrival_port": 0
+            }
+        }
+        ModelHomeI.addModel("Source", Source, modelInfo)
 
+        modelInfo = {
+            "description": "Classic DEVS GPT model",
+            "ports": {
+                "output_port": 2,
+                "test_input_port": 3
+            },
+            "output_source": "Observer"
+        }
+        ModelHomeI.addModel("GPT", createGPT, modelInfo)
+
+        modelHome = ModelHomeI()
         adapter = communicator.createObjectAdapter("ModelHome")
         adapter.add(modelHome, Ice.stringToIdentity("ModelHome"))
         adapter.activate()
