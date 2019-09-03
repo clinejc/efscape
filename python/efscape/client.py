@@ -43,6 +43,9 @@ def run(communicator):
                 modelName = modelList[int(response) - 1]
                 print('selected ' + modelName)
             elif int(response) == 0:
+                if modelName is None:
+                    break
+                    
                 parmString = modelHome.getModelInfo(modelName);
                 parameters = json.loads(parmString)
                 print(parameters)

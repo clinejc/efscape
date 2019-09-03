@@ -5,7 +5,7 @@ import sys
 import click
 import logging
 import click_log
-from efscape.server import ModelHomeI, ModelI, run_server, test_devs
+from efscape.server import ModelHomeI, run_server, test_devs, createGPT
 
 # configure loggings
 logger = logging.getLogger()  #__name__)
@@ -18,6 +18,16 @@ def main(args=sys.argv):
     click.echo("Running " "efscape.cli.main...")
 
     #test_devs()
+
+    modelInfo = {
+        "description": "Classic DEVS GPT model",
+        "ports": {
+            "output_port": 2,
+            "test_input_port": 3
+        },
+        "output_source": "Observer"
+    }
+    ModelHomeI.addModel("GPT", createGPT, modelInfo)
     run_server(args)
 
     # modelHome = ModelHomeI()

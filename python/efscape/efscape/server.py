@@ -526,6 +526,7 @@ def createGPT():
 
     return digraph
 
+
 def test_devs():
     """
     Test the GPT model
@@ -534,30 +535,6 @@ def test_devs():
 
     simulator = devs.Simulator(model)
     simulator.execute_until(5.0)
-
-    for m in model:
-        print(m.__class__.__name__)
-
-        modelInfo = {
-            "description": "Classic DEVS model",
-            "ports": {
-                "arrival_port": 0
-            }
-        }
-        ModelHomeI.addModel("Source", Source, modelInfo)
-
-        modelInfo = {
-            "description": "Classic DEVS GPT model",
-            "ports": {
-                "output_port": 2,
-                "test_input_port": 3
-            },
-            "output_source": "Observer"
-        }
-        ModelHomeI.addModel("GPT", createGPT, modelInfo)
-
-        modelHome = ModelHomeI()
-        testmodel = modelHome.create("GPT")
 
 
 def run_server(args):
@@ -575,24 +552,6 @@ def run_server(args):
         if len(args) > 1:
             print(args[0] + ": too many arguments")
             sys.exit(1)
-
-        modelInfo = {
-            "description": "Classic DEVS model",
-            "ports": {
-                "arrival_port": 0
-            }
-        }
-        ModelHomeI.addModel("Source", Source, modelInfo)
-
-        modelInfo = {
-            "description": "Classic DEVS GPT model",
-            "ports": {
-                "output_port": 2,
-                "test_input_port": 3
-            },
-            "output_source": "Observer"
-        }
-        ModelHomeI.addModel("GPT", createGPT, modelInfo)
 
         modelHome = ModelHomeI()
         adapter = communicator.createObjectAdapter("ModelHome")
