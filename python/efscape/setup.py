@@ -37,6 +37,7 @@ setup(
     entry_points={
         'console_scripts': [
             'efscape=efscape.cli:main',
+            'efpyclient=efscape.client:main'
         ],
     },
     install_requires=requirements,
