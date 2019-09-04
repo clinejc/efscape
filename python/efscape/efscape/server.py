@@ -28,6 +28,7 @@ Ice.loadSlice(
 # 3. import efscape python API
 import efscape
 
+
 def createContent(port, value):
     """
     Creates an efscape.Content object
@@ -45,16 +46,18 @@ def createContent(port, value):
     """
     return efscape.Content(port, json.dumps(value))
 
+
 class ModelI(efscape.Model):
     """
     Implements interface Model -- basic DEVS interface
     """
+
     ports = {}  # model ports
 
-    def __init__(self, wrapped_model = None, modelInfo = {}):
+    def __init__(self, wrapped_model=None, modelInfo={}):
         super().__init__()
         self.wrapped_model = wrapped_model  # set the wrappped model
-        self.name = 'model'
+        self.name = "model"
         if wrapped_model is not None:
             self.name = wrapped_model.__class__
 
@@ -76,14 +79,21 @@ class ModelI(efscape.Model):
         self.input_consumer = None
         if "output_producer" in self.modelInfo:
             print(self.modelInfo["output_producer"])
-            if self.wrapped_model.__class__.__name__ == self.modelInfo["output_producer"]:
+            if (
+                self.wrapped_model.__class__.__name__
+                == self.modelInfo["output_producer"]
+            ):
                 self.output_producer = self.wrapped_model
-                logger.info("Added root model<" + self.wrapped_model.__class__.__name__ + ">")
+                logger.info(
+                    "Added root model<" + self.wrapped_model.__class__.__name__ + ">"
+                )
             else:
                 for submodel in self.wrapped_model:
                     if submodel.__class__.__name__ == self.modelInfo["output_producer"]:
                         self.output_producer = submodel
-                        logger.info("Added submodel<" + submodel.__class__.__name__ +">")
+                        logger.info(
+                            "Added submodel<" + submodel.__class__.__name__ + ">"
+                        )
             if not isinstance(self.output_producer, devs.AtomicBase):
                 self.output_producer = None
             else:
@@ -102,12 +112,12 @@ class ModelI(efscape.Model):
             if callable(initialize_op):
                 initialize_op(self.wrapped_model.path.parent_op)
                 status = True
-    
-            # add simulator for the wrapped model
-            self.simulator = devs.Simulator(self.wrapped_model)  
 
-            status = True  # 2019-09-03 ignoring initialization failure for now      
-        
+            # add simulator for the wrapped model
+            self.simulator = devs.Simulator(self.wrapped_model)
+
+            status = True  # 2019-09-03 ignoring initialization failure for now
+
         return status
 
     def timeAdvance(self, current=None):
@@ -119,7 +129,7 @@ class ModelI(efscape.Model):
     def internalTransition(self, current=None):
         if self.wrapped_model is None:
             return False
-        
+
         self.simulator.execute_next_event()
 
         return True
@@ -136,24 +146,28 @@ class ModelI(efscape.Model):
         for content in msg:
             if content.port in self.ports:
                 try:
-                    xb.append((self.ports[content.port],json.loads(content.valueToJson)))
+                    xb.append(
+                        (self.ports[content.port], json.loads(content.valueToJson))
+                    )
                 except ValueError as ex:
                     logger.error(str(ex))
-                    logger.error("Decoding JSON has failed for <" + content.valueToJson + ">")
+                    logger.error(
+                        "Decoding JSON has failed for <" + content.valueToJson + ">"
+                    )
             else:
                 print("content port not found")
                 print(self.ports)
-        #self.simulator.compute_next_state(xb, elapsedTime)
+        # self.simulator.compute_next_state(xb, elapsedTime)
         print(xb)
         if self.input_consumer is not None:
-            self.input_consumer.delta_ext(elapsedTime,xb)
+            self.input_consumer.delta_ext(elapsedTime, xb)
 
         return True
 
     def confluentTransition(self, msg, current=None):
         if self.wrapped_model is None:
             return False
-        
+
         # process external events first
         self.externalTransition(self.timeAdvance(), msg, current)
         self.internalTransition(current)
@@ -173,7 +187,7 @@ class ModelI(efscape.Model):
         if yb is None:
             print("ModelI.outputFunction(): nothing to output")
             return
-        
+
         print(yb)
 
         # convert
@@ -191,8 +205,8 @@ class ModelI(efscape.Model):
 
     # accessor/mutator methods
     def getType(self, current=None):
-        if self.wrapped_model is  None:
-            return 'None'
+        if self.wrapped_model is None:
+            return "None"
 
         return str(self.wrapped_model.__class__)
 
@@ -219,6 +233,7 @@ class SimulatorI(efscape.Simulator):
          double set_Global_and_SendOutput(in double tN);
          bool applyDeltaFunc(in message msg);
     """
+
     def __init__(self, model=None):
         super().__init__()
         self.model = model
@@ -234,7 +249,7 @@ class SimulatorI(efscape.Simulator):
         """
         if self.model is None:
             return False
-        
+
         return self.model.initialize()
 
     def nextEventTime(self, current=None):
@@ -252,7 +267,7 @@ class SimulatorI(efscape.Simulator):
         """
         if self.model is None:
             return sys.float_info.max
-        
+
         return self.model.timeAdvance()
 
     def execNextEvent(self, current=None):
@@ -261,7 +276,7 @@ class SimulatorI(efscape.Simulator):
         """
         if self.model is None:
             return
-        
+
         self.model.internalTransition()
 
     def computeNextOutput(self, current=None):
@@ -284,9 +299,9 @@ class SimulatorI(efscape.Simulator):
         """
         if self.model is None:
             return
-        
+
         return
-    
+
     def halt(self, current=None):
         if self.model is None:
             return True
@@ -341,7 +356,9 @@ class ModelHomeI(efscape.ModelHome):
             modelInfo = self.models[name][1]
             modelI = ModelI(wrapped_model, modelInfo)
             if current is not None:
-                model = efscape.ModelPrx.uncheckedCast(current.adapter.addWithUUID(modelI))
+                model = efscape.ModelPrx.uncheckedCast(
+                    current.adapter.addWithUUID(modelI)
+                )
 
         return model
 
@@ -367,8 +384,10 @@ class ModelHomeI(efscape.ModelHome):
         simulator = None
 
         simulatorI = SimulatorI(model)
-        simulator = efscape.SimulatorPrx.uncheckedCast(current.adapter.addWithUUID(simulatorI))
- 
+        simulator = efscape.SimulatorPrx.uncheckedCast(
+            current.adapter.addWithUUID(simulatorI)
+        )
+
         return simulator
 
     def shutdown(self, current=None):
@@ -380,19 +399,22 @@ class ModelHomeI(efscape.ModelHome):
 import collections
 import random
 
+
 class Source(devs.AtomicBase):
     arrival_port = 0
 
     def __init__(self, arrival_rate=1.0, **kwds):
         super().__init__(**kwds)
-        self.logger = logging.getLogger('quickstart.Source')
-        self.logger.info('Initialize source with arrival rate {}'.format(arrival_rate))
+        self.logger = logging.getLogger("quickstart.Source")
+        self.logger.info("Initialize source with arrival rate {}".format(arrival_rate))
         self.arrival_rate = arrival_rate
         self.inter_arrival_time = random.expovariate(self.arrival_rate)
         self.job_id = 0
 
     def ta(self):
-        self.logger.debug('Next arrival in {} time units'.format(self.inter_arrival_time))
+        self.logger.debug(
+            "Next arrival in {} time units".format(self.inter_arrival_time)
+        )
         return self.inter_arrival_time
 
     def delta_int(self):
@@ -400,8 +422,9 @@ class Source(devs.AtomicBase):
         self.inter_arrival_time = random.expovariate(self.arrival_rate)
 
     def output_func(self):
-        self.logger.info('Generate job {}'.format(self.job_id))
+        self.logger.info("Generate job {}".format(self.job_id))
         return self.arrival_port, self.job_id
+
 
 class Server(devs.AtomicBase):
     arrival_port = 0
@@ -409,8 +432,8 @@ class Server(devs.AtomicBase):
 
     def __init__(self, service_rate=1.0, **kwds):
         super().__init__(**kwds)
-        self.logger = logging.getLogger('quickstart.Server')
-        self.logger.info('Initialize server with service rate {}'.format(service_rate))
+        self.logger = logging.getLogger("quickstart.Server")
+        self.logger.info("Initialize server with service rate {}".format(service_rate))
         self.service_rate = service_rate
         self.remaining_service_time = devs.infinity
         self.queue = collections.deque()
@@ -418,7 +441,7 @@ class Server(devs.AtomicBase):
 
     def ta(self):
         if self.job_in_service is None:
-            self.logger.debug('Server is idle')
+            self.logger.debug("Server is idle")
             return devs.infinity
 
         return self.remaining_service_time
@@ -426,17 +449,21 @@ class Server(devs.AtomicBase):
     def start_next_job(self):
         self.job_in_service = self.queue.popleft()
         self.remaining_service_time = random.expovariate(self.service_rate)
-        self.logger.info('Start processing job {} with service time {}'.format(self.job_in_service, self.remaining_service_time))
+        self.logger.info(
+            "Start processing job {} with service time {}".format(
+                self.job_in_service, self.remaining_service_time
+            )
+        )
 
     def delta_int(self):
         # service finished
-        self.logger.info('Finished processing job {}'.format(self.job_in_service))
+        self.logger.info("Finished processing job {}".format(self.job_in_service))
         if len(self.queue):
             # jobs waiting, start to process immediately
             self.start_next_job()
         else:
             # no more jobs, switch to idle
-            self.logger.info('Queue empty, server turns idle')
+            self.logger.info("Queue empty, server turns idle")
             self.job_in_service = None
 
     def delta_ext(self, e, xb):
@@ -445,16 +472,20 @@ class Server(devs.AtomicBase):
 
         # new job(s) arriving
         for port, job_id in xb:
-            self.logger.info('New job {} arrives'.format(job_id))
+            self.logger.info("New job {} arrives".format(job_id))
             self.queue.append(job_id)
             if self.job_in_service is None:
                 # queue empty, start immediately
                 self.start_next_job()
             else:
                 # server busy
-                self.logger.debug('Server busy, enqueueing job {}'.format(job_id))
+                self.logger.debug("Server busy, enqueueing job {}".format(job_id))
 
-        self.logger.debug('Remaining service time for job {}: {} time units'.format(self.job_in_service, self.remaining_service_time))
+        self.logger.debug(
+            "Remaining service time for job {}: {} time units".format(
+                self.job_in_service, self.remaining_service_time
+            )
+        )
 
     def delta_conf(self, xb):
         # treat incoming jobs first
@@ -474,8 +505,8 @@ class Observer(devs.AtomicBase):
 
     def __init__(self, time=0.0, **kwds):
         super().__init__(**kwds)
-        self.logger = logging.getLogger('quickstart.Observer')
-        self.logger.info('Initialize observer at time {}'.format(time))
+        self.logger = logging.getLogger("quickstart.Observer")
+        self.logger.info("Initialize observer at time {}".format(time))
         self.time = time
         self.arrivals = list()
         self.departures = list()
@@ -488,22 +519,26 @@ class Observer(devs.AtomicBase):
         self.time += e
         for port, job_id in xb:
             if port == self.arrival_port:
-                self.logger.info('Job {} arrives at time {}'.format(job_id, self.time))
+                self.logger.info("Job {} arrives at time {}".format(job_id, self.time))
                 self.arrivals.append(self.time)
                 self.output = {"job_id": job_id, "action": "arrival", "time": self.time}
             elif port == self.departure_port:
-                self.logger.info('Job {} departs at time {}'.format(job_id, self.time))
+                self.logger.info("Job {} departs at time {}".format(job_id, self.time))
                 self.departures.append(self.time)
-                self.output = {"job_id": job_id, "action": "departure", "time": self.time}
+                self.output = {
+                    "job_id": job_id,
+                    "action": "departure",
+                    "time": self.time,
+                }
             elif port == self.test_input_port:
-                self.logger.info('test input: {}'.format(job_id))
+                self.logger.info("test input: {}".format(job_id))
 
     def delta_int(self):
         self.output = None
 
     def ta(self):
         if self.output is not None:
-            return 0.
+            return 0.0
 
         return devs.infinity
 
@@ -514,6 +549,7 @@ class Observer(devs.AtomicBase):
             yb.append((self.output_port, self.output))
             print("yb=" + str(yb))
             return yb
+
 
 def createGPT():
     source = Source(1.0)

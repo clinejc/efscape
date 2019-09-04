@@ -52,14 +52,19 @@ def view_available_models(modelHome):
             if modelName is None:
                 break
                 
-            parmString = modelHome.getModelInfo(modelName);
+            parmString = modelHome.getModelInfo(modelName)
             parameters = json.loads(parmString)
-            print(parameters)
+            print(json.dumps(parameters, indent=4, separators=(',', ': '), sort_keys=True))
 
             # if the parameter 'modelName' exists, attempt to write
             # the default parameters to file [modelName].json
             if 'modelName' in parameters:
                 parmName = parameters['modelName']
+
+                with open(parmName + '.json', 'w') as f:
+                    json.dump(parameters, f, indent=4, separators=(',', ': '), sort_keys=True)
+                    #add trailing newline for POSIX compatibility
+                    f.write('\n')
 
                 parmFile = open(parmName + '.json', 'w')
                 parmFile.write(parmString)

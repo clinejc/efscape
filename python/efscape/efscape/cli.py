@@ -20,6 +20,7 @@ def main(args=sys.argv):
     #test_devs()
 
     modelInfo = {
+        "modelName": "GPT",
         "description": "Classic DEVS GPT model",
         "ports": {
             "output_port": 2,
