@@ -368,8 +368,19 @@ class ModelHomeI(efscape.ModelHome):
     def createFromJSON(self, configuration, current=None):
         return None
 
-    def createFromParameters(self, parameters, current=None):
-        return None
+    def createFromParameters(self, parametersString, current=None):
+        logger.info("Entering efscape.ModelHomeI.createFromParameters(...)...")
+        model = None
+        parameters = json.loads(parametersString)
+        if "modelName" in parameters:
+            modelName = parameters["modelName"]
+            model = self.create(modelName, current)
+            if not model:
+                logger.error("Unable to create model <"+ + modelName +">!")
+        else:
+            logger.info("efscape.Model: <modelName> not found!")
+
+        return model
 
     def getModelList(self, current=None):
         return list(self.models.keys())

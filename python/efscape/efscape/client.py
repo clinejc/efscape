@@ -62,7 +62,7 @@ def view_available_models(modelHome):
                 parmName = parameters['modelName']
 
                 with open(parmName + '.json', 'w') as f:
-                    json.dump(parameters, f, indent=4, separators=(',', ': '), sort_keys=True)
+                    json.dump(parameters, f, indent=4)  #, separators=(',', ': '), sort_keys=True)
                     #add trailing newline for POSIX compatibility
                     f.write('\n')
 
@@ -76,7 +76,7 @@ def view_available_models(modelHome):
     
     return 0
 
-def run_simulation(simulator, time_max=100.):
+def run_simulation(simulator, timeMax=100.):
     """
     Run the efscape simulation
 
@@ -84,7 +84,7 @@ def run_simulation(simulator, time_max=100.):
     ----------
     simulator efscape.SimulatorPrx
         simulator proxy
-    time_max double
+    timeMax double
         simulation duration
     """
     model = simulator.getModel()
@@ -104,7 +104,7 @@ def run_simulation(simulator, time_max=100.):
 
         while not simulator.halt():
             t = simulator.nextEventTime()
-            if t > time_max:
+            if t > timeMax:
                 break
             logger.info('Next event time = ' + str(t))
             simulator.execNextEvent()
@@ -166,17 +166,15 @@ def run_input_test(simulator):
     return 0
 
 
-def run(communicator, name, time_max):
+def run(communicator, filename):
     """
     Run the efscape client
 
     Parameters
     ----------
     communicator Ice Communicator
-    name str
-        model name or json file name
-    time_max float
-        maximum simulation time
+    filename str
+        json file name
     """
     status = 0
 
@@ -191,7 +189,7 @@ def run(communicator, name, time_max):
 
    # 4a. If no parameter file has been specified, prompt the user to select
     #     a model and its corresponding default parameter file
-    if not name:
+    if not filename:
         status = view_available_models(modelHome)
         sys.exit(status)
 
@@ -199,44 +197,46 @@ def run(communicator, name, time_max):
     #     1. name of a parameter file in JSON format, or
     #     2. name of a model
     model = None
-    parmName = Path(name)
+    parmName = Path(filename)
+    parameters = None
     if parmName.exists():
         logger.info('Running simulation using input from <' + str(parmName) + '>...')
         parmString = None
         with parmName.open() as f:
             parmString = f.read()
+            parameters = json.loads(parmString)  # will need later
 
             # 5a. create model from parameter file
             model = modelHome.createFromParameters(parmString)
 
-    else:   # 5.b create model from model name
-        modelName = name
-        model = modelHome.create(modelName)
+    else:
+        logger.error("parameter file <" + str(parmName) + "> not found!")
 
     if not model:
-        print('Invalid mode proxy!')
+        logger.error('Invalid mode proxy!')
         sys.exit(1)
 
-    print('model successfully created!')
+    logger.info('model successfully created!')
     simulator = modelHome.createSim(model)
 
     if not simulator:
-        print('Invalid simulator proxy!')
+        logger.info('Invalid simulator proxy!')
         sys.exit(1)
 
-    print('simulator created!')
+    logger.info('simulator created!')
 
     # 6. run simulation
-    if not time_max:
-        status = run_simulation(simulator)
-    else:
-        status = run_simulation(simulator, time_max)
+    timeMax = 100.  # default
+    if "timeMax" in parameters:
+        timeMax = parameters["timeMax"]
+
+    status = run_simulation(simulator, timeMax)
 
     #status = run_input_test(simulator)
 
     return status
 
-def run_client(argv, name, time_max):
+def run_client(argv, filename):
     """ """
     #
     # Ice.initialize returns an initialized Ice communicator,
@@ -252,14 +252,13 @@ def run_client(argv, name, time_max):
         #     print(sys.argv[0] + ": too many arguments")
         #     sys.exit(1)
 
-        run(communicator, name, time_max)
+        run(communicator, filename)
 
 @click.command()
-@click.argument('name', required=False)
-@click.argument('time_max', required=False, type=float)
-def main(name, time_max):
+@click.argument('filename', required=False)
+def main(filename):
     """Console script for efscape.client."""
     click.echo("Running " "efscape.client.main...")
 
     argv = [sys.argv[0]]  # ignoring Ice-related arguments for now
-    run_client(argv, name, time_max)
+    run_client(argv, filename)
