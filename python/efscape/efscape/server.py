@@ -69,22 +69,25 @@ class ModelI(efscape.Model):
                 self.ports[value] = key
 
         #
-        # get information about model output sources from model metadata
-        # * The output source should be the name of an atomic model
-        #
-        self.output_source = None
-        if "output_source" in self.modelInfo:
-            print(self.modelInfo["output_source"])
-            if self.wrapped_model.__class__.__name__ == self.modelInfo["output_source"]:
-                self.output_source = self.wrapped_model
+        # get information about model output generator from model metadata
+        # * The output producer should be the name of an atomic model
+        # * The output producer is also tagged as the input consumer (for now)
+        self.output_producer = None
+        self.input_consumer = None
+        if "output_producer" in self.modelInfo:
+            print(self.modelInfo["output_producer"])
+            if self.wrapped_model.__class__.__name__ == self.modelInfo["output_producer"]:
+                self.output_producer = self.wrapped_model
                 logger.info("Added root model<" + self.wrapped_model.__class__.__name__ + ">")
             else:
                 for submodel in self.wrapped_model:
-                    if submodel.__class__.__name__ == self.modelInfo["output_source"]:
-                        self.output_source = submodel
+                    if submodel.__class__.__name__ == self.modelInfo["output_producer"]:
+                        self.output_producer = submodel
                         logger.info("Added submodel<" + submodel.__class__.__name__ +">")
-            if not isinstance(self.output_source, devs.AtomicBase):
-                self.output_source = None
+            if not isinstance(self.output_producer, devs.AtomicBase):
+                self.output_producer = None
+            else:
+                self.input_consumer = self.output_producer
 
     # interfaces from Entity
     def getName(self, current=None):
@@ -142,8 +145,8 @@ class ModelI(efscape.Model):
                 print(self.ports)
         #self.simulator.compute_next_state(xb, elapsedTime)
         print(xb)
-        if self.output_source is not None:
-            self.output_source.delta_ext(elapsedTime,xb)
+        if self.input_consumer is not None:
+            self.input_consumer.delta_ext(elapsedTime,xb)
 
         return True
 
@@ -160,12 +163,12 @@ class ModelI(efscape.Model):
     def outputFunction(self, current=None):
         print("ModelI.outputFunction(): entering...")
         message = []
-        if self.output_source is None:
+        if self.output_producer is None:
             return message
 
         print("ModelI.outputFunction(): potential output...")
 
-        yb = self.output_source.output_func()
+        yb = self.output_producer.output_func()
 
         if yb is None:
             print("ModelI.outputFunction(): nothing to output")
