@@ -150,7 +150,7 @@ int run(const std::shared_ptr<Ice::Communicator>& communicator) {
         communicator->stringToProxy("modelhome"));
   } catch (const Ice::NotRegisteredException&) {
     auto query = Ice::checkedCast<IceGrid::QueryPrx>(
-        communicator->stringToProxy("DemoIceGrid/Query"));
+        communicator->stringToProxy("EfscapeIceGrid/Query"));
     lCp_ModelHome = Ice::checkedCast<efscape::ModelHomePrx>(
         query->findObjectByType("::efscape::ModelHome"));
   }

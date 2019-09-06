@@ -403,7 +403,10 @@ class ModelHomeI(efscape.ModelHome):
 
     def shutdown(self, current=None):
         if current is not None:
+            logger.info("Shutting down efscape.ModelHome")
             current.adapter.getCommunicator().shutdown()
+        else:
+            logger.info("Not able to shutdown efscape.ModelHome")
 
 
 # for testing

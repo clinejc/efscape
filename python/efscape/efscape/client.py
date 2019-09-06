@@ -4,6 +4,7 @@ import click
 import logging
 import click_log
 import Ice
+import IceGrid
 from pathlib import Path
 import json
 
@@ -166,7 +167,7 @@ def run_input_test(simulator):
     return 0
 
 
-def run(communicator, filename):
+def run(communicator, filename, icegrid):
     """
     Run the efscape client
 
@@ -179,8 +180,17 @@ def run(communicator, filename):
     status = 0
 
     # 4. attempt to access the efscape.ModelHome proxy
-    modelHome = efscape.ModelHomePrx.checkedCast(
-        communicator.propertyToProxy('ModelHome.Proxy').ice_twoway().ice_secure(False))
+    modelHome = None
+    if not icegrid:
+        modelHome = efscape.ModelHomePrx.checkedCast(
+            communicator.propertyToProxy('ModelHome.Proxy').ice_twoway().ice_secure(False))
+    else:
+        try:
+            modelHome = efscape.ModelHomePrx.checkedCast(communicator.stringToProxy('modelhome'))
+        except Ice.NotRegisteredException:
+            query = IceGrid.QueryPrx.checkedCast(communicator.stringToProxy("EfscapeIceGrid/Query"))
+            modelHome = efscape.ModelHomePrx.checkedCast(query.findObjectByType("::efscape::ModelHome"))
+
     if not modelHome:
         logger.error("invalid proxy")
         sys.exit(1)
@@ -191,7 +201,8 @@ def run(communicator, filename):
     #     a model and its corresponding default parameter file
     if not filename:
         status = view_available_models(modelHome)
-        sys.exit(status)
+        modelHome.shutdown()
+        return status
 
     # 4b. Else, attempt to run the simulation with assuming argv[1] is either:
     #     1. name of a parameter file in JSON format, or
@@ -214,14 +225,16 @@ def run(communicator, filename):
 
     if not model:
         logger.error('Invalid mode proxy!')
-        sys.exit(1)
+        modelHome.shutdown()
+        return status
 
     logger.info('model successfully created!')
     simulator = modelHome.createSim(model)
 
     if not simulator:
         logger.info('Invalid simulator proxy!')
-        sys.exit(1)
+        modelHome.shutdown()
+        return status
 
     logger.info('simulator created!')
 
@@ -234,16 +247,27 @@ def run(communicator, filename):
 
     #status = run_input_test(simulator)
 
+    logger.info("efscape.ModelHome client shutting down server ..")
+    modelHome.shutdown()
+
     return status
 
 def run_client(argv, filename):
     """ """
+
+    config_filename = "config.client"
+    icegrid = False
+    if "ICEGRID" in os.environ:
+        config_filename = "config.client2"
+        icegrid = True
+
+        click.echo("Using icegrid...")
     #
     # Ice.initialize returns an initialized Ice communicator,
     # the communicator is destroyed once it goes out of scope.
     #
     with Ice.initialize(argv,
-            str(Path(os.environ['EFSCAPE_PATH']) / "src/server/config.client")) as communicator:
+            str(Path(os.environ['EFSCAPE_PATH']) / "src/server" / config_filename)) as communicator:
 
         #
         # The communicator initialization removes all Ice-related arguments from argv
@@ -252,7 +276,7 @@ def run_client(argv, filename):
         #     print(sys.argv[0] + ": too many arguments")
         #     sys.exit(1)
 
-        run(communicator, filename)
+        run(communicator, filename, icegrid)
 
 @click.command()
 @click.argument('filename', required=False)
