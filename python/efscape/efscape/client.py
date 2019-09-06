@@ -11,7 +11,7 @@ import json
 # configure loggings
 logger = logging.getLogger()  #__name__)
 click_log.basic_config(logger)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 # 1. set the path of the 'efscape' slice defitions
 efscape_slice_dir = Path(os.environ['EFSCAPE_PATH']) / 'src/slice'

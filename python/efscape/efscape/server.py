@@ -155,10 +155,10 @@ class ModelI(efscape.Model):
                         "Decoding JSON has failed for <" + content.valueToJson + ">"
                     )
             else:
-                print("content port not found")
-                print(self.ports)
+                logger.info("content port not found")
+                logger.info(self.ports)
         # self.simulator.compute_next_state(xb, elapsedTime)
-        print(xb)
+        logger.info(xb)
         if self.input_consumer is not None:
             self.input_consumer.delta_ext(elapsedTime, xb)
 
@@ -175,12 +175,13 @@ class ModelI(efscape.Model):
         return True
 
     def outputFunction(self, current=None):
-        print("ModelI.outputFunction(): entering...")
+        logger.info("ModelI.outputFunction(): entering...")
         message = []
         if self.output_producer is None:
+            logger.info("efscape.ModelI.outputFunction(): missing output producer")
             return message
 
-        print("ModelI.outputFunction(): potential output...")
+        logger.info("ModelI.outputFunction(): potential output...")
 
         yb = self.output_producer.output_func()
 
@@ -222,6 +223,9 @@ class ModelI(efscape.Model):
         """
         if current is not None:
             current.adapter.remove(current.id)
+        
+        # need to ensure the wrapped model is deleted now
+        del self.wrapped_model
 
 
 class SimulatorI(efscape.Simulator):
