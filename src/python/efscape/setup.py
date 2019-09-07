@@ -36,7 +36,7 @@ setup(
     description="Provides a Python implementation of the efscape ZeroC ICe interface",
     entry_points={
         'console_scripts': [
-            'efscape=efscape.cli:main',
+            'efpyserver=efscape.cli:main',
             'efpyclient=efscape.client:main'
         ],
     },

@@ -2,10 +2,12 @@
 
 """Console script for efscape."""
 import sys
+import os
 import click
 import logging
 import click_log
-from efscape.server import ModelHomeI, run_server, test_devs, createGPT
+from pathlib import Path
+from efscape.efscape import ModelHomeI, run_server, test_devs, createGPT
 
 # configure loggings
 logger = logging.getLogger()  #__name__)
@@ -19,6 +21,7 @@ def main(args=sys.argv):
 
     #test_devs()
 
+    # load the class DEVS GPT model for testing
     modelInfo = {
         "modelName": "GPT",
         "description": "Classic DEVS GPT model",
@@ -29,6 +32,11 @@ def main(args=sys.argv):
         "output_producer": "Observer"
     }
     ModelHomeI.addModel("GPT", createGPT, modelInfo)
+
+    # Need to change to the server direction to run server
+    efscape_server_dir = Path(os.environ["EFSCAPE_PATH"]) / "src" / "server"
+    os.chdir(str(efscape_server_dir))
+
     run_server(args)
     
     return 0

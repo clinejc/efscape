@@ -1,0 +1,25 @@
+<!-- Copyright (c) ZeroC, Inc. All rights reserved. -->
+
+<icegrid>
+
+  <application name="EfscapePy">
+
+    <node name="node1">
+
+      <server id="EfscapePyServer" exe="efpyserver" activation="on-demand">
+        <adapter name="ModelHome" endpoints="tcp -h localhost">
+          <object identity="modelhome" type="::efscape::ModelHome" property="Identity"/>
+        </adapter>
+
+        <property name="IceMX.Metrics.Debug.GroupBy" value="id"/>
+        <property name="IceMX.Metrics.Debug.Disabled" value="1"/>
+        <property name="IceMX.Metrics.ByParent.GroupBy" value="parent"/>
+        <property name="IceMX.Metrics.ByParent.Disabled" value="1"/>
+        <property name="Ice.StdOut" value="log"/>
+      </server>
+
+    </node>
+
+  </application>
+
+</icegrid>

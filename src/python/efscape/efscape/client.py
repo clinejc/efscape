@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import sys
 import os
 import click
@@ -113,6 +115,10 @@ def run_simulation(simulator, timeMax=100.):
             for x in message:
                 logger.info('message ' + str(idx) + ': value on port <' + \
                           x.port + '> = ' +  x.valueToJson)
+        
+        #
+        message = [efscape.Content("stop_input_port", json.dumps({}))]
+        model.externalTransition(timeMax, message)
 
     # 7. Wrap-up
     simulator.destroy()

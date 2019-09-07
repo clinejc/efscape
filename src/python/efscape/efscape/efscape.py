@@ -618,3 +618,30 @@ def run_server(args):
         adapter.add(modelHome, Ice.stringToIdentity("ModelHome"))
         adapter.activate()
         communicator.waitForShutdown()
+
+def run_server_with_icegrid(args):
+    #
+    # Ice.initialize returns an initialized Ice communicator,
+    # the communicator is destroyed once it goes out of scope.
+    #
+    with Ice.initialize(args) as communicator:
+
+        #
+        # Install a signal handler to shutdown the communicator on Ctrl-C
+        #
+        signal.signal(signal.SIGINT, lambda signum, frame: communicator.shutdown())
+
+        #
+        # The communicator initialization removes all Ice-related arguments from argv
+        #
+        if len(sys.argv) > 1:
+            print(sys.argv[0] + ": too many arguments")
+            sys.exit(1)
+
+
+        properties = communicator.getProperties()
+        adapter = communicator.createObjectAdapter("ModelHome")
+        id = Ice.stringToIdentity(properties.getProperty("Identity"))
+        adapter.add(ModelHomeI(), id)
+        adapter.activate()
+        communicator.waitForShutdown()
