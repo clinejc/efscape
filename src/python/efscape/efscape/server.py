@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+"""Main module."""
+
+
 """Efscape Ice Server module."""
 import signal
 import sys
