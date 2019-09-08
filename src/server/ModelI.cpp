@@ -218,19 +218,6 @@ ModelI::setName(std::string aCr_name,
 }
 
 /**
- * Returns the configuration of the model in JSON format via a string.
- *
- * @param current method invocation
- * @returns model configuration in JSON format
- */
-std::string
-ModelI::saveJSON(const Ice::Current& current)
-{
-  std::string lC_config = "";
-  return lC_config;
-}
-
-/**
  * Destroys the model.
  *
  * @param current method invocation

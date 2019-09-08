@@ -1,7 +1,7 @@
 // __COPYRIGHT_START__
 // Package Name : efscape
 // File Name : ModelI.hpp
-// Copyright (C) 2006-2018 Jon C. Cline
+// Copyright (C) 2006-2019 Jon C. Cline
 // 
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -28,7 +28,7 @@
  * interface for server-side models.
  *
  * @author Jon Cline <clinej@stanfordalumni.org>
- * @version 1.2.0 created 18 Oct 2008, revised 24 Jan 2019
+ * @version 1.3.0 created 18 Oct 2008, revised 08 Sep 2019
  */
 class ModelI : virtual public efscape::Model,
 		 public adevs::EventListener<efscape::impl::IO_Type>
@@ -64,8 +64,6 @@ public:
   virtual std::string getType(const Ice::Current&) const override;
   virtual void setName(std::string,
 		       const Ice::Current&) override;
-
-  virtual std::string saveJSON(const Ice::Current&) override;
 
   virtual void destroy(const Ice::Current&) override;
 

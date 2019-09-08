@@ -8,7 +8,7 @@
 
       <server id="EfscapePyServer" exe="efpyserver" activation="on-demand">
         <adapter name="ModelHome" endpoints="tcp -h localhost">
-          <object identity="modelhome" type="::efscape::ModelHome" property="Identity"/>
+          <object identity="modelhome2" type="::efscape::ModelHome" property="Identity"/>
         </adapter>
 
         <property name="IceMX.Metrics.Debug.GroupBy" value="id"/>

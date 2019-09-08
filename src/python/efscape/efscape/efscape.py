@@ -81,7 +81,7 @@ class ModelI(efscape.Model):
         self.output_producer = None
         self.input_consumer = None
         if "output_producer" in self.modelInfo:
-            print(self.modelInfo["output_producer"])
+            logger.info(self.modelInfo["output_producer"])
             if (
                 self.wrapped_model.__class__.__name__
                 == self.modelInfo["output_producer"]
@@ -140,9 +140,9 @@ class ModelI(efscape.Model):
     def externalTransition(self, elapsedTime, msg, current=None):
         if self.wrapped_model is None:
             return False
-        print("ModelI.externalTransition(...)...")
-        print("\ttime=" + str(elapsedTime))
-        print("\tmessage=" + str(msg))
+        logger.info("ModelI.externalTransition(...)...")
+        logger.info("\ttime=" + str(elapsedTime))
+        logger.info("\tmessage=" + str(msg))
 
         # convert input message to pydevs input format
         xb = []
@@ -189,15 +189,15 @@ class ModelI(efscape.Model):
         yb = self.output_producer.output_func()
 
         if yb is None:
-            print("ModelI.outputFunction(): nothing to output")
+            logger.info("ModelI.outputFunction(): nothing to output")
             return
 
-        print(yb)
+        logger.info(yb)
 
         # convert
         message = []
         for port, value in yb:
-            print(port)
+            logger.info(port)
             if port in self.ports:
                 try:
                     message.append(efscape.Content(self.ports[port], json.dumps(value)))
@@ -216,9 +216,6 @@ class ModelI(efscape.Model):
 
     def setName(self, name, current=None):
         self.name = name
-
-    def saveJSON(self, current=None):
-        return {}
 
     def destroy(self, current=None):
         """
@@ -339,6 +336,7 @@ class ModelHomeI(efscape.ModelHome):
 
     models = {}  # collection of models
 
+
     @classmethod
     def addModel(cls, name, model, info={}):
         """
@@ -384,6 +382,14 @@ class ModelHomeI(efscape.ModelHome):
             model = self.create(modelName, current)
             if not model:
                 logger.error("Unable to create model <"+ + modelName +">!")
+
+            if "properties" in parameters:
+                properties = parameters["properties"]
+                message = [
+                    efscape.Content("properties_input",
+                    json.dumps(properties))
+                ]
+                model.externalTransition(0., )
         else:
             logger.info("efscape.Model: <modelName> not found!")
 
@@ -568,7 +574,7 @@ class Observer(devs.AtomicBase):
         yb = []
         if self.output is not None:
             yb.append((self.output_port, self.output))
-            print("yb=" + str(yb))
+            logger.info("yb=" + str(yb))
             return yb
 
 
@@ -610,7 +616,7 @@ def run_server(args):
         signal.signal(signal.SIGINT, lambda signum, frame: communicator.shutdown())
 
         if len(args) > 1:
-            print(args[0] + ": too many arguments")
+            logger.info(args[0] + ": too many arguments")
             sys.exit(1)
 
         modelHome = ModelHomeI()
@@ -635,7 +641,7 @@ def run_server_with_icegrid(args):
         # The communicator initialization removes all Ice-related arguments from argv
         #
         if len(sys.argv) > 1:
-            print(sys.argv[0] + ": too many arguments")
+            logger.error(sys.argv[0] + ": too many arguments")
             sys.exit(1)
 
 

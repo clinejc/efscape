@@ -173,26 +173,34 @@ def run_input_test(simulator):
     return 0
 
 
-def run(communicator, filename, icegrid):
+def run(communicator, identity, filename, icegrid):
     """
     Run the efscape client
 
     Parameters
     ----------
     communicator Ice Communicator
+    identity str
+        Ice object id (default: "modelhome")
     filename str
-        json file name
+        json file name (optional)
     """
     status = 0
 
     # 4. attempt to access the efscape.ModelHome proxy
     modelHome = None
+
+    if not identity:
+        identity = 'modelhome'
+
+    logger.info("Attempting to access ModelHome <" + identity + ">...")
+
     if not icegrid:
         modelHome = efscape.ModelHomePrx.checkedCast(
             communicator.propertyToProxy('ModelHome.Proxy').ice_twoway().ice_secure(False))
     else:
         try:
-            modelHome = efscape.ModelHomePrx.checkedCast(communicator.stringToProxy('modelhome'))
+            modelHome = efscape.ModelHomePrx.checkedCast(communicator.stringToProxy(identity))
         except Ice.NotRegisteredException:
             query = IceGrid.QueryPrx.checkedCast(communicator.stringToProxy("EfscapeIceGrid/Query"))
             modelHome = efscape.ModelHomePrx.checkedCast(query.findObjectByType("::efscape::ModelHome"))
@@ -258,7 +266,7 @@ def run(communicator, filename, icegrid):
 
     return status
 
-def run_client(argv, filename):
+def run_client(argv, identity, filename):
     """ """
 
     config_filename = "config.client"
@@ -282,13 +290,20 @@ def run_client(argv, filename):
         #     print(sys.argv[0] + ": too many arguments")
         #     sys.exit(1)
 
-        run(communicator, filename, icegrid)
+        run(communicator, identity, filename, icegrid)
 
 @click.command()
+@click.option('--identity', '-I', help="ModelHome identity (default: 'modelhome')")
 @click.argument('filename', required=False)
-def main(filename):
-    """Console script for efscape.client."""
+def main(identity, filename):
+    """
+    efscape ICE client that runs a simulation on the efscape ICE server
+
+    If an input file is not specified, the user will be prompted to
+    select one of the available models, from which a valid parameter file
+    will be generated.
+    """
     click.echo("Running " "efscape.client.main...")
 
     argv = [sys.argv[0]]  # ignoring Ice-related arguments for now
-    run_client(argv, filename)
+    run_client(argv, identity, filename)
