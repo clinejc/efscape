@@ -7,29 +7,36 @@ import click
 import logging
 import click_log
 from pathlib import Path
-from efscape.efscape import ModelHomeI, run_server, test_devs, createGPT
+from efscape.efscape import (
+    ModelHomeI,
+    run_server,
+    run_server_with_icegrid,
+    test_devs,
+    createGPT,
+)
 
 # configure loggings
-logger = logging.getLogger()  #__name__)
+logger = logging.getLogger()  # __name__)
 click_log.basic_config(logger)
 logger.setLevel(logging.INFO)
 
+
 @click.command()
-def main(args=sys.argv):
+@click.option('--Ice.Config', 'ice_config')
+def main(ice_config):
     """Console script for efscape."""
     click.echo("Running " "efscape.cli.main...")
+    if ice_config:
+        click.echo("ice_config=<" + ice_config + ">")
 
-    #test_devs()
+    # test_devs()
 
     # load the class DEVS GPT model for testing
     modelInfo = {
         "modelName": "GPT",
         "description": "Classic DEVS GPT model",
-        "ports": {
-            "output_port": 2,
-            "test_input_port": 3
-        },
-        "output_producer": "Observer"
+        "ports": {"output_port": 2, "test_input_port": 3},
+        "output_producer": "Observer",
     }
     ModelHomeI.addModel("GPT", createGPT, modelInfo)
 
@@ -37,8 +44,8 @@ def main(args=sys.argv):
     efscape_server_dir = Path(os.environ["EFSCAPE_PATH"]) / "src" / "server"
     os.chdir(str(efscape_server_dir))
 
-    run_server(args)
-    
+    run_server_with_icegrid(sys.argv)
+
     return 0
 
 
