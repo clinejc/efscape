@@ -62,7 +62,7 @@ class ModelI(efscape.Model):
         self.wrapped_model = wrapped_model  # set the wrappped model
         self.name = "model"
         if wrapped_model is not None:
-            self.name = wrapped_model.__class__
+            self.name = wrapped_model.__class__.__name__
 
         self.modelInfo = modelInfo  # set model metadata
 
@@ -212,7 +212,7 @@ class ModelI(efscape.Model):
         if self.wrapped_model is None:
             return "None"
 
-        return str(self.wrapped_model.__class__)
+        return str(self.wrapped_model.__class__.__name__)
 
     def setName(self, name, current=None):
         self.name = name
