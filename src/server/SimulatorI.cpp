@@ -106,6 +106,7 @@ SimulatorI::computeNextState(Ice::Double elapsedTime,
 			     ::efscape::Message msg,
 			     const Ice::Current& current)
 {
+  mCp_model->externalTransition(elapsedTime, msg);
 }
 /**
  * Returns true if the simulator should stop (e.g. model becomes passive).

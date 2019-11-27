@@ -268,6 +268,7 @@ ModelHomeI::createSim(std::shared_ptr<efscape::ModelPrx> rootModel,
 void
 ModelHomeI::shutdown(const Ice::Current& current)
 {
+  LOG4CXX_DEBUG(efscape::impl::ModelHomeI::getLogger(), "Shutting down...");
   current.adapter->getCommunicator()->shutdown();
 }
 

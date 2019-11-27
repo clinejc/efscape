@@ -431,6 +431,7 @@ int EfscapeClient::run(int argc, char* argv[]) {
         std::ofstream parmFile(lC_parmName.c_str());
         parmFile << lC_parmString << std::endl;
       }
+      lCp_ModelHome->shutdown();
       return EXIT_SUCCESS;
     }
 
@@ -520,6 +521,7 @@ int EfscapeClient::run(int argc, char* argv[]) {
 
     lCp_Simulator->destroy();
     lCp_Model->destroy();
+    lCp_ModelHome->shutdown();
 
   } catch (const Ice::Exception& excp) {
     std::cerr << excp << std::endl;

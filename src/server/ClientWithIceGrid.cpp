@@ -224,6 +224,7 @@ int run(const std::shared_ptr<Ice::Communicator>& communicator) {
       std::ofstream parmFile(lC_parmName.c_str());
       parmFile << lC_parmString << std::endl;
     }
+    lCp_ModelHome->shutdown();
     return EXIT_SUCCESS;
   }
 
@@ -313,6 +314,7 @@ int run(const std::shared_ptr<Ice::Communicator>& communicator) {
 
   lCp_Simulator->destroy();
   lCp_Model->destroy();
+  lCp_ModelHome->shutdown();
 
   return status;
 }
