@@ -29,14 +29,14 @@ function install_adevs() {
 
 # install repast hpc
 function install_repast_hpc {
-  if [ -e $BUILD_DIR/repast_hpc-2.2.0 ]
+  if [ -e $BUILD_DIR/repast_hpc-2.3.0 ]
   then
-    echo " A directory named $BUILD_DIR/repast_hpc-2.2.0 already exists; you must delete it before it can be rebuilt."
+    echo " A directory named $BUILD_DIR/repast_hpc-2.3.0 already exists; you must delete it before it can be rebuilt."
     echo "Skipping..."
     return
   fi
   cd $BUILD_DIR
-  if [ ! -e $BUILD_DIR/repast_hpc-2.2.0.tgz ]; then
+  if [ ! -e $BUILD_DIR/repast_hpc-2.3.0.tgz ]; then
       wget https://github.com/Repast/repast.hpc/releases/download/v2.3.0/repast_hpc-2.3.0.tgz
   fi
   tar xvzf repast_hpc-2.3.0.tgz
@@ -45,9 +45,6 @@ function install_repast_hpc {
   mkdir Release
   cd Release
   cmake -DCMAKE=Release -DCMAKE_INSTALL_PREFIX=$PREFIX_DIR ../src
-  make install
-  cd ..
-  ./configure --prefix=$PREFIX_DIR
   make install
 }
 
