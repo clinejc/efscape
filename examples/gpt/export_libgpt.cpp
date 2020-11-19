@@ -104,7 +104,7 @@ namespace gpt {
 	g = lC_attribute.asDouble();
       } else {
 	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		      "Unable to parse attribute  <period>")
+		      "Unable to parse attribute  <period>");
       }
       
       lC_attribute = aC_args["processing_time"];
@@ -112,7 +112,7 @@ namespace gpt {
 	p = lC_attribute.asDouble();
       } else {
 	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		      "Unable to parse attribute  <processing_time>")
+		      "Unable to parse attribute  <processing_time>");
       }
       
       lC_attribute = aC_args["observ_time"];
@@ -120,7 +120,7 @@ namespace gpt {
 	t = lC_attribute.asDouble();
       } else {
 	LOG4CXX_ERROR(efscape::impl::ModelHomeI::getLogger(),
-		      "Unable to parse attribute  <observ_time>")
+		      "Unable to parse attribute  <observ_time>");
       }
     }
     
