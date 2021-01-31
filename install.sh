@@ -52,6 +52,15 @@ function install_efscape {
     cd $EFSCAPE_PATH
     ./autogen.sh
     ./configure --prefix=$PREFIX_DIR
+    make
+
+    # patch server
+    cwd=$PWD
+    cd $PWD/src/server
+    ./patch_server_for_osx.sh $PREFIX_DIR/lib
+    cd $cwd
+
+    # resume installation
     make install
 }
 

@@ -1,6 +1,6 @@
 diff -Naur repast_hpc-2.3.0/cmake/Modules/FindNetCDF.cmake repast_hpc-2.3.0~patched/cmake/Modules/FindNetCDF.cmake
 --- repast_hpc-2.3.0/cmake/Modules/FindNetCDF.cmake	1969-12-31 19:00:00.000000000 -0500
-+++ repast_hpc-2.3.0~patched/cmake/Modules/FindNetCDF.cmake	2019-01-27 20:42:27.000000000 -0500
++++ repast_hpc-2.3.0~patched/cmake/Modules/FindNetCDF.cmake	2020-11-18 21:49:08.000000000 -0500
 @@ -0,0 +1,71 @@
 +# - Find NetCDF
 +# Find the native NetCDF includes and library
@@ -76,7 +76,7 @@ diff -Naur repast_hpc-2.3.0/cmake/Modules/FindNetCDF.cmake repast_hpc-2.3.0~patc
 \ No newline at end of file
 diff -Naur repast_hpc-2.3.0/src/CMakeLists.txt repast_hpc-2.3.0~patched/src/CMakeLists.txt
 --- repast_hpc-2.3.0/src/CMakeLists.txt	1969-12-31 19:00:00.000000000 -0500
-+++ repast_hpc-2.3.0~patched/src/CMakeLists.txt	2019-01-27 20:22:33.000000000 -0500
++++ repast_hpc-2.3.0~patched/src/CMakeLists.txt	2020-11-18 22:04:51.000000000 -0500
 @@ -0,0 +1,303 @@
 +project(repast_hpc_project)
 +
@@ -330,7 +330,7 @@ diff -Naur repast_hpc-2.3.0/src/CMakeLists.txt repast_hpc-2.3.0~patched/src/CMak
 +
 +set (NETCDF_CXX "YES")
 +find_package(NetCDF REQUIRED)
-+include_directories(NETCDF_INCLUDES)
++include_directories(${NETCDF_INCLUDES})
 +
 +find_package(CURL REQUIRED)
 +
@@ -383,7 +383,7 @@ diff -Naur repast_hpc-2.3.0/src/CMakeLists.txt repast_hpc-2.3.0~patched/src/CMak
 +	        DESTINATION lib/pkgconfig)
 diff -Naur repast_hpc-2.3.0/src/relogo/SimulationRunnerPlus.h repast_hpc-2.3.0~patched/src/relogo/SimulationRunnerPlus.h
 --- repast_hpc-2.3.0/src/relogo/SimulationRunnerPlus.h	1969-12-31 19:00:00.000000000 -0500
-+++ repast_hpc-2.3.0~patched/src/relogo/SimulationRunnerPlus.h	2019-01-29 10:34:29.000000000 -0500
++++ repast_hpc-2.3.0~patched/src/relogo/SimulationRunnerPlus.h	2020-11-18 21:49:08.000000000 -0500
 @@ -0,0 +1,194 @@
 +/*
 + *   Repast for High Performance Computing (Repast HPC)
@@ -581,7 +581,7 @@ diff -Naur repast_hpc-2.3.0/src/relogo/SimulationRunnerPlus.h repast_hpc-2.3.0~p
 +#endif /* SIMULATIONRUNNERPLUS_HPP_ */
 diff -Naur repast_hpc-2.3.0/src/repast_hpc/Schedule.cpp repast_hpc-2.3.0~patched/src/repast_hpc/Schedule.cpp
 --- repast_hpc-2.3.0/src/repast_hpc/Schedule.cpp	2018-12-05 11:53:35.000000000 -0500
-+++ repast_hpc-2.3.0~patched/src/repast_hpc/Schedule.cpp	2019-02-09 17:54:45.000000000 -0500
++++ repast_hpc-2.3.0~patched/src/repast_hpc/Schedule.cpp	2020-11-18 21:49:08.000000000 -0500
 @@ -179,20 +179,34 @@
  	endEvents.push_back(func);
  }
@@ -626,7 +626,7 @@ diff -Naur repast_hpc-2.3.0/src/repast_hpc/Schedule.cpp repast_hpc-2.3.0~patched
  }
 diff -Naur repast_hpc-2.3.0/src/repast_hpc/Schedule.h repast_hpc-2.3.0~patched/src/repast_hpc/Schedule.h
 --- repast_hpc-2.3.0/src/repast_hpc/Schedule.h	2018-12-05 11:53:35.000000000 -0500
-+++ repast_hpc-2.3.0~patched/src/repast_hpc/Schedule.h	2019-02-09 17:51:53.000000000 -0500
++++ repast_hpc-2.3.0~patched/src/repast_hpc/Schedule.h	2020-11-18 21:49:08.000000000 -0500
 @@ -301,6 +301,25 @@
  		return schedule_.getCurrentTick();
  	}
@@ -676,7 +676,7 @@ diff -Naur repast_hpc-2.3.0/src/repast_hpc/Schedule.h repast_hpc-2.3.0~patched/s
  }
 diff -Naur repast_hpc-2.3.0/src/repast_hpc.pc.in repast_hpc-2.3.0~patched/src/repast_hpc.pc.in
 --- repast_hpc-2.3.0/src/repast_hpc.pc.in	1969-12-31 19:00:00.000000000 -0500
-+++ repast_hpc-2.3.0~patched/src/repast_hpc.pc.in	2019-01-12 20:50:28.000000000 -0500
++++ repast_hpc-2.3.0~patched/src/repast_hpc.pc.in	2020-11-18 21:49:08.000000000 -0500
 @@ -0,0 +1,10 @@
 +prefix=@DEST_DIR@
 +exec_prefix=@exec_prefix@
@@ -690,7 +690,7 @@ diff -Naur repast_hpc-2.3.0/src/repast_hpc.pc.in repast_hpc-2.3.0~patched/src/re
 +Cflags: -I${includedir}
 diff -Naur repast_hpc-2.3.0/src/zombie/ZombieObserver.cpp repast_hpc-2.3.0~patched/src/zombie/ZombieObserver.cpp
 --- repast_hpc-2.3.0/src/zombie/ZombieObserver.cpp	2018-12-05 11:53:35.000000000 -0500
-+++ repast_hpc-2.3.0~patched/src/zombie/ZombieObserver.cpp	2019-01-27 20:51:13.000000000 -0500
++++ repast_hpc-2.3.0~patched/src/zombie/ZombieObserver.cpp	2020-11-18 21:49:08.000000000 -0500
 @@ -66,7 +66,10 @@
    if (_rank == 0) {
      Log4CL::instance()->get_logger("root").log(INFO, "TICK BEGINS: " + boost::lexical_cast<string>(RepastProcess::instance()->getScheduleRunner().currentTick()));
@@ -705,7 +705,7 @@ diff -Naur repast_hpc-2.3.0/src/zombie/ZombieObserver.cpp repast_hpc-2.3.0~patch
    get(zombies);
 diff -Naur repast_hpc-2.3.0/src/zombie/model-1cpu.props repast_hpc-2.3.0~patched/src/zombie/model-1cpu.props
 --- repast_hpc-2.3.0/src/zombie/model-1cpu.props	1969-12-31 19:00:00.000000000 -0500
-+++ repast_hpc-2.3.0~patched/src/zombie/model-1cpu.props	2019-01-27 20:42:27.000000000 -0500
++++ repast_hpc-2.3.0~patched/src/zombie/model-1cpu.props	2020-11-18 21:49:08.000000000 -0500
 @@ -0,0 +1,22 @@
 +#random.seed = 1284067381
 +stop.at = 10
