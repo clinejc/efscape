@@ -7,51 +7,42 @@ PREFIX_DIR=/usr/local
 
 # install adevs
 function install_adevs() {
-  if [ -e $BUILD_DIR/adevs-3.3 ]
+  if [ -e $BUILD_DIR/adevs ]
   then
-    echo " A directory named $BUILD_DIR/adevs-3.3 already exists; you must delete it before it can be rebuilt."
+    echo " A directory named $BUILD_DIR/adevs already exists; you must delete it before it can be rebuilt."
     echo "Skipping..."
     return
   fi
   cd $BUILD_DIR
-  if [ ! -e adevs-3.3.zip ]
-  then
-    wget https://web.ornl.gov/~nutarojj/adevs/adevs-3.3.zip
-  fi
-  unzip adevs-3.3.zip
-  cd adevs-3.3
-  patch -p1 -i $EFSCAPE_PATH/ext/adevs-3.3.patch
+  git clone git@github.com:clinejc/adevs.git
+  cd adevs
+  git checkout serialization-and-autotools
   chmod +x autogen.sh
-  ./autogen.sh
-  ./configure --prefix=$PREFIX_DIR
+  ./autogen.sh --prefix=$PREFIX_DIR
   make install
 }
 
 # install repast hpc
 function install_repast_hpc {
-  if [ -e $BUILD_DIR/repast_hpc-2.3.0 ]
+  if [ -e $BUILD_DIR/repast.hpc ]
   then
-    echo " A directory named $BUILD_DIR/repast_hpc-2.3.0 already exists; you must delete it before it can be rebuilt."
+    echo " A directory named $BUILD_DIR/repas._hpc already exists; you must delete it before it can be rebuilt."
     echo "Skipping..."
     return
   fi
   cd $BUILD_DIR
-  if [ ! -e $BUILD_DIR/repast_hpc-2.3.0.tgz ]; then
-      wget https://github.com/Repast/repast.hpc/releases/download/v2.3.0/repast_hpc-2.3.0.tgz
-  fi
-  tar xvzf repast_hpc-2.3.0.tgz
-  cd repast_hpc-2.3.0
-  patch -p1 -i $EFSCAPE_PATH/ext/repast_hpc-2.3.0.patch
+  git clone git@github.com:clinejc/repast.hpc.git
+  cd repast.hpc
+  git checkout add-interactive-simulator
   mkdir Release
   cd Release
-  cmake -DCMAKE=Release -DCMAKE_INSTALL_PREFIX=$PREFIX_DIR ../src
+  cmake --DCMAKE=Release -DCMAKE_INSTALL_PREFIX=$PREFIX_DIR ../src
   make install
 }
 
 function install_efscape {
     cd $EFSCAPE_PATH
-    ./autogen.sh
-    ./configure --prefix=$PREFIX_DIR
+    ./autogen.sh --prefix=$PREFIX_DIR
     make
 
     # patch server
